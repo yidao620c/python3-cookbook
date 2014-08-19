@@ -22,7 +22,6 @@ Python3 CookBook 全文翻译
 2. 当前文档生成托管在readthedocs_ 上
 3. 使用了python官方文档主题sphinx-rtd-theme_.
 
---------------------------------------------------------------
 .. _readthedocs: https://readthedocs.org/
 .. _sphinx-rtd-theme: https://github.com/snide/sphinx_rtd_theme
 .. _reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html

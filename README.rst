@@ -14,3 +14,16 @@ Python3 CookBook 全文翻译
 读起来不会很容易。所以建议您在阅读时，最好也了解一下手册中相关的地方。
 
 译文中有什么错漏的地方请大家见谅，也欢迎大家指正： yidao620@gmail.com
+
+--------------------------------------------------------------
+
+注：
+
+1. 所有文档均使用reStructuredText编辑，参考reStructuredText_
+2. 当前文档生成托管在readthedocs_上
+3. 使用了python官方文档主题sphinx_rtd_theme_
+
+
+.. _readthedocs: https://readthedocs.org/
+.. _sphinx_rtd_theme: https://github.com/snide/sphinx_rtd_theme
+.. _reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html

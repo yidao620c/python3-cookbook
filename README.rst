@@ -19,9 +19,9 @@ Python3 CookBook 全文翻译
 
 注：
 
-1. 所有文档均使用reStructuredText编辑，参考reStructuredText_
+1. 所有文档均使用reStructuredText编辑，参考 reStructuredText_
 2. 当前文档生成托管在 readthedocs_ 上
-3. 使用了python官方文档主题sphinx-rtd-theme_
+3. 使用了python官方文档主题 sphinx-rtd-theme_
 
 .. _readthedocs: https://readthedocs.org/
 .. _sphinx-rtd-theme: https://github.com/snide/sphinx_rtd_theme

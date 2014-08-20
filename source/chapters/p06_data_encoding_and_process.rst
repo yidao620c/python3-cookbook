@@ -1,5 +1,5 @@
 =============================
-第二章：字符串和文本
+第六章：数据编码和处理
 =============================
 
 Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
@@ -15,4 +15,4 @@ Contents:
    :maxdepth: 1
    :glob:
 
-   ../c200/*
+   ../c06/*

@@ -3,14 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to python3-cookbook's documentation!
-============================================
+================================================
+Python Cookbook 3rd Edition Documentation!
+================================================
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
-
+   :glob:
+   
+   copyright
    preface
-
+   chapters/*
+   aboutme
 

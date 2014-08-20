@@ -28,7 +28,7 @@ import os
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = ['chinese_search']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -268,3 +268,5 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+_exts = "../exts"
+sys.path.append(os.path.abspath(_exts))

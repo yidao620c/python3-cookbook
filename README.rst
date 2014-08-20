@@ -30,7 +30,8 @@
 ++++++++
 1. 所有文档均使用reStructuredText编辑，参考 reStructuredText_
 2. 当前文档生成托管在 readthedocs_ 上
-3. 使用了python官方文档主题 sphinx-rtd-theme_ ，也是默认的主题default.
+#. 生成的文档预览地址： python3-cookbook_
+#. 使用了python官方文档主题 sphinx-rtd-theme_ ，也是默认的主题default.
 
 ::
 
@@ -47,3 +48,4 @@
 .. _readthedocs: https://readthedocs.org/
 .. _sphinx-rtd-theme: https://github.com/snide/sphinx_rtd_theme
 .. _reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html
+.. _python3-cookbook: http://python3-cookbook.readthedocs.org/zh_CN/latest/

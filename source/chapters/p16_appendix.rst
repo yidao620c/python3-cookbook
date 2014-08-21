@@ -1,5 +1,5 @@
 =============================
-第十章：模块与包
+附录
 =============================
 
 Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
@@ -15,4 +15,4 @@ Contents:
    :maxdepth: 1
    :glob:
 
-   ../c10/*
+   ../c16/*

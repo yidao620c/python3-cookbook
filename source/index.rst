@@ -17,3 +17,4 @@ Contents:
    preface
    chapters/*
    aboutme
+   roadmap

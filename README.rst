@@ -30,8 +30,9 @@
 ++++++++
 备注
 ++++++++
-1. 所有文档均使用reStructuredText编辑，参考 reStructuredText_
-2. 当前文档生成托管在 readthedocs_ 上
+1. 原版PDF下载地址： http://pan.baidu.com/s/1dDhByJv
+#. 所有文档均使用reStructuredText编辑，参考 reStructuredText_
+#. 当前文档生成托管在 readthedocs_ 上
 #. 生成的文档预览地址： python3-cookbook_
 #. 使用了python官方文档主题 sphinx-rtd-theme_ ，也是默认的主题default.
 

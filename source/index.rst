@@ -16,5 +16,3 @@ Contents:
    copyright
    preface
    chapters/*
-   aboutme
-

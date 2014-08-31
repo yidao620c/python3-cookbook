@@ -40,8 +40,6 @@
 我们在写查询元素的代码的时候，通常会使用包含yield表达式的生成器函数，也就是我们上面示例代码中的那样。
 这样可以将搜索过程代码和使用搜索结果代码解耦。如果你还不清楚什么是生成器，请参看4.3节。
 
-Using deque(maxlen=N) creates a fixed-sized queue. When new items are added and
-the queue is full, the oldest item is automatically removed. For example:
 使用deque(maxlen=N)构造函数会新建一个固定大小的队列。当心的元素加入并且这个队列已满的时候，
 最老的元素会自动被移除掉。
 

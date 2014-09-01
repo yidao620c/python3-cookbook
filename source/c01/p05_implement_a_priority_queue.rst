@@ -75,7 +75,7 @@ index变量的作用是保证同等优先级元素的正确排序。
 通过保存一个不断增加的index下标变量，可以确保元素安装它们插入的顺序排序。
 而且，index变量也在相同优先级元素比较的时候起到重要作用。
 
-为了阐明这些，Item实例是不能被排序的：
+为了阐明这些，先假定Item实例是不支持排序的：
 
 .. code-block:: python
 
@@ -87,10 +87,39 @@ index变量的作用是保证同等优先级元素的正确排序。
     TypeError: unorderable types: Item() < Item()
     >>>
 
-If you make (priority, item) tuples, they can be compared as long as the priorities
-are different. However, if two tuples with equal priorities are compared, the comparison
-fails as before. For example:
-如果你使用元组(priority, item),
+如果你使用元组(priority, item)，只要两个元素的优先级不同就能比较。
+但是如果两个元素优先级一样的话，那么比较操作就会跟之前一样出错：
 
+.. code-block:: python
 
+    >>> a = (1, Item('foo'))
+    >>> b = (5, Item('bar'))
+    >>> a < b
+    True
+    >>> c = (1, Item('grok'))
+    >>> a < c
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    TypeError: unorderable types: Item() < Item()
+    >>>
+
+通过引入另外的index变量组成三元组(priority, index, item)，就能很好的避免上面的错误，
+因为不可能有两个元素有相同的index值。Python在做元组比较时候，如果前面的比较以及可以确定结果了，
+后面的比较操作就不会发生了：
+
+.. code-block:: python
+
+    >>> a = (1, 0, Item('foo'))
+    >>> b = (5, 1, Item('bar'))
+    >>> c = (1, 2, Item('grok'))
+    >>> a < b
+    True
+    >>> a < c
+    True
+    >>>
+
+如果你想在多个线程中使用同一个队列，那么你需要增加适当的锁和信号量机制。
+可以查看12.3小节的例子演示是怎样做的。
+
+heapq模块的官方文档有更详细的例子程序以及对于堆理论及其实现的详细说明。
 

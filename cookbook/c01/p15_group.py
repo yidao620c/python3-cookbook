@@ -4,6 +4,8 @@
 Topic: 分组迭代
 Desc : 
 """
+from operator import itemgetter
+from itertools import groupby
 
 
 def group_iter():
@@ -18,7 +20,19 @@ def group_iter():
         {'address': '1039 W GRANVILLE', 'date': '07/04/2012'},
     ]
 
+    # Sort by the desired field first
+    rows.sort(key=itemgetter('date'))
+    # Iterate in groups
+    for date, items in groupby(rows, key=itemgetter('date')):
+        print(date)
+        for i in items:
+            print(' ', i)
 
+    # defaultdict使用
+    from collections import defaultdict
+    rows_by_date = defaultdict(list)
+    for row in rows:
+        rows_by_date[row['date']].append(row)
 
 if __name__ == '__main__':
     group_iter()

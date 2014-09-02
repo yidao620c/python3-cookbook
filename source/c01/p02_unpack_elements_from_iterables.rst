@@ -21,9 +21,6 @@ Python的星号表达式可以用来解决这个问题。比如，你在学习�
         first, *middle, last = grades
         return avg(middle)
 
-As another use case, suppose you have user records that consist of a name and email
-address, followed by an arbitrary number of phone numbers. You could unpack the
-records like this:
 另外一种情况，假设你现在有一些用户的记录列表，每条记录包含一个名字，邮件，接着就是不确定数量的电话号码。
 你可以像下面这样分解这些记录：
 

@@ -10,7 +10,6 @@
 ----------
 解决方案
 ----------
-The following class uses the heapq module to implement a simple priority queue:
 下面的类利用heapq模块实现了一个简单的优先级队列：
 
 .. code-block:: python

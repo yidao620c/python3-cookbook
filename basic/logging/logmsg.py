@@ -18,12 +18,15 @@ __author__ = 'Xiong Neng'
 # 模块基本用_，类级别用__
 _log = logging.getLogger('app.' + __name__)
 
+
 class FilterFunc(logging.Filter):
     def __init__(self, name):
         super().__init__()
         self.funcname = name
     def filter(self, record):
         if record.funcName == self.funcname: return False
+
+
 def my_log():
     host = '10.0.0.175'
     port = 8080
@@ -38,7 +41,6 @@ def my_log():
     logging.disable(logging.DEBUG)  # 全局关闭某个级别
     # 使用log配置文件，在main函数中执行一次即可
     config.fileConfig('applogcfg.ini')
-
 
 
 if __name__ == '__main__':

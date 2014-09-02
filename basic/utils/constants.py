@@ -5,7 +5,7 @@
     Desc : 
 """
 import sys, os
-import utils.consttype as const
+from . import consttype as const
 __author__ = 'Xiong Neng'
 
 const.ROOT_PATH = os.path.dirname(sys.path[0])

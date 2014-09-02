@@ -7,6 +7,8 @@
 ----------
 怎样从一个集合中获得最大或者最小的N个元素列表？
 
+|
+
 ----------
 解决方案
 ----------
@@ -35,6 +37,8 @@ heapq模块有两个函数：nlargest() 和 nsmallest()可以完美解决这个�
     expensive = heapq.nlargest(3, portfolio, key=lambda s: s['price'])
 
 译者注：上面代码在对每个元素进行对比的时候，会以price的值进行比较。
+
+|
 
 ----------
 讨论

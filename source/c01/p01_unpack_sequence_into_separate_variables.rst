@@ -7,6 +7,8 @@
 ----------
 现在有一个包含N个元素的元组或者是序列，怎样将它里面的值解压后同时赋值给N变量？
 
+|
+
 ----------
 解决方案
 ----------
@@ -53,6 +55,8 @@
     File "<stdin>", line 1, in <module>
     ValueError: need more than 2 values to unpack
     >>>
+
+|
 
 ----------
 讨论

@@ -7,6 +7,8 @@
 ----------
 怎样在数据字典中执行一些计算操作(比如求最小值、最大值、排序等等)？
 
+|
+
 ----------
 解决方案
 ----------
@@ -49,6 +51,8 @@
     prices_and_names = zip(prices.values(), prices.keys())
     print(min(prices_and_names)) # OK
     print(max(prices_and_names)) # ValueError: max() arg is an empty sequence
+
+|
 
 ----------
 讨论

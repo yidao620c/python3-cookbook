@@ -68,8 +68,8 @@
     KeyError: "Key not found in the first mapping: 'y'"
     >>>
 
-ChainMap对于编程语言用范围的变量中有作(比如globals, locals等)是非常有用的。
-事实上，有一些方法使它变得简单：
+ChainMap对于编程语言中的作用范围变量(比如globals, locals等)是非常有用的。
+事实上，有一些方法可以使它变得简单：
 
 .. code-block:: python
 

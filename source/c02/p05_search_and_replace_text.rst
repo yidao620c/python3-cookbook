@@ -76,6 +76,6 @@ sub()函数中的第一个参数是被匹配的模式，第二个参数是替换
 ----------
 讨论
 ----------
-There isn’t much more to regular expression search and replace than the sub() method
-shown. The trickiest part is specifying the regular expression pattern—something that’s
-best left as an exercise to the reader.
+关于正则表达式搜索和替换，上面演示的sub()方法基本已经涵盖了所有。
+其实最难的部分就是编写正则表达式模式，这个最好是留给作者自己去练习了。
+

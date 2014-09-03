@@ -2,12 +2,12 @@
 第二章：字符串和文本
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+几乎所有有用的程序都会涉及到某些文本处理，不管是解析数据还是产生输出。
+这一章将重点关注文本的操作处理，比如提取字符串，搜索，替换以及解析等。
+大部分的问题都能简单的调用字符串的内建方法完成。
+但是，一些更为复杂的操作可能需要正则表达式或者强大的解析器，所有这些主题我们都会详细讲解。
+并且在操作Unicode时候碰到的一些棘手的问题在这里也会被提及到。
+
 
 Contents:
 

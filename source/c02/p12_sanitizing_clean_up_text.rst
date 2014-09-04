@@ -28,8 +28,6 @@
     'pýtĥöñ\x0cis\tawesome\r\n'
     >>>
 
-The first step is to clean up the whitespace. To do this, make a small translation table
-and use translate():
 第一步是清理空白字符。为了这样做，先创建一个小的转换表格然后使用translate方法：
 
 .. code-block:: python
@@ -46,8 +44,6 @@ and use translate():
 
 正如你看的那样，空白字符\t和\f已经被重新映射到一个空格。回车字符\r直接被删除。
 
-You can take this remapping idea a step further and build much bigger tables. For example,
-let’s remove all combining characters:
 你可以以这个表格为基础进一步构建更大的表格。比如，让我们删除所有的和音符：
 
 .. code-block:: python

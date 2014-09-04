@@ -95,7 +95,7 @@ combining()函数可以测试一个字符是否为组合字符。
 在这个模块中还有其他函数用于查找字符类别，测试是否为数字字符等等。
 
 Unicode显然是一个很大的主题。如果想更深入的了解关于标准化方面的信息，
-请看考`Unicode官网中关于这部分的说明 <http://www.unicode.org/faq/normalization.html>`_
-Ned Batchelder在`他的网站 <http://nedbatchelder.com/text/unipain.html>`_
+请看考 `Unicode官网中关于这部分的说明 <http://www.unicode.org/faq/normalization.html>`_
+Ned Batchelder在 `他的网站 <http://nedbatchelder.com/text/unipain.html>`_
 上对Python的Unicode处理问题也有一个很好的介绍。
 

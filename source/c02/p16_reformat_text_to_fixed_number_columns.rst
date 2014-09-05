@@ -51,6 +51,8 @@ the following long string:
         the eyes, look into my eyes, you're
         under.
 
+|
+
 ----------
 讨论
 ----------

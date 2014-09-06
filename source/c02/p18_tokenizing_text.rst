@@ -142,6 +142,8 @@
     # Token(type='PRINT', value='print')
     # Token(type='NAME', value='er')
 
-关于更高阶的令牌化技术，你可能需要查看PyParsing或者PLY包。一个调用PLY的例子在下一节会有演示。
+关于更高阶的令牌化技术，你可能需要查看 `PyParsing <http://pyparsing.wikispaces.com/>`_
+或者 `PLY <http://www.dabeaz.com/ply/index.html>`_ 包。
+一个调用PLY的例子在下一节会有演示。
 
 

@@ -6,7 +6,7 @@
 问题
 ----------
 你想根据一组语法规则解析文本并执行命令，或者构造一个代表输入的抽象语法树。
-语法非常简单，所以你可以自己写这个解析器，而不是使用一些框架。
+如果语法非常简单，你可以自己写这个解析器，而不是使用一些框架。
 
 |
 
@@ -44,7 +44,7 @@
 在EBNF中，被包含在{...}*中的规则是可选的。*代表0次或多次重复(跟正则表达式中意义是一样的)。
 
 现在，如果你对BNF的工作机制还不是很明白的话，就把它当做是一组左右符号可相互替换的规则。
-一般来讲，解析的原理就是你通过利用BNF完成多个替换和扩展以匹配输入文本和语法规则。
+一般来讲，解析的原理就是你利用BNF完成多个替换和扩展以匹配输入文本和语法规则。
 为了演示，假设你正在解析形如3 + 4 * 5的表达式。
 这个表达式先要通过使用2.18节中介绍的技术分解为一组令牌流。
 结果可能是像下列这样的令牌序列：
@@ -53,8 +53,6 @@
 
     NUM + NUM * NUM
 
-From there, parsing involves trying to match the grammar to input tokens by making
-substitutions:
 在此基础上， 解析动作会试着去通过替换操作匹配语法到输入令牌：
 
 .. code-block:: python
@@ -224,7 +222,7 @@ substitutions:
 如果你在找寻关于语法，解析算法等相关的背景知识的话，你应该去看一下编译器书籍。
 很显然，关于这方面的内容太多，不可能在这里全部展开。
 
-尽管如此，编写一个迭代下降解析器的整体思路是比较简单的。
+尽管如此，编写一个递归下降解析器的整体思路是比较简单的。
 开始的时候，你先获得所有的语法规则，然后将其转换为一个函数或者方法。
 因此如果你的语法类似这样：
 
@@ -250,9 +248,171 @@ substitutions:
         def factor(self):
         ...
 
-The task of each method is simple—it must walk from left to right over each part of the
-grammar rule, consuming tokens in the process. In a sense, the goal of the method is
-to either consume the rule or generate a syntax error if it gets stuck. To do this, the
-following implementation techniques are applied:
+每个方法要完成的任务很简单 - 它必须从左至右遍历语法规则的每一部分，处理每个令牌。
+从某种意义上讲，方法的目的就是要么处理完语法规则，要么产生一个语法错误。
+为了这样做，需采用下面的这些实现方法：
 
-*
+-   如果规则中的下个符号是另外一个语法规则的名字(比如term或factor)，就简单的调用同名的方法即可。
+    这就是该算法中"下降"的由来 - 控制下降到另一个语法规则中去。
+    有时候规则会调用已经执行的方法(比如，在factor ::= '('expr ')'中对expr的调用)。
+    这就是算法中"递归"的由来。
+-   如果规则中下一个符号是个特殊符号(比如()，你得查找下一个令牌并确认是一个精确匹配)。
+    如果不匹配，就产生一个语法错误。这一节中的_expect()方法就是用来做这一步的。
+-   如果规则中下一个符号为一些可能的选择项(比如 + 或 -)，
+    你必须对每一种可能情况检查下一个令牌，只有当它匹配一个的时候才能继续。
+    这也是本节示例中_accept()方法的目的。
+    它相当于_expect()方法的弱化版本，因为如果一个匹配找到了它会继续，
+    但是如果没找到，它不会产生错误而是回滚(允许后续的检查继续进行)。
+-   对于有重复部分的规则(比如在规则表达式 ::= term { ('+'|'-') term }*中)，
+    重复动作通过一个while循环来实现。
+    循环主体会收集或处理所有的重复元素直到没有其他元素可以找到。
+-   一旦整个语法规则处理完成，每个方法会返回某种结果给调用者。
+    这就是在解析过程中值是怎样累加的原理。
+    比如，在表达式求值程序中，返回值代表表达式解析后的部分结果。
+    最后所有值会在最顶层的语法规则方法中合并起来。
+
+尽管向你演示的是一个简单的例子，递归下降解析器可以用来实现非常复杂的解析。
+比如，Python语言本身就是通过一个递归下降解析器去解释的。
+如果你对此感兴趣，你可以通过查看Python源码文件Grammar/Grammar来研究下底层语法机制。
+看完你会发现，通过手动方式去实现一个解析器其实会有很多的局限和不足之处。
+
+其中一个局限就是它们不能被用于包含任何左递归的语法规则中。比如，加入你需要翻译下面这样一个规则：
+
+.. code-block:: python
+
+    items ::= items ',' item
+        | item
+
+为了这样做，你可能会像下面这样使用items()方法：
+
+.. code-block:: python
+
+    def items(self):
+        itemsval = self.items()
+        if itemsval and self._accept(','):
+            itemsval.append(self.item())
+        else:
+            itemsval = [ self.item() ]
+
+唯一的问题是这个方法根本不能工作，事实上，它会产生一个无限递归错误。
+
+关于语法规则本身你可能也会碰到一些棘手的问题。
+比如，你可能想知道下面这个简单扼语法是否表述得当：
+
+.. code-block:: python
+
+    expr ::= factor { ('+'|'-'|'*'|'/') factor }*
+
+    factor ::= '(' expression ')'
+        | NUM
+
+这个语法看上去没啥问题，但是它却不能察觉到标准四则运算中的运算符优先级。
+比如，表达式"3 + 4 * 5"会得到35而不是期望的23.
+分开使用"expr"和"term"规则可以让它正确的工作。
+
+对于复杂的语法，你最好是选择某个解析工具比如PyParsing或者是PLY。
+下面是使用PLY来重写表达式求值程序的代码：
+
+.. code-block:: python
+
+    from ply.lex import lex
+    from ply.yacc import yacc
+
+    # Token list
+    tokens = [ 'NUM', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN' ]
+    # Ignored characters
+    t_ignore = ' \t\n'
+    # Token specifications (as regexs)
+    t_PLUS = r'\+'
+    t_MINUS = r'-'
+    t_TIMES = r'\*'
+    t_DIVIDE = r'/'
+    t_LPAREN = r'\('
+    t_RPAREN = r'\)'
+
+    # Token processing functions
+    def t_NUM(t):
+        r'\d+'
+        t.value = int(t.value)
+        return t
+
+    # Error handler
+    def t_error(t):
+        print('Bad character: {!r}'.format(t.value[0]))
+        t.skip(1)
+
+    # Build the lexer
+    lexer = lex()
+
+    # Grammar rules and handler functions
+    def p_expr(p):
+        '''
+        expr : expr PLUS term
+            | expr MINUS term
+        '''
+        if p[2] == '+':
+            p[0] = p[1] + p[3]
+        elif p[2] == '-':
+            p[0] = p[1] - p[3]
+
+
+    def p_expr_term(p):
+        '''
+        expr : term
+        '''
+        p[0] = p[1]
+
+
+    def p_term(p):
+        '''
+        term : term TIMES factor
+        | term DIVIDE factor
+        '''
+        if p[2] == '*':
+            p[0] = p[1] * p[3]
+        elif p[2] == '/':
+            p[0] = p[1] / p[3]
+
+    def p_term_factor(p):
+        '''
+        term : factor
+        '''
+        p[0] = p[1]
+
+    def p_factor(p):
+        '''
+        factor : NUM
+        '''
+        p[0] = p[1]
+
+    def p_factor_group(p):
+        '''
+        factor : LPAREN expr RPAREN
+        '''
+        p[0] = p[2]
+
+    def p_error(p):
+        print('Syntax error')
+
+    parser = yacc()
+
+这个程序中，所有代码都在一个比较高的层次。你只需要为令牌写正则表达式和规则匹配时的高阶处理函数即可。
+而实际的运行解析器，接受令牌等等底层动作已经被库函数实现了。
+
+下面是一个怎样使用得到的解析对象的例子：
+
+.. code-block:: python
+
+    >>> parser.parse('2')
+    2
+    >>> parser.parse('2+3')
+    5
+    >>> parser.parse('2+(3+4)*5')
+    37
+    >>>
+
+如果你想在你的编程过程中来点挑战和刺激，编写解析器和编译器是个不错的选择。
+再次，一本编译器的书籍会包含很多底层的理论知识。不过很多好的资源也可以在网上找到。
+Python自己的ast模块也值得去看一下。
+
+

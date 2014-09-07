@@ -2,12 +2,10 @@
 第三章：数字日期和时间
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+在Python中执行整数和浮点数的数学运算时很简单的。
+尽管如此，如果你需要执行分数、数组或者是日期和时间的运算的话，就得做更多的工作了。
+本章集中讨论的就是这些主题。
+
 
 Contents:
 

@@ -2,6 +2,10 @@
 《Python Cookbook》 3rd Edition 翻译 
 =========================================================
 
+在线预览地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
+
+--------------------------------------------------------------
+
 -----------------
 译者的话
 -----------------
@@ -28,6 +32,7 @@
 #. 当前文档生成托管在 readthedocs_ 上
 #. 生成的文档预览地址： python3-cookbook_
 #. 使用了python官方文档主题 sphinx-rtd-theme_ ，也是默认的主题default.
+#. 书中所有代码均在python 3.4版本下面运行通过，所有源码放在cookbook包下面
 
 ::
 

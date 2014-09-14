@@ -2,12 +2,11 @@
 第四章：迭代器与生成器
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+迭代是Python最强大的功能之一。初看起来，你可能会简单的认为迭代只不过是处理序列中元素的一种方法。
+然而，绝非仅仅就是如此，还有很多你可能不知道的，
+比如创建你自己的迭代器对象，在itertools模块中使用有用的迭代模式，构造生成器函数等等。
+这一章目的就是向你展示跟迭代有关的各种常见问题。
+
 
 Contents:
 

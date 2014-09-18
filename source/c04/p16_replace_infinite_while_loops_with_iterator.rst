@@ -26,7 +26,6 @@
                 break
             process_data(data)
 
-Such code can often be replaced using iter(), as follows:
 这种代码通常可以使用 ``iter()`` 来代替，如下所示：
 
 .. code-block:: python
@@ -37,7 +36,7 @@ Such code can often be replaced using iter(), as follows:
             # process_data(data)
 
 
-如果你怀疑它到底行不行，你可以试验下一个简单的例子即可。比如：
+如果你怀疑它到底能不能正常工作，可以试验下一个简单的例子。比如：
 
 .. code-block:: python
 

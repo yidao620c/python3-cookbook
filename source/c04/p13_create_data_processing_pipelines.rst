@@ -134,13 +134,13 @@
 在调用gen_concatenate()函数的时候你可能会有些不太明白。
 这个函数的目的是将输入序列拼接成一个很长的行序列。
 itertools.chain()函数同样有类似的功能，但是它需要将所有可迭代对象最为参数传入。
-在上面这个例子中，你可能会写类似这样的语句``lines = itertools.chain(*files)``，
+在上面这个例子中，你可能会写类似这样的语句 ``lines = itertools.chain(*files)`` ，
 使得gen_opener()生成器能被全部消费掉。
 但由于gen_opener()生成器每次生成一个打开过的文件，等到下一个迭代步骤时文件就关闭了，因此china()在这里不能这样使用。
 下面的解决方案可以避免这种情况：
 
-gen_concatenate()函数中出现过``yield from``语句，它将yield操作代理到父生成器上去。
-语句``yield from it``简单的返回生成器``it``所产生的所有值。
+gen_concatenate()函数中出现过 ``yield from`` 语句，它将yield操作代理到父生成器上去。
+语句 ``yield from it`` 简单的返回生成器 ``it`` 所产生的所有值。
 关于这个我们在4.14小节会有更进一步的描述。
 
 最后还有一点需要注意的是，管道方式并不是万能的。

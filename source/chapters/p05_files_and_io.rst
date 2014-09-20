@@ -2,12 +2,9 @@
 第五章：文件与IO
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+所有程序都要处理输入和输出。
+这一章将涵盖处理不同类型的文件，包括文本和二进制文件，文件编码和其他相关的内容。
+对文件名和目录的操作也会涉及到。
 
 Contents:
 

@@ -33,15 +33,13 @@
 ----------
 讨论
 ----------
-A little-known feature of the iter() function is that it can create an iterator if you pass
-it a callable and a sentinel value. The resulting iterator simply calls the supplied callable
-over and over again until it returns the sentinel, at which point iteration stops.
+``iter()`` 函数有一个鲜为人知的特性就是，如果你给它传递一个可调用对象和一个标记值，它会创建一个迭代器。
+这个迭代器会一直调用传入的可调用对象直到它返回标记值为止，这时候迭代终止。
 
-In the solution, the functools.partial is used to create a callable that reads a fixed
-number of bytes from a file each time it’s called. The sentinel of b'' is what gets returned
-when a file is read but the end of file has been reached.
+在例子中，``functools.partial`` 用来创建一个每次被调用时从文件中读取固定数目字节的可调用对象。
+标记值 ``b''`` 就是当到达文件结尾时的返回值。
 
-Last, but not least, the solution shows the file being opened in binary mode. For reading
-fixed-sized records, this would probably be the most common case. For text files, reading
-line by line (the default iteration behavior) is more common.
+最后再提一点，上面的例子中的文件时以二进制模式打开的。
+如果是读取固定大小的记录，这通常是最普遍的情况。
+而对于文本文件，一行一行的读取(默认的迭代行为)更普遍点。
 

@@ -8,7 +8,7 @@
 * Email：   yidao620@gmail.com
 * 博客：     http://yidao620c.iteye.com/
 * GitHub：  https://github.com/yidao620c
-* 公司：     `广州云宏信息科技股份有限公司<http://www.winhong.com/>`_
+* 公司：     `广州云宏信息科技股份有限公司 <http://www.winhong.com/>`_
 
 |
 |

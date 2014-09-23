@@ -126,6 +126,6 @@
 要注意的是使用 ``mmap()`` 函数时会在底层有一些平台的差异性。
 另外，还有一些选项可以用来创建匿名的内存映射区域。
 如果你对这个感兴趣，确保你仔细研读了Python文档中
-`这方面的内容 <http://docs.python.org/3/library/mmap.html>`_
+`这方面的内容 <http://docs.python.org/3/library/mmap.html>`_ 。
 
 

@@ -76,7 +76,7 @@
 如果你需要执行更加复杂的日期操作，比如处理失去，模糊时间范围，节假日计算等等，
 可以考虑使用 `dateutil模块 <http://pypi.python.org/pypi/python-dateutil>`_
 
-许多类似的时间计算可以使用dateutil.relativedelta()函数代替。
+许多类似的时间计算可以使用 ``dateutil.relativedelta()`` 函数代替。
 但是，有一点需要注意的就是，它会在处理月份(还有它们的天数差距)的时候填充间隙。看例子最清楚：
 
 .. code-block:: python

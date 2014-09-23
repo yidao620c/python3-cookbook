@@ -12,10 +12,10 @@
 ----------
 解决方案
 ----------
-内置的sorted()函数有一个关键字参数key，可以传入一个callable对象给它，
-这个callable对象对每个传入的对象返回一个值，这个值会被sorted用来排序这些对象。
+内置的 ``sorted()`` 函数有一个关键字参数 ``key`` ，可以传入一个 ``callable`` 对象给它，
+这个 ``callable`` 对象对每个传入的对象返回一个值，这个值会被 ``sorted`` 用来排序这些对象。
 比如，如果你在应用程序里面有一个User实例序列，并且你希望通过他们的user_id属性进行排序，
-你可以提供一个以User实例作为输入并输出对应user_id值的callable对象。比如：
+你可以提供一个以User实例作为输入并输出对应user_id值的 ``callable`` 对象。比如：
 
 .. code-block:: python
 
@@ -32,7 +32,7 @@
         print(users)
         print(sorted(users, key=lambda u: u.user_id))
 
-另外一种方式是使用operator.attrgetter()来代替lambda函数：
+另外一种方式是使用 ``operator.attrgetter()`` 来代替lambda函数：
 
 .. code-block:: python
 
@@ -46,16 +46,16 @@
 ----------
 讨论
 ----------
-选择使用lambda函数或者是attrgetter()可能取决于个人喜好。
-但是，attrgetter()函数通常会运行的快点，并且还能同时允许多个字段进行比较。
-这个跟operator.itemgetter()函数作用于字典类型很类似(参考1.13小节)。
+选择使用lambda函数或者是 ``attrgetter()`` 可能取决于个人喜好。
+但是，``attrgetter()`` 函数通常会运行的快点，并且还能同时允许多个字段进行比较。
+这个跟 ``operator.itemgetter()`` 函数作用于字典类型很类似(参考1.13小节)。
 例如，如果User实例还有一个first_name和last_name属性，那么可以向下面这样排序：
 
 .. code-block:: python
 
     by_name = sorted(users, key=attrgetter('last_name', 'first_name'))
 
-同样需要注意的是，这一小节用到的技术同样适用于像min()和max()之类的函数。比如：
+同样需要注意的是，这一小节用到的技术同样适用于像 ``min()`` 和 ``max()`` 之类的函数。比如：
 
 .. code-block:: python
 

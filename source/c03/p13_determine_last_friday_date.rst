@@ -71,7 +71,7 @@ Python的datetime模块中有工具函数和类可以帮助你执行这样的计
 然后通过模运算计算出目标日期要经过多少天才能到达开始日期。然后用开始日期减去那个时间差即得到结果日期。
 
 如果你要像这样执行大量的日期计算的话，你最好安装第三方包python-dateutil来代替。
-比如，下面是是使用dateutil模块中的relativedelta()函数执行同样的计算：
+比如，下面是是使用dateutil模块中的 ``relativedelta()`` 函数执行同样的计算：
 
 .. code-block:: python
 

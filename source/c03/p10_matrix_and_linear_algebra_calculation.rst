@@ -48,7 +48,7 @@ NumPy库有一个矩阵对象可以用来解决这个问题。
             [ 2]])
     >>>
 
-可以在numpy.linalg子包中找到更多的操作函数，比如：
+可以在 ``numpy.linalg`` 子包中找到更多的操作函数，比如：
 
 .. code-block:: python
 

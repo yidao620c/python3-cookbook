@@ -12,7 +12,7 @@
 ----------
 解决方案
 ----------
-heapq模块有两个函数：nlargest() 和 nsmallest()可以完美解决这个问题。
+heapq模块有两个函数：``nlargest()`` 和 ``nsmallest()`` 可以完美解决这个问题。
 
 .. code-block:: python
 

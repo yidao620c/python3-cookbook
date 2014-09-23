@@ -12,7 +12,7 @@
 ----------
 解决方案
 ----------
-为了手动的遍历可迭代对象，使用next()函数并在代码中捕获StopIteration异常。
+为了手动的遍历可迭代对象，使用 ``next()`` 函数并在代码中捕获 ``StopIteration`` 异常。
 比如，下面的例子手动读取一个文件中的所有行：
 
 .. code-block:: python
@@ -26,8 +26,8 @@
             except StopIteration:
                 pass
 
-通常来讲，StopIteration用来指示迭代的结尾。
-然而，如果你手动使用上面演示的next()函数的话，你还可以通过返回一个指定值来标记结尾，比如None。
+通常来讲，``StopIteration`` 用来指示迭代的结尾。
+然而，如果你手动使用上面演示的 ``next()`` 函数的话，你还可以通过返回一个指定值来标记结尾，比如None。
 下面是示例：
 
 .. code-block:: python

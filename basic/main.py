@@ -5,11 +5,14 @@
     Desc : 
 """
 import sys, os
+
 __author__ = 'Xiong Neng'
+
 
 def test_f(fmt, *args, exc_info, extra):
     pass
 
+
 if __name__ == '__main__':
-   if -1:
-       print("aaa")
+    print(chr(57344))
+    print(ord('\ue000'))

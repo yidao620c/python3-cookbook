@@ -69,8 +69,6 @@ row[4]访问Change。
             # process row
             ...
 
-In this version, you would access the elements of each row using the row headers. For
-example, row['Symbol'] or row['Change'].
 在这个版本中，你可以使用列名去访问每一行的数据了。比如，``row['Symbol']`` 或者 ``row['Change']`` 。
 
 为了写入CSV数据，你仍然可以使用csv模块，不过这时候先创建一个 ``writer`` 对象。例如;

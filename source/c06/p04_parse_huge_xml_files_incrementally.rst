@@ -166,7 +166,7 @@
 还被用来判断某个元素是否匹配传给函数 ``parse_and_remove()`` 的路径。
 如果匹配，就利用 ``yield`` 语句向调用者返回这个元素。
 
-在``yield`` 之后的下面这个语句才是使得程序占用极少内存的ElementTree的核心特性：
+在 ``yield`` 之后的下面这个语句才是使得程序占用极少内存的ElementTree的核心特性：
 
 .. code-block:: python
 

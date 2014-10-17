@@ -136,6 +136,7 @@
     >>>
 
 有一点要强调的是 ``xml.etree.ElementTree`` 并不是XML解析的唯一方法。
-对于更高级的应用程序，你需要考虑使用 ``lxml`` 。它使用了和ElementTree同样的编程接口，
-因此上面的例子同样也适用于lxml。你只需要将刚开始的import语句换成 ``lxml.etree import parse`` 就行了。
+对于更高级的应用程序，你需要考虑使用 ``lxml`` 。
+它使用了和ElementTree同样的编程接口，因此上面的例子同样也适用于lxml。
+你只需要将刚开始的import语句换成 ``from lxml.etree import parse`` 就行了。
 ``lxml`` 完全遵循XML标准，并且速度也非常快，同时还支持验证，XSLT和XPath等特性。

@@ -52,7 +52,14 @@ def re_sub():
     a = pat.sub(Nth(3, 'bad'), 'This is a good story, good is good. Oh, good')
     print(a)
     # 传入一个lambda函数，在匹配处两边加双引号
-    a = pat.sub(lambda mo: '"' + mo.group(0) + '"', 'This is a good story, good is ')
+    a = pat.sub(lambda mo: '"' + mo.group(0) + '"', 'This is a good story, very good.')
+    print(a)
+
+    # 前后匹配，特殊构造，不作为分组
+    # (?=...)之后的字符串需要匹配表达式才能成功匹配
+    # (?<=...)之前的字符串需要匹配表达式才能成功匹配
+    pat = re.compile(r'(?<=a )good(?= story)')
+    a = pat.sub('bad', 'This is a good story, very good.')
     print(a)
 
 

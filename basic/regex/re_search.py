@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """
-    Topic: sample
-    Desc : 各种正则式例子
+    Topic: 简单的正则式搜索，包括分组捕获
+    Desc : 正则式例子
      建议阅读Jeffrey E. F. Friedl编写的《精通正则表达式》
     （Mastering Regular Expression）
 """

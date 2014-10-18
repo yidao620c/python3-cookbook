@@ -32,9 +32,6 @@ Python中表示多行数据的标准方式是一个由元组构成的序列。�
 还得安装相应的第三方模块来提供支持。
 不过相应的编程接口几乎都是一样的，除了一点点细微差别外。
 
-The first step is to connect to the database. Typically, you execute a connect() function,
-supplying parameters such as the name of the database, hostname, username, password,
-and other details as needed. For example:
 第一步是连接到数据库。通常你要执行 ``connect()`` 函数，
 给它提供一些数据库名、主机、用户名、密码和其他必要的一些参数。例如：
 
@@ -64,7 +61,6 @@ and other details as needed. For example:
     >>> db.commit()
     >>>
 
-To perform a query, use a statement such as this:
 为了执行某个查询，使用像下面这样的语句：
 
 .. code-block:: python
@@ -78,7 +74,7 @@ To perform a query, use a statement such as this:
     ('HPQ', 75, 33.2)
     >>>
 
-如果你想接受用户输入作为参数来执行查询操作，必须确保你使用下面这样的占位符?来进行参数转义：
+如果你想接受用户输入作为参数来执行查询操作，必须确保你使用下面这样的占位符?来进行引用参数：
 
 .. code-block:: python
 
@@ -94,37 +90,27 @@ To perform a query, use a statement such as this:
 ----------
 讨论
 ----------
-At a low level, interacting with a database is an extremely straightforward thing to do.
-You simply form SQL statements and feed them to the underlying module to either
-update the database or retrieve data. That said, there are still some tricky details you’ll
-need to sort out on a case-by-case basis.
+在比较低的级别上和数据库交互是非常简单的。
+你只需提供SQL语句并调用相应的模块就可以更新或提取数据了。
+虽说如此，还是有一些比较棘手的细节问题需要你逐个列出去解决。
 
+一个难点是数据库中的数据和Python类型直接的映射。
+对于日期类型，通常可以使用 ``datetime`` 模块中的 ``datetime`` 实例，
+或者可能是 ``time`` 模块中的系统时间戳。
+对于数字类型，特别是使用到小数的金融数据，可以用 ``decimal`` 模块中的 ``Decimal`` 实例来表示。
+不幸的是，对于不同的数据库而言具体映射规则是不一样的，你必须参考相应的文档。
 
-One complication is the mapping of data from the database into Python types. For
-entries such as dates, it is most common to use datetime instances from the date
-time module, or possibly system timestamps, as used in the time module. For numerical
-data, especially financial data involving decimals, numbers may be represented as Dec
-imal instances from the decimal module. Unfortunately, the exact mapping varies by
-database backend so you’ll have to read the associated documentation.
+另外一个更加复杂的问题就是SQL语句字符串的构造。
+你千万不要使用Python字符串格式化操作符(如%)或者 ``.format()`` 方法来创建这样的字符串。
+如果传递给这些格式化操作符的值来自于用户的输入，那么你的程序就很有可能遭受SQL注入攻击(参考 http://xkcd.com/327 )。
+查询语句中的通配符？指示后台数据库使用它自己的字符串替换机制，这样更加的安全。
 
+不幸的是，不同的数据库后台对于通配符的使用是不一样的。大部分模块使用?或%s，
+还有其他一些使用了不同的符号，比如:0或:1来指示参数。
+同样的，你还是得去参考你使用的数据库模块相应的文档。
+一个数据库模块的 ``paramstyle`` 属性包含了参数引用风格的信息。
 
-Another extremely critical complication concerns the formation of SQL statement
-strings. You should never use Python string formatting operators (e.g., %) or the .for
-mat() method to create such strings. If the values provided to such formatting operators
-are derived from user input, this opens up your program to an SQL-injection attack (see
-http://xkcd.com/327). The special ? wildcard in queries instructs the database backend
-to use its own string substitution mechanism, which (hopefully) will do it safely.
-
-
-Sadly, there is some inconsistency across database backends with respect to the wildcard.
-Many modules use ? or %s, while others may use a different symbol, such as :0 or :1,
-to refer to parameters. Again, you’ll have to consult the documentation for the database
-module you’re using. The paramstyle attribute of a database module also contains information
-about the quoting style.
-
-
-For simply pulling data in and out of a database table, using the database API is usually
-simple enough. If you’re doing something more complicated, it may make sense to use
-a higher-level interface, such as that provided by an object-relational mapper. Libraries
-such as SQLAlchemy allow database tables to be described as Python classes and for
-database operations to be carried out while hiding most of the underlying SQL.
+对于简单的数据库数据的读写问题，使用数据库API通常非常简单。
+如果你要处理更加复杂的问题，建议你使用更加高级的接口，比如一个对象关系映射ORM所提供的接口。
+类似 ``SQLAlchemy`` 这样的库允许你使用Python类来表示一个数据库表，
+并且能在隐藏底层SQL的情况下实现各种数据库的操作。

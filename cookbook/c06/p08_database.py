@@ -5,6 +5,7 @@ Topic: 关系型数据库处理
 Desc : 
 """
 import sqlite3
+import datetime.time
 
 
 def db_operation():

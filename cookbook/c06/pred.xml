@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<stop>
+    <id>14791</id>
+    <nm>Clark &amp; Balmoral</nm>
+    <sri>
+        <rt>22</rt>
+        <d>North Bound</d>
+        <dd>North Bound</dd>
+    </sri>
+    <cr>22</cr>
+    <pre>
+        <pt>5 MIN</pt>
+        <fd>Howard</fd>
+        <v>1378</v>
+        <rn>22</rn>
+    </pre>
+    <pre>
+        <pt>15 MIN</pt>
+        <fd>Howard</fd>
+        <v>1867</v>
+        <rn>22</rn>
+    </pre>
+</stop>

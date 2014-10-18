@@ -88,7 +88,7 @@
     record_struct = Struct('<idd')
 
 结构体通常会使用一些结构码值i, d, f等
-[参考`Python文档 <https://docs.python.org/3/library/struct.html>`_]。
+[参考 `Python文档 <https://docs.python.org/3/library/struct.html>`_ ]。
 这些代码分别代表某个特定的二进制数据类型如32位整数，64位浮点数，32位浮点数等。
 第一个字符<指定了字节顺序。在这个例子中，它表示"低位在前"。
 更改这个字符为>表示高位在前，或者是!表示网络字节顺序。

@@ -15,7 +15,7 @@
 使用 ``xml.etree.ElementTree`` 模块可以很容易的处理这些任务。
 第一步是以通常的方式来解析这个文档。例如，假设你有一个名为 ``pred.xml`` 的文档，类似下面这样：
 
-.. code-block:: python
+.. code-block::
 
     <?xml version="1.0"?>
     <stop>
@@ -67,7 +67,7 @@
 
 处理结果是一个像下面这样新的XML文件：
 
-.. code-block:: python
+.. code-block::
 
     <?xml version='1.0' encoding='us-ascii'?>
     <stop>

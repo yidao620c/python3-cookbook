@@ -15,7 +15,7 @@
 对于大多数的CSV格式的数据读写问题，都可以使用 ``csv`` 库。、
 例如，假设你在一个名叫stocks.csv文件中有一些股票市场数据，就像这样：
 
-.. code-block:: python
+.. code-block::
 
     Symbol,Price,Date,Time,Change,Volume
     "AA",39.48,"6/11/2007","9:36am",-0.18,181800
@@ -140,7 +140,7 @@ row[4]访问Change。
 如果你正在读取CSV数据并将它们转换为命名元组，需要注意对列名进行合法性认证。
 例如，一个CSV格式文件有一个包含非法标识符的列头行，类似下面这样：
 
-.. code-block:: python
+.. code-block::
 
     Street Address,Num-Premises,Latitude,Longitude
     5412 N CLARK,10,41.980262,-87.668452
@@ -200,5 +200,3 @@ row[4]访问Change。
 它可以加载CSV数据到一个 ``DataFrame`` 对象中去。
 然后利用这个对象你就可以生成各种形式的统计、过滤数据以及执行其他高级操作了。
 在6.13小节中会有这样一个例子。
-
-

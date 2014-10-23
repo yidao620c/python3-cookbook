@@ -10,7 +10,6 @@ import sys
 import re
 import codecs
 
-
 ip_maps = {
     '10.0.0.1': '192.168.203.254',
     # 下面是191机器
@@ -66,21 +65,33 @@ ip_maps = {
     '10.0.0.197': '192.168.203.22',
 }
 
+exclude_pat = (re.compile(r'.*\.bash_history'),
+               re.compile(r'.*\.log'),
+               re.compile(r'.*/ruby19/lib/.*'),
+               re.compile(r'.*/logs?/.*'),
+               re.compile(r'.*\.log\..*'),
+               re.compile(r'.*\.bak'),)
+
 
 def search_replace(nfile):
     """paas环境的ip地址转换"""
     with codecs.open(nfile, mode='r', encoding='utf-8') as nf:
         file_names = nf.read().split('\n')
     for fname in file_names:
-        if os.path.isfile(fname):
-            with codecs.open(fname, mode='r', encoding='utf-8') as readf:
-                old_lines = readf.read()
-            for k, v in ip_maps.items():
-                old_lines = re.sub(k + r'(?=\D+|\n|$)', v, old_lines)
-            with codecs.open(fname, mode='w', encoding='utf-8') as writef:
-                writef.writelines(old_lines)
+        if any(ep.match(fname) for ep in exclude_pat):
+            continue
+        try:
+            if os.path.isfile(fname):
+                with codecs.open(fname, mode='r', encoding='utf-8') as readf:
+                    old_lines = readf.read()
+                for k, v in ip_maps.items():
+                    old_lines = re.sub(k + r'(?=\D+|\n|$)', v, old_lines)
+                with codecs.open(fname, mode='w', encoding='utf-8') as writef:
+                    writef.writelines(old_lines)
+        except UnicodeDecodeError:
+            pass
 
 
 if __name__ == '__main__':
-    # python replace_ip.py file_names
+    # sudo python replace_ip.py file_names
     search_replace(sys.argv[1])

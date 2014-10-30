@@ -16,3 +16,4 @@ def test_f(fmt, *args, exc_info, extra):
 if __name__ == '__main__':
     print(chr(57344))
     print(ord('\ue000'))
+    print("clients/command/{}".format('001'))

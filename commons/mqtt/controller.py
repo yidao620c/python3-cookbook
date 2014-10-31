@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """
-Topic: 模拟控制客户端
+Topic: 模拟手机客户端
 Desc : 
 """
 import paho.mqtt.client as mqtt

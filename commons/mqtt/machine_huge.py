@@ -5,8 +5,8 @@ Topic: 模拟家电
 Desc : 
 """
 import paho.mqtt.client as mqtt
-import gevent
 import time
+import threading
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -17,23 +17,17 @@ def on_connect(cli, userdata, rc):
     cli.subscribe("clients/command/+")
 
 
-def on_connect2(cli, userdata, rc):
-    print("Connected with result code " + str(rc))
-    cli.publish("clients/result/{}".format('001'), "Success")
-    cli.disconnect()
-
-
 # The callback for when a PUBLISH message is received from the server.
 def on_message(cli, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
-    cli.publish("clients/result/{}".format('001'), "Success")
-    client2 = mqtt.Client()
-    client2.on_connect = on_connect2
-    client2.connect("192.168.203.107", 1883, 60)
-    client2.loop_start()
 
 
-def start_connnect(ip):
+def start_connect_repeat(ip, count):
+    for i in range(count):
+        start_connect(ip)
+
+
+def start_connect(ip):
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
@@ -41,7 +35,7 @@ def start_connnect(ip):
     client.loop_start()
 
 if __name__ == '__main__':
-    threads = [gevent.spawn(start_connnect, '192.168.203.107') for i in range(500)]
-    gevent.joinall(threads)
+    for i in range(8000):
+        start_connect('192.168.203.107')
     while True:
         time.sleep(1)

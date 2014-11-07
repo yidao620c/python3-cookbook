@@ -5,7 +5,6 @@ Topic: 模拟手机客户端
 Desc : 
 """
 import paho.mqtt.client as mqtt
-import gevent
 import time
 
 
@@ -32,7 +31,5 @@ def start_connnect(ip):
     client.loop_start()
 
 if __name__ == '__main__':
-    threads = [gevent.spawn(start_connnect, '192.168.203.95') for i in range(500)]
-    gevent.joinall(threads)
     while True:
         time.sleep(1)

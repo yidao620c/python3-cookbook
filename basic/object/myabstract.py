@@ -20,9 +20,11 @@ class Foo(metaclass=ABCMeta):
         """子类给我必须实现这个特性"""
         pass
 
+
 class Grok():
     def spam(self, a, b):
         print("Grok...")
+
 
 def main():
     Foo.register(Grok)  # 向抽象基类注册

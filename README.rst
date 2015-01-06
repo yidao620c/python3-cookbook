@@ -6,9 +6,9 @@
 
 --------------------------------------------------------------
 
------------------
+++++++++++++++++
 译者的话
------------------
+++++++++++++++++
 人生苦短，我用Python！
 
 译者一直坚持使用Python3，因为它代表了Python的未来。虽然向后兼容是它的硬伤，但是这个局面迟早会改变的，
@@ -50,7 +50,9 @@
 
 -----------------------------------------------------
 
-## How to Contribute
+++++++++++++++++
+How to Contribute
+++++++++++++++++
 
 You are welcome to contribute to mango-test as follow
 
@@ -66,7 +68,9 @@ Meanwhile you'd better follow the rules below
 * Follow common Python coding conventions
 * Add the following [license](#license) in each source file
 
-## License
+++++++++++++++++
+License
+++++++++++++++++
 
 (The Apache License)
 
@@ -77,7 +81,6 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
        http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
 
 
 .. _readthedocs: https://readthedocs.org/

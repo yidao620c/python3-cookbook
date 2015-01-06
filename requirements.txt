@@ -1,0 +1,4 @@
+PIL==1.1.6
+requests-oauthlib==0.4.2
+
+

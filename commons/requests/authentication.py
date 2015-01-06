@@ -5,7 +5,6 @@ Topic: 认证
 """
 import requests
 import re
-from PIL import Image
 from io import StringIO
 import json
 from requests import Request, Session

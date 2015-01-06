@@ -5,7 +5,6 @@ Topic: requests入门
 """
 import requests
 import re
-from PIL import Image
 from io import StringIO
 import json
 

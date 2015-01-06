@@ -67,5 +67,10 @@ def re_sub():
 
 
 if __name__ == '__main__':
-    re_sub()
+    pp = re.compile(r'((http|https|ftp)://[a-zA-Z0-9+\-&@#/%?=~_|!:,.;]*[a-zA-Z0-9+\-&@#/%=~_|])')
+    aa = 'one： http://www.baidu.com/ two'
+    print(pp.sub('<a href="\g<1>">', aa))
+    # print(pp.findall(aa))
+    # for m in pp.finditer(aa):
+    #     print(m.group())
 

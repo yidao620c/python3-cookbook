@@ -5,7 +5,6 @@ Topic: 实战演练
 """
 import requests
 import re
-from PIL import Image
 from io import StringIO
 import json
 from requests import Request, Session
@@ -13,7 +12,6 @@ from contextlib import closing
 from requests.auth import AuthBase
 from requests.auth import HTTPBasicAuth
 from requests.auth import HTTPDigestAuth
-from requests_oauthlib import OAuth2
 import xml.etree.ElementTree as ET
 
 

@@ -50,12 +50,13 @@
 
 -----------------------------------------------------
 
-++++++++++++++++
++++++++++++++++++++
 How to Contribute
-++++++++++++++++
++++++++++++++++++++
 
 You are welcome to contribute to mango-test as follow
 
+* fork project and commit pull requests
 * add/edit wiki
 * report/fix issue
 * code review
@@ -74,7 +75,7 @@ License
 
 (The Apache License)
 
-Copyright (c) 2013-2014 [WinHong, Inc.](http://www.winhong.com/) and other contributors
+Copyright (c) 2010-2014 [WinHong, Inc.](http://www.winhong.com/) and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

@@ -1,4 +1,14 @@
 PIL==1.1.6
+greenlet==0.4.5
+gunicorn==19.1.1
+oauthlib==0.7.2
+paho-mqtt==1.0
+paramiko==1.15.1
+psycopg2==2.5.4
+pycrypto==2.6.1
+pytz==2014.9
+tzlocal==1.1.2
+redis==2.10.3
+requests==2.4.3
 requests-oauthlib==0.4.2
-
-
+whitenoise==1.0.3

@@ -2,12 +2,11 @@
 第七章：函数
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+使用 ``def`` 语句定义函数是所有程序的基础。
+本章的目标是讲解一些更加高级和不常见的函数定义与使用模式。
+涉及到的内容包括默认参数、任意数量参数、仅允许关键字参数、注解和闭包。
+另外，一些高级的控制流和利用回调函数传递数据的技术在这里也会讲解到。
+
 
 Contents:
 

@@ -26,19 +26,26 @@ class MenuToobarFrame(wx.Frame):
         # 创建两个菜单
         menu1 = wx.Menu()
         menuBar.Append(menu1, '&File')
+        menu1.Append(-1, "&Open...", 'Open new file')
+        menuItem = menu1.Append(-1, "&Exit...", 'Exit System')
+        # 菜单项绑定事件
+        self.Bind(wx.EVT_MENU, self.OnCloseMe, menuItem)
         menu2 = wx.Menu()
         # 创建菜单项MenuItem
         menu2.Append(wx.NewId(), '&Copy', 'Copy in status bar')
-        menu2.Append(wx.NewId(), 'Cut', '')
-        menu2.Append(wx.NewId(), 'Paste','')
+        menu2.Append(wx.NewId(), '&Cut', '')
+        menu2.Append(wx.NewId(), '&Paste','')
         menu2.AppendSeparator()
         menu2.Append(wx.NewId(), '&Options', 'Display Options')
         menuBar.Append(menu2, '&Edit')  # 在菜单栏上附上菜单
         self.SetMenuBar(menuBar)  # 在Frame上面附加菜单
 
+    def OnCloseMe(self, event):
+        self.Close(True)
+
 
 def main():
-    app = wx.PySimpleApp()
+    app = wx.App()
     frame = MenuToobarFrame(parent=None, id=-1)
     frame.Show()
     app.MainLoop()

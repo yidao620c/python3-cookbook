@@ -22,7 +22,7 @@ class MyFrame(wx.Frame):
 
 
 def main():
-    app = wx.PySimpleApp()
+    app = wx.App()
     frame = MyFrame()
     frame.Show(True)
     app.MainLoop()

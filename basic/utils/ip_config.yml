@@ -1,5 +1,5 @@
 # 下面是每个组件对应的IP配置
-domain_name: wingarden.web
+domain_name: samples.network
 nfs_server: 10.0.0.160
 
 sysdb: 10.0.0.154

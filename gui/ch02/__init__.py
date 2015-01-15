@@ -7,3 +7,10 @@
 
 __author__ = 'Xiong Neng'
 
+
+def main():
+    pass
+
+
+if __name__ == '__main__':
+    main()

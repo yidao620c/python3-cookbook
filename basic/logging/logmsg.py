@@ -33,7 +33,7 @@ def my_log():
     # 不要用 'xxxx' % (aa, bb)去手动格式化消息
     _log.error('error to connect to %s:%d', host, port)
     _log.addFilter(FilterFunc('foo'))  # 将忽略来自foo()函数的所有消息
-    lgg = logging.getLogger('app.web.client')
+    lgg = logging.getLogger('app.network.client')
     lgg.propagate = False  # 关闭传播属性
     lgg.error('do you see me?')  # 但是还是可以看到
     lgg.setLevel(logging.CRITICAL)

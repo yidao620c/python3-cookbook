@@ -31,7 +31,7 @@ def on_message(cli, userdata, msg):
     client2 = mqtt.Client()
     client2.on_connect = on_connect2
     client2.connect("192.168.203.107", 1883, 60)
-    # client2.connect("mqtt2.wingarden.net", 80, 60)
+    # client2.connect("mqtt2.samples.net", 80, 60)
     client2.loop_start()
 
 
@@ -40,5 +40,5 @@ if __name__ == '__main__':
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect("192.168.203.107", 1883, 60)
-    # client.connect("mqtt2.wingarden.net", 80, 60)
+    # client.connect("mqtt2.samples.net", 80, 60)
     client.loop_forever()

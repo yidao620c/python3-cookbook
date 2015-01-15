@@ -32,7 +32,8 @@ PASSWORD = 'jianji2014'
 
 DIR_LOCAL = r'D:\Wingarden\src\trunk\ling\target\classes\com'
 DIR_REMOTE = r"/usr/local/apache-tomcat-8.0.15/webapps/ROOT/WEB-INF/classes/com"
-COMMAND_PATH = '/home/winhong/ling.sh'
+COMMAND_01 = '/home/winhong/ling01.sh'
+COMMAND_02 = '/home/winhong/ling02.sh'
 
 ZIPDIR_SRC = r'D:\Wingarden\src\trunk\ling\target\classes\com'
 ZIPDIR_DEST = r'D:\temp'
@@ -91,21 +92,23 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
             pass
 
 
-def exe_command(hostname_, username_, password_, commandpath_):
+def exe_command(hostname_, username_, password_, commandpaths_):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(hostname_, username=username_, password=password_)
     # channel = ssh.invoke_shell()
     # ssh_stdin, ssh_stdout, ssh_stderr = channel.exec_command(commandpath_)
-    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(commandpath_)
-    for eline in ssh_stdout.readlines():
-        print('ssh_stdout:{}'.format(eline), end='')
-    for eline in ssh_stderr.readlines():
-        print('ssh_stderr:{}'.format(eline), end='')
-    # Cleanup
-    ssh_stdin.close()
-    ssh_stdout.close()
-    ssh_stderr.close()
+    for command_ in commandpaths_:
+        commandpath_, issudo = command_
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(commandpath_, get_pty=issudo)
+        for eline in ssh_stdout.readlines():
+            print('ssh_stdout:{}'.format(eline), end='')
+        for eline in ssh_stderr.readlines():
+            print('ssh_stderr:{}'.format(eline), end='')
+        # Cleanup
+        ssh_stdin.close()
+        ssh_stdout.close()
+        ssh_stderr.close()
     # channel.close()
     ssh.close()
     LOG.info('end successfully!')
@@ -116,6 +119,6 @@ if __name__ == '__main__':
     ffdir, ffname = ziputil(ZIPDIR_SRC, ZIPDIR_DEST, ZIPNAME)
     # 第二步：SSH传输压缩包
     transfer_file(HOSTNAME, PORT, USERNAME, PASSWORD, ffdir, ffname)
-    # 第三步：执行远程shell脚本替换class文件后重启tomcat
-    exe_command(HOSTNAME, USERNAME, PASSWORD, COMMAND_PATH)
+    # 第三步：执行远程shell脚本，替换class文件并重启，注意sudo和非sudo分开执行
+    exe_command(HOSTNAME, USERNAME, PASSWORD, [(COMMAND_01, True), (COMMAND_02, False)])
 

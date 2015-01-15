@@ -74,7 +74,7 @@ def fetch_data(pparser, url):
 def main():
     result = []
     pattt = re.compile(r'程序员编码诀窍')
-    urll = 'http://www.oschina.web/doc'
+    urll = 'http://www.oschina.network/doc'
     pages = fetch_data(ParsePages(), urll)
     for eachurl in pages:
         print('**********')

@@ -27,7 +27,7 @@ from email.mime.audio import MIMEAudio
 __author__ = 'Xiong Neng'
 
 def multipart():
-    sender = 'jon@nodgg.web'
+    sender = 'jon@nodgg.network'
     receiver = 'dave@gmail.com'
     subject = 'Faders up'
     body = 'I never should have moved out of Texsa. -J.\n'

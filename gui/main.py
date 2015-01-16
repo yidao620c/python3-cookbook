@@ -10,12 +10,17 @@ import ch01.menu_toolbar as menutool
 import ch01.dialogs as dialogs
 import ch01.event_bind as eventbind
 import ch01.custom_event as customevent
+import ch01.sketch_paint as spaint
+import ch02.show_text as showtext
 
 if __name__ == '__main__':
+    import datetime
     pass
     # showpic.main()
     # closebutton.main()
     # menutool.main()
     # dialogs.main()
     # eventbind.main()
-    customevent.main()
+    # customevent.main()
+    # spaint.main()
+    showtext.main()

@@ -9,7 +9,7 @@ import os
 import os.path as p
 import re
 
-from basic.string.replace_ip import ip_maps
+from basic.mystring.replace_ip import ip_maps
 
 __author__ = 'Xiong Neng'
 

@@ -14,10 +14,15 @@
 
 *主要贡献者*
 
-1. XX (xxxxxxxxx@gmail.com)
-2. YY (yyyyyyyyy@gmail.com)
+1. test1 (test1@gmail.com)
+2. test2 (test2@gmail.com)
 
 |
 |
+
+*项目主页*
+
+https://github.com/yidao620c/python3-cookbook
+
 |
 |

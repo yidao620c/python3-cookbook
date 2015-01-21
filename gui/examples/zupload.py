@@ -5,6 +5,7 @@ Topic: 小令自动发布工具
 Desc : 
 """
 import wx
+import wx.html
 import examples.ztransfer as ztransfer
 import os
 import subprocess
@@ -47,9 +48,110 @@ def subprocess_popen(*args, **kwargs):
     return ppopen
 
 
+class SketchGuide(wx.Dialog):
+    text = u'''
+    <html>
+        <body bgcolor="#ACAA60">
+            <center>
+                <table bgcolor="#455481" width="100%" cellspacing="0"
+                    cellpadding=”0” border=”1”>
+                <tr>
+                    <td align="center"><h1>使用帮助！</h1></td>
+                </tr>
+                </table>
+            </center>
+            <p>
+                <b>简介：</b>此工具会帮你自动编译代码并上传到服务器，然后替换class文件并重启tomcat
+            </p>
+            <p>
+                <b>1.更新代码：</b>请先确保代码源代码已经从svn更新到最新了。
+            </p>
+            <p>
+                <b>2.maven目录(选填)</b> 如果你机子上面设置了MAVEN_HOME那么这个就不用填了。
+            </p>
+        </body>
+    </html>
+    '''
+
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, 'Use Guide', size=(550, 300))
+        html = wx.html.HtmlWindow(self)
+        html.SetPage(self.text)
+        button = wx.Button(self, wx.ID_OK, u'确定')
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(html, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Layout()
+
+
+class SketchAbout(wx.Dialog):
+    text = u'''
+    <html>
+        <body bgcolor="#ACAA60">
+            <center>
+                <table bgcolor="#455481" width="100%" cellspacing="0"
+                    cellpadding=”0” border=”1”>
+                <tr>
+                    <td align="center"><h1>小令发布工具</h1></td>
+                </tr>
+                <tr>
+                    <td align="center"><h4>Profession Edition 0.9.0</h4></td>
+                </tr>
+                </table>
+            </center>
+            <p>
+                Powered By XiongNeng 2015/01/21
+            </p>
+        </body>
+    </html>
+    '''
+
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, 'About', size=(550, 300))
+        html = wx.html.HtmlWindow(self)
+        html.SetPage(self.text)
+        button = wx.Button(self, wx.ID_OK, u'确定')
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(html, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Layout()
+
+
 class UploadFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, u'小令自动发布工具')
+        # 创建一个菜单栏
+        menuBar = wx.MenuBar()
+
+        # 创建几个菜单
+        menu1 = wx.Menu()
+        menuBar.Append(menu1, '&File')
+        menu1.Append(-1, "&Open...", 'Open new file')
+        menuItem = menu1.Append(-1, "&Exit...", 'Exit System')
+        # 菜单项绑定事件
+        self.Bind(wx.EVT_MENU, self.OnCloseMe, menuItem)
+
+        menu2 = wx.Menu()
+        # 创建菜单项MenuItem
+        menu2.Append(wx.NewId(), '&Copy', 'Copy in status bar')
+        menu2.Append(wx.NewId(), '&Cut', '')
+        menu2.Append(wx.NewId(), '&Paste', '')
+        menu2.AppendSeparator()
+        menu2.Append(wx.NewId(), '&Options', 'Display Options')
+        menuBar.Append(menu2, '&Edit')  # 在菜单栏上附上菜单
+
+        menu3 = wx.Menu()
+        menuBar.Append(menu3, '&Help')
+        guideItems = menu3.Append(-1, "&Use Guide", '')
+        aboutItem3 = menu3.Append(-1, "&About", '')
+        # 菜单项绑定事件
+        self.Bind(wx.EVT_MENU, self.OnGuide, guideItems)
+        self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem3)
+
+        self.SetMenuBar(menuBar)  # 在Frame上面附加菜单
+        # ----------------------------分割线----------------------------------
         panel = wx.Panel(self)
         # 首先创建controls
         topLbl = wx.StaticText(panel, -1, u'================小令自动发布工具===============')
@@ -128,6 +230,16 @@ class UploadFrame(wx.Frame):
     def OnCloseMe(self, event):
         self.Close(True)
 
+    def OnGuide(self, event):
+        dlg = SketchGuide(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def OnAbout(self, event):
+        dlg = SketchAbout(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
     def OnUploadMe(self, event):
         hostname = self.name.GetValue()
         username = self.addr1.GetValue()
@@ -146,9 +258,9 @@ class UploadFrame(wx.Frame):
             _LOGGING.info('#subprocess exe_command start: %s' % exe_command)
             # 执行命令，但是捕捉输出
             # if os.name == 'nt':
-            #     _LOGGING.info('os.name==nt')
-            #     startupinfo = subprocess.STARTUPINFO()
-            #     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            # _LOGGING.info('os.name==nt')
+            # startupinfo = subprocess.STARTUPINFO()
+            # startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             exresult = subprocess_call(exe_command, shell=True)
             # exresult = subprocess_popen(exe_command, shell=True, stdout=subprocess.PIPE)
             # out = exresult.stdout.read()

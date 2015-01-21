@@ -15,3 +15,5 @@ logging.basicConfig(level=logging.DEBUG, filename=tempfile.TemporaryFile().name)
 
 if __name__ == '__main__':
     zupload.main()
+    import examples.progress_update as pu
+    # pu.main()

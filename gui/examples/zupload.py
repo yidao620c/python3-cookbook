@@ -10,8 +10,12 @@ import examples.ztransfer as ztransfer
 import os
 import subprocess
 import logging
+import time
 import tempfile
 import sys
+from threading import Thread
+from wx.lib.pubsub import pub
+import wx.lib.agw.pyprogress as PP
 
 HOSTNAME_ = '115.29.145.245'  # remote hostname where SSH server is running
 USERNAME_ = 'winhong'
@@ -119,9 +123,124 @@ class SketchAbout(wx.Dialog):
         self.Layout()
 
 
+########################################################################
+class ButtonThread(Thread):
+    """Test Worker Thread Class."""
+
+    # ----------------------------------------------------------------------
+    def __init__(self, myframe):
+        """Init Worker Thread Class."""
+        Thread.__init__(self)
+        self.myframe = myframe
+
+    # ----------------------------------------------------------------------
+    def run(self):
+        self.myframe.buttonEnd = False
+        self.myframe.buttonResult = False
+        hostname = self.myframe.name.GetValue()
+        username = self.myframe.addr1.GetValue()
+        password = self.myframe.addr2.GetValue()
+        projdir = self.myframe.proj.GetValue()
+        maven_home = self.myframe.maven.GetValue()
+        self.myframe.ChangeConfig(hostname, username, password, projdir)
+        errmsg = ''
+        try:
+            # 先本地编译
+            if not maven_home:
+                exe_command = 'cd /d %s && mvn clean && mvn compile' % projdir
+            else:
+                mvn_full = os.path.join(maven_home, 'bin', 'mvn')
+                exe_command = 'cd /d %s && %s clean && %s compile' % (projdir, mvn_full, mvn_full)
+            _LOGGING.info('#subprocess exe_command start: %s' % exe_command)
+            # 执行命令，但是捕捉输出
+            # if os.name == 'nt':
+            # _LOGGING.info('os.name==nt')
+            # startupinfo = subprocess.STARTUPINFO()
+            # startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            exresult = subprocess_call(exe_command, shell=True)
+            # exresult = subprocess_popen(exe_command, shell=True, stdout=subprocess.PIPE)
+            # out = exresult.stdout.read()
+            # _LOGGING.info(out)
+            _LOGGING.info('#subprocess_call result is %s' % exresult)
+            _LOGGING.info('#subprocess_call exe_command end')
+            if exresult != 0:
+                result = False
+                errmsg = 'execute maven command failure.'
+            else:
+                result = ztransfer.main()
+        except Exception as e:
+            result = False
+            errmsg = e.message
+        self.myframe.buttonEnd = True
+        self.myframe.buttonResult = result
+        self.myframe.buttonMsg = errmsg
+
+
+class CheckThread(Thread):
+    """Test Worker Thread Class."""
+
+    # ----------------------------------------------------------------------
+    def __init__(self, myframe):
+        """Init Worker Thread Class."""
+        Thread.__init__(self)
+        self.myframe = myframe
+
+    # ----------------------------------------------------------------------
+    def run(self):
+        """Run Worker Thread."""
+        # This is the code executing in the new thread.
+        while not self.myframe.buttonEnd:
+            time.sleep(1)
+            wx.CallAfter(pub.sendMessage, "update",
+                         msg=(self.myframe.buttonEnd, self.myframe.buttonResult, self.myframe.buttonMsg))
+
+
+########################################################################
+class MyProgressDialog(wx.Dialog):
+    """"""
+
+    # ----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        wx.Dialog.__init__(self, None, title=u"同步进度条", size=(350, 150))
+        self.count = 0
+        self.progress = wx.Gauge(self, -1, 15, (20, 50), size=(300, 30))
+        self.tips = wx.StaticText(self, -1, u'正在同步，请耐心等待几秒钟...')
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.progress, 0, wx.EXPAND)
+        sizer.Add((20,20), 0, wx.EXPAND)
+        sizer.Add(self.tips, 0, wx.EXPAND)
+        self.SetSizer(sizer)
+
+        # create a pubsub receiver
+        pub.subscribe(self.updateProgress, "update")
+
+    # ----------------------------------------------------------------------
+    def updateProgress(self, msg):
+        """更新进度条"""
+        self.count += 1
+        if msg[0]:
+            self.Destroy()
+            if msg[1]:
+                _LOGGING.info('MessageDialog.upload.success!!!')
+                wx.MessageDialog(self, u'上传成功了！',
+                                 'MessageDialog', wx.ICON_INFORMATION).ShowModal()
+            else:
+                _LOGGING.error('MessageDialog.upload.error!!!')
+                wx.MessageDialog(self, u'上传失败，error:%s！' % msg[2],
+                                 'MessageDialog', wx.ICON_INFORMATION).ShowModal()
+        elif self.count >= 15:
+            self.count = 1
+
+        self.progress.SetValue(self.count)
+
+
 class UploadFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, u'小令自动发布工具')
+        self.buttonEnd = False
+        self.buttonResult = False
+        self.buttonMsg = ''
         # 创建一个菜单栏
         menuBar = wx.MenuBar()
 
@@ -241,48 +360,16 @@ class UploadFrame(wx.Frame):
         dlg.Destroy()
 
     def OnUploadMe(self, event):
-        hostname = self.name.GetValue()
-        username = self.addr1.GetValue()
-        password = self.addr2.GetValue()
-        projdir = self.proj.GetValue()
-        maven_home = self.maven.GetValue()
-        self.ChangeConfig(hostname, username, password, projdir)
-        errmsg = ''
-        try:
-            # 先本地编译
-            if not maven_home:
-                exe_command = 'cd /d %s && mvn clean && mvn compile' % projdir
-            else:
-                mvn_full = os.path.join(maven_home, 'bin', 'mvn')
-                exe_command = 'cd /d %s && %s clean && %s compile' % (projdir, mvn_full, mvn_full)
-            _LOGGING.info('#subprocess exe_command start: %s' % exe_command)
-            # 执行命令，但是捕捉输出
-            # if os.name == 'nt':
-            # _LOGGING.info('os.name==nt')
-            # startupinfo = subprocess.STARTUPINFO()
-            # startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            exresult = subprocess_call(exe_command, shell=True)
-            # exresult = subprocess_popen(exe_command, shell=True, stdout=subprocess.PIPE)
-            # out = exresult.stdout.read()
-            # _LOGGING.info(out)
-            _LOGGING.info('#subprocess_call result is %s' % exresult)
-            _LOGGING.info('#subprocess_call exe_command end')
-            if exresult != 0:
-                result = False
-                errmsg = 'execute maven command failure.'
-            else:
-                result = ztransfer.main()
-        except Exception as e:
-            result = False
-            errmsg = e.message
-        if result:
-            _LOGGING.info('MessageDialog.upload.success!!!')
-            wx.MessageDialog(self, u'上传成功了！',
-                             'MessageDialog', wx.ICON_INFORMATION).ShowModal()
-        else:
-            _LOGGING.error('MessageDialog.upload.error!!!')
-            wx.MessageDialog(self, u'上传失败，error:%s！' % errmsg,
-                             'MessageDialog', wx.ICON_INFORMATION).ShowModal()
+        btn = event.GetEventObject()
+        btn.Disable()
+
+        ButtonThread(self).start()
+        CheckThread(self).start()
+
+        dlg = MyProgressDialog()
+        dlg.ShowModal()
+
+        btn.Enable()
 
     def ChangeConfig(self, hostname, username, password, projdir):
         ztransfer.HOSTNAME = hostname

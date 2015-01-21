@@ -64,7 +64,7 @@ def ziputil(zip_dir_src, zip_dir_dest, zip_name):
 def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
     _LOGGING.info('#transfer_file start')
     try:
-        _LOGGING.info('Establishing SSH connection to:', hostname_, port_, '...')
+        _LOGGING.info('Establishing SSH connection to: %s:%s' % (hostname_, port_))
         t = paramiko.Transport((hostname_, port_))
         t.start_client()
 

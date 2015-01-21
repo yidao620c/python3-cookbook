@@ -43,8 +43,7 @@ ZIPNAME = 'ling.zip'
 # HOSTKEYTYPE = None
 # HOSTKEY = None
 
-logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger('test')
+_LOGGING = logging.getLogger('ztransfer')
 
 
 def zipdir(path, zipf):
@@ -54,20 +53,23 @@ def zipdir(path, zipf):
 
 
 def ziputil(zip_dir_src, zip_dir_dest, zip_name):
+    _LOGGING.info('#ziputil start')
     zipf = zipfile.ZipFile(os.path.join(zip_dir_dest, zip_name), 'w', zipfile.ZIP_DEFLATED)
     zipdir(zip_dir_src, zipf)
     zipf.close()
+    _LOGGING.info('#ziputil end')
     return zip_dir_dest, zip_name
 
 
 def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
+    _LOGGING.info('#transfer_file start')
     try:
-        print('Establishing SSH connection to:', hostname_, port_, '...')
+        _LOGGING.info('Establishing SSH connection to:', hostname_, port_, '...')
         t = paramiko.Transport((hostname_, port_))
         t.start_client()
 
         if not t.is_authenticated():
-            print('Trying password login...')
+            _LOGGING.info('Trying password login...')
             t.auth_password(username=username_, password=password_)
 
         sftp = paramiko.SFTPClient.from_transport(t)
@@ -75,24 +77,26 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
         local_file = os.path.join(fdir_, fname_)
         remote_file = DIR_REMOTE + '/' + fname_
         try:
-            print('start transport...')
+            _LOGGING.info('start transport...')
             sftp.put(local_file, remote_file)
         except:
-            LOG.error('error...')
+            _LOGGING.error('error...')
             raise
         t.close()
-        LOG.info('传输完成后删除本地的zip文件...')
+        _LOGGING.info('传输完成后删除本地的zip文件...')
         os.remove(local_file)
     except Exception as e:
-        print(e)
+        _LOGGING.error('transfer error...')
         try:
-            LOG.info('end transport and close it...')
+            _LOGGING.info('end transport and close it...')
             t.close()
         except:
             pass
+    _LOGGING.info('#transfer_file end')
 
 
 def exe_command(hostname_, username_, password_, commandpaths_):
+    _LOGGING.info('#exe_command start')
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(hostname_, username=username_, password=password_)
@@ -102,16 +106,18 @@ def exe_command(hostname_, username_, password_, commandpaths_):
         commandpath_, issudo = command_
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(commandpath_, get_pty=issudo)
         for eline in ssh_stdout.readlines():
-            print 'ssh_stdout:%s' % (eline,), ''
+            pass
+            # _LOGGING.debug('ssh_stdout:%s' % (eline,))
         for eline in ssh_stderr.readlines():
-            print 'ssh_stderr:%s' % (eline,), ''
+            pass
+            _LOGGING.debug('ssh_stderr:%s' % (eline,))
         # Cleanup
         ssh_stdin.close()
         ssh_stdout.close()
         ssh_stderr.close()
     # channel.close()
     ssh.close()
-    LOG.info('end successfully!')
+    _LOGGING.info('#exe_command end')
     return True
 
 

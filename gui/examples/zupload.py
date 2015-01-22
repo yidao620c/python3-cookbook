@@ -100,6 +100,88 @@ def loadConfig():
     return config
 
 
+class Ling01(wx.Dialog):
+    text = u'''
+    <html>
+        <body bgcolor="#ACAA60">
+            <center>
+                <table bgcolor="#455481" width="100%" cellspacing="0"
+                    cellpadding=”0” border=”1”>
+                <tr>
+                    <td align="center"><h1>ling01.sh示例代码</h1></td>
+                </tr>
+                </table>
+            </center>
+            <p>
+                #!/bin/bash<br><br>
+
+                echo '先停止tomcat...'<br>
+                ps aux |grep tomcat |grep -v 'grep tomcat' |awk '{print $2}'|sudo xargs kill -9<br>
+                wait<br><br>
+
+                echo '成功停止!开始替换class文件'<br>
+                cd /usr/local/apache-tomcat-8.0.15/webapps/ROOT/WEB-INF/classes/com<br>
+                rm -rf winhong/<br>
+                unzip ling.zip<br>
+                wait<br><br>
+
+                echo '解压成功'<br>
+                rm -f ling.zip<br>
+            </p>
+        </body>
+    </html>
+    '''
+
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, u'ling01.sh示例', size=(600, 400))
+        html = wx.html.HtmlWindow(self)
+        html.SetPage(self.text)
+        button = wx.Button(self, wx.ID_OK, u'确定')
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(html, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Layout()
+
+
+class Ling02(wx.Dialog):
+    text = u'''
+    <html>
+        <body bgcolor="#ACAA60">
+            <center>
+                <table bgcolor="#455481" width="100%" cellspacing="0"
+                    cellpadding=”0” border=”1”>
+                <tr>
+                    <td align="center"><h1>ling02.sh示例代码</h1></td>
+                </tr>
+                </table>
+            </center>
+            <p>
+                #!/bin/bash<br><br>
+
+                echo '开始重启tomcat....'<br>
+                /usr/local/apache-tomcat-8.0.15/bin/startup.sh<br>
+                wait<br><br>
+
+                echo '重启成功...'<br>
+
+            </p>
+        </body>
+    </html>
+    '''
+
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, u'ling02.sh示例', size=(550, 360))
+        html = wx.html.HtmlWindow(self)
+        html.SetPage(self.text)
+        button = wx.Button(self, wx.ID_OK, u'确定')
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(html, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Layout()
+
+
 class SketchGuide(wx.Dialog):
     text = u'''
     <html>
@@ -113,20 +195,29 @@ class SketchGuide(wx.Dialog):
                 </table>
             </center>
             <p>
-                <b>简介：</b>此工具会帮你自动编译代码并上传到服务器，然后替换class文件并重启tomcat
+                <b>简介：</b>自动编译代码并上传到服务器，然后替换class文件并重启tomcat
             </p>
             <p>
                 <b>1.更新代码：</b>请先确保代码源代码已经从svn更新到最新了。
             </p>
             <p>
-                <b>2.maven目录(选填)</b> 如果你机子上面设置了MAVEN_HOME那么这个就不用填了。
+                <b>2.Tomcat目录</b> 服务器上面Tomcat的根目录
+            </p>
+            <p>
+                <b>3.远程脚本1</b> 使用sudo命令去kill掉tomcat进程(参考ling01.sh)
+            </p>
+            <p>
+                <b>4.远程脚本2</b> 非sudo方式启动tomcat，需要设置sudoers(参考ling02.sh)
+            </p>
+            <p>
+                <b>5.Maven目录(选填)</b> 如果mvn命令还没有添加到系统PATH中就需要填这个。
             </p>
         </body>
     </html>
     '''
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, 'Use Guide', size=(550, 300))
+        wx.Dialog.__init__(self, parent, -1, 'Use Guide', size=(550, 360))
         html = wx.html.HtmlWindow(self)
         html.SetPage(self.text)
         button = wx.Button(self, wx.ID_OK, u'确定')
@@ -325,9 +416,13 @@ class UploadFrame(wx.Frame):
         menu3 = wx.Menu()
         menuBar.Append(menu3, '&Help')
         guideItems = menu3.Append(-1, "&Use Guide", '')
+        ling01Items = menu3.Append(-1, u"&ling01.sh", '')
+        ling02Items = menu3.Append(-1, u"&ling02.sh", '')
         aboutItem3 = menu3.Append(-1, "&About", '')
         # 菜单项绑定事件
         self.Bind(wx.EVT_MENU, self.OnGuide, guideItems)
+        self.Bind(wx.EVT_MENU, self.OnLing01, ling01Items)
+        self.Bind(wx.EVT_MENU, self.OnLing02, ling02Items)
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem3)
 
         self.SetMenuBar(menuBar)  # 在Frame上面附加菜单
@@ -426,6 +521,16 @@ class UploadFrame(wx.Frame):
 
     def OnGuide(self, event):
         dlg = SketchGuide(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def OnLing01(self, event):
+        dlg = Ling01(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def OnLing02(self, event):
+        dlg = Ling02(self)
         dlg.ShowModal()
         dlg.Destroy()
 

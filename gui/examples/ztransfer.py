@@ -113,10 +113,10 @@ def exe_command(hostname_, username_, password_, commandpaths_):
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(commandpath_, get_pty=issudo)
         for eline in ssh_stdout.readlines():
             pass
-            # _LOGGING.debug('ssh_stdout:%s' % (eline,))
+            # _LOGGING.info('ssh_stdout:%s' % (eline,))
         for eline in ssh_stderr.readlines():
             pass
-            _LOGGING.debug('ssh_stderr:%s' % (eline,))
+            _LOGGING.error('ssh_stderr:%s' % (eline,))
         # Cleanup
         ssh_stdin.close()
         ssh_stdout.close()

@@ -8,4 +8,6 @@ Desc :
 
 if __name__ == '__main__':
     print('----start----')
+    print('abcd'[:-1])
+    print(type('abcd'[:-1]))
 

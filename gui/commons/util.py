@@ -15,3 +15,8 @@ def resource_path(relative_path):
     else:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
+
+
+def userhome_file(filename):
+    userhome = os.path.expanduser('~')
+    return os.path.join(userhome, filename)

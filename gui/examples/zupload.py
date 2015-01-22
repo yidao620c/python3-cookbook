@@ -7,6 +7,7 @@ Desc :
 import wx
 import wx.html
 import examples.ztransfer as ztransfer
+import commons.util as zutil
 import os
 import subprocess
 import logging
@@ -15,11 +16,16 @@ import tempfile
 import sys
 from threading import Thread
 from wx.lib.pubsub import pub
+import ConfigParser
 import wx.lib.agw.pyprogress as PP
 
 HOSTNAME_ = '115.29.145.245'  # remote hostname where SSH server is running
 USERNAME_ = 'winhong'
 PASSWORD_ = 'jianji2014'
+TOMAT_REMOTE_ = r"/usr/local/apache-tomcat-8.0.15"
+# DIR_REMOTE = r"/usr/local/apache-tomcat-8.0.15/webapps/ROOT/WEB-INF/classes/com"
+COMMAND_01_ = '/home/winhong/ling01.sh'
+COMMAND_02_ = '/home/winhong/ling02.sh'
 
 _LOGGING = logging.getLogger('zupload')
 
@@ -50,6 +56,48 @@ def subprocess_popen(*args, **kwargs):
         kwargs['startupinfo'] = startupinfo
     ppopen = subprocess.Popen(*args, **kwargs)
     return ppopen
+
+
+class MyConfig():
+    def __init__(self, hostname=HOSTNAME_, username=USERNAME_, password=PASSWORD_,
+                 projdir='', mavendir='', tomcatdir=TOMAT_REMOTE_,
+                 command1=COMMAND_01_, command2=COMMAND_02_):
+        self.hostname = hostname
+        self.username = username
+        self.password = password
+        self.projdir = projdir
+        self.mavendir = mavendir
+        self.tomcatdir = tomcatdir
+        self.command1 = command1
+        self.command2 = command2
+
+
+def saveConfig(myconfig):
+    config_file = zutil.userhome_file('ztool.conf')
+    # check if file exists
+    cf = ConfigParser.ConfigParser()
+    if os.path.isfile(config_file):
+        # update file
+        cf.read(config_file)
+    else:
+        # create file
+        cf.add_section('main')
+    for k, v in vars(myconfig).iteritems():
+        cf.set("main", k, v)
+    with open(config_file, "w") as f:
+        cf.write(f)
+
+
+def loadConfig():
+    config = MyConfig()
+    userhome = os.path.expanduser('~')
+    config_file = os.path.join(userhome, 'ztool.conf')
+    if os.path.isfile(config_file):
+        cf = ConfigParser.ConfigParser()
+        cf.read(config_file)
+        for k, v in vars(config).iteritems():
+            setattr(config, k, cf.get('main', k))
+    return config
 
 
 class SketchGuide(wx.Dialog):
@@ -104,7 +152,8 @@ class SketchAbout(wx.Dialog):
                 </tr>
                 </table>
             </center>
-            <p>
+            <br/><br/><br/><br/><br/>
+            <p style="text-align: right; margin-top: 100px;">
                 Powered By XiongNeng 2015/01/21
             </p>
         </body>
@@ -125,8 +174,7 @@ class SketchAbout(wx.Dialog):
 
 ########################################################################
 class ButtonThread(Thread):
-    """Test Worker Thread Class."""
-
+    """Button Worker Thread Class."""
     # ----------------------------------------------------------------------
     def __init__(self, myframe):
         """Init Worker Thread Class."""
@@ -137,12 +185,23 @@ class ButtonThread(Thread):
     def run(self):
         self.myframe.buttonEnd = False
         self.myframe.buttonResult = False
-        hostname = self.myframe.name.GetValue()
-        username = self.myframe.addr1.GetValue()
-        password = self.myframe.addr2.GetValue()
+
+        # save config
+        hostname = self.myframe.hostname.GetValue()
+        username = self.myframe.username.GetValue()
+        password = self.myframe.password.GetValue()
+        tomcathome = self.myframe.tomcat.GetValue()
+        command1 = self.myframe.command1.GetValue()
+        command2 = self.myframe.command2.GetValue()
         projdir = self.myframe.proj.GetValue()
         maven_home = self.myframe.maven.GetValue()
-        self.myframe.ChangeConfig(hostname, username, password, projdir)
+        myconf = MyConfig(hostname=hostname, username=username, password=password,
+                          projdir=projdir, mavendir=maven_home, tomcatdir=tomcathome,
+                          command1=command1, command2=command2)
+        # 先更新模块的配置
+        self.myframe.ChangeConfig(myconfig=myconf)
+        # 然后同步到本地配置文件中
+        saveConfig(myconfig=myconf)
         errmsg = ''
         try:
             # 先本地编译
@@ -177,8 +236,7 @@ class ButtonThread(Thread):
 
 
 class CheckThread(Thread):
-    """Test Worker Thread Class."""
-
+    """每隔0.5秒检查是否已经完成"""
     # ----------------------------------------------------------------------
     def __init__(self, myframe):
         """Init Worker Thread Class."""
@@ -190,15 +248,15 @@ class CheckThread(Thread):
         """Run Worker Thread."""
         # This is the code executing in the new thread.
         while not self.myframe.buttonEnd:
-            time.sleep(1)
+            time.sleep(0.5)
             wx.CallAfter(pub.sendMessage, "update",
-                         msg=(self.myframe.buttonEnd, self.myframe.buttonResult, self.myframe.buttonMsg))
+                         msg=(self.myframe.buttonEnd, self.myframe.buttonResult,
+                              self.myframe.buttonMsg))
 
 
 ########################################################################
 class MyProgressDialog(wx.Dialog):
-    """"""
-
+    """进度条弹出框"""
     # ----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -208,7 +266,7 @@ class MyProgressDialog(wx.Dialog):
         self.tips = wx.StaticText(self, -1, u'正在同步，请耐心等待几秒钟...')
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.progress, 0, wx.EXPAND)
-        sizer.Add((20,20), 0, wx.EXPAND)
+        sizer.Add((20, 20), 0, wx.EXPAND)
         sizer.Add(self.tips, 0, wx.EXPAND)
         self.SetSizer(sizer)
 
@@ -247,8 +305,8 @@ class UploadFrame(wx.Frame):
         # 创建几个菜单
         menu1 = wx.Menu()
         menuBar.Append(menu1, '&File')
-        menu1.Append(-1, "&Open...", 'Open new file')
-        menuItem = menu1.Append(-1, "&Exit...", 'Exit System')
+        menu1.Append(-1, "&Open", 'Open new file')
+        menuItem = menu1.Append(-1, "&Exit", 'Exit System')
         # 菜单项绑定事件
         self.Bind(wx.EVT_MENU, self.OnCloseMe, menuItem)
 
@@ -271,20 +329,28 @@ class UploadFrame(wx.Frame):
 
         self.SetMenuBar(menuBar)  # 在Frame上面附加菜单
         # ----------------------------分割线----------------------------------
+        # 加载配置文件
+        myconfig = loadConfig()
         panel = wx.Panel(self)
         # 首先创建controls
         topLbl = wx.StaticText(panel, -1, u'================小令自动发布工具===============')
         topLbl.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
-        nameLbl = wx.StaticText(panel, -1, u'服务器地址:')
-        self.name = wx.TextCtrl(panel, -1, HOSTNAME_)  # 文本输入框
-        addrLbl = wx.StaticText(panel, -1, u'登录用户名:')
-        self.addr1 = wx.TextCtrl(panel, -1, USERNAME_)
-        addrLbl2 = wx.StaticText(panel, -1, u'密码:')
-        self.addr2 = wx.TextCtrl(panel, -1, PASSWORD_, style=wx.TE_PASSWORD)
+        hostLbl = wx.StaticText(panel, -1, u'服务器地址:')
+        self.hostname = wx.TextCtrl(panel, -1, myconfig.hostname)
+        usernameLbl = wx.StaticText(panel, -1, u'登录用户名:')
+        self.username = wx.TextCtrl(panel, -1, myconfig.username)
+        passwordLbl = wx.StaticText(panel, -1, u'密码:')
+        self.password = wx.TextCtrl(panel, -1, myconfig.password, style=wx.TE_PASSWORD)
+        tomcatLbl = wx.StaticText(panel, -1, u'Tomcat目录:')
+        self.tomcat = wx.TextCtrl(panel, -1, myconfig.tomcatdir)
+        command1Lbl = wx.StaticText(panel, -1, u'远程脚本1:')
+        self.command1 = wx.TextCtrl(panel, -1, myconfig.command1)
+        command2Lbl = wx.StaticText(panel, -1, u'远程脚本2:')
+        self.command2 = wx.TextCtrl(panel, -1, myconfig.command2)
         projLbl = wx.StaticText(panel, -1, u'本地工程目录:')
-        self.proj = wx.TextCtrl(panel, -1, '')
-        mavenbl = wx.StaticText(panel, -1, u'maven目录(选填):')
-        self.maven = wx.TextCtrl(panel, -1, '')
+        self.proj = wx.TextCtrl(panel, -1, myconfig.projdir)
+        mavenbl = wx.StaticText(panel, -1, u'Maven目录(选填):')
+        self.maven = wx.TextCtrl(panel, -1, myconfig.mavendir)
         saveBtn = wx.Button(panel, -1, u'开始发布')
         cancelBtn = wx.Button(panel, -1, u'关闭')
 
@@ -296,29 +362,35 @@ class UploadFrame(wx.Frame):
         mainSizer.Add(topLbl, 0, wx.ALL, 5)
         mainSizer.Add(wx.StaticLine(panel), 0, wx.EXPAND | wx.TOP | wx.BOTTOM, 5)
 
-        # 地址列
         # addrSizer控制所有地址信息，使用gridbag sizer
         addrSizer = wx.GridBagSizer(hgap=5, vgap=5)
         # sizer.Add(bw, pos=(3,0), span=(1,4), flag=wx.EXPAND)
-        addrSizer.Add(nameLbl, pos=(0, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(self.name, pos=(0, 1), flag=wx.EXPAND)
-        addrSizer.Add(addrLbl, pos=(1, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(self.addr1, pos=(1, 1), flag=wx.EXPAND)
-        # 带有空白空间的行
-        addrSizer.Add(addrLbl2, pos=(2, 0), span=(1, 1),
-                      flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(self.addr2, pos=(2, 1), flag=wx.EXPAND)
+        addrSizer.Add(hostLbl, pos=(0, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.hostname, pos=(0, 1), flag=wx.EXPAND)
 
-        addrSizer.Add(projLbl, pos=(3, 0), span=(1, 1),
-                      flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(self.proj, pos=(3, 1), flag=wx.EXPAND)
+        addrSizer.Add(usernameLbl, pos=(1, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.username, pos=(1, 1), flag=wx.EXPAND)
 
-        addrSizer.Add(mavenbl, pos=(4, 0), span=(1, 1),
-                      flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(self.maven, pos=(4, 1), flag=wx.EXPAND)
+        addrSizer.Add(passwordLbl, pos=(2, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.password, pos=(2, 1), flag=wx.EXPAND)
+
+        addrSizer.Add(tomcatLbl, pos=(3, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.tomcat, pos=(3, 1), flag=wx.EXPAND)
+
+        addrSizer.Add(command1Lbl, pos=(4, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.command1, pos=(4, 1), flag=wx.EXPAND)
+
+        addrSizer.Add(command2Lbl, pos=(5, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.command2, pos=(5, 1), flag=wx.EXPAND)
+
+        addrSizer.Add(projLbl, pos=(6, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.proj, pos=(6, 1), flag=wx.EXPAND)
+
+        addrSizer.Add(mavenbl, pos=(7, 0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(self.maven, pos=(7, 1), flag=wx.EXPAND)
 
         # 添加几个实际的空白行
-        addrSizer.Add((30, 30), pos=(5, 0), span=(1, 2), flag=wx.EXPAND)
+        addrSizer.Add((30, 30), pos=(8, 0), span=(1, 2), flag=wx.EXPAND)
 
         addrSizer.AddGrowableCol(1)
         # 然后把addrSizer添加到mainSizer中
@@ -371,13 +443,18 @@ class UploadFrame(wx.Frame):
 
         btn.Enable()
 
-    def ChangeConfig(self, hostname, username, password, projdir):
-        ztransfer.HOSTNAME = hostname
-        ztransfer.USERNAME = username
-        ztransfer.PASSWORD = password
-        ztransfer.DIR_LOCAL = os.path.join(projdir, 'target', 'classes', 'com')
-        ztransfer.ZIPDIR_SRC = os.path.join(projdir, 'target', 'classes', 'com')
-        ztransfer.ZIPDIR_DEST = projdir
+    def ChangeConfig(self, myconfig):
+        ztransfer.HOSTNAME = myconfig.hostname
+        ztransfer.USERNAME = myconfig.username
+        ztransfer.PASSWORD = myconfig.password
+        ztransfer.DIR_LOCAL = os.path.join(myconfig.projdir, 'target', 'classes', 'com')
+        ztransfer.ZIPDIR_SRC = os.path.join(myconfig.projdir, 'target', 'classes', 'com')
+        ztransfer.ZIPDIR_DEST = myconfig.projdir
+        if myconfig.tomcatdir.endswith('/'):
+            myconfig.tomcatdir = myconfig.tomcatdir[:-1]
+        ztransfer.DIR_REMOTE = myconfig.tomcatdir + '/webapps/ROOT/WEB-INF/classes/com'
+        ztransfer.COMMAND_01 = myconfig.command1
+        ztransfer.COMMAND_02 = myconfig.command2
 
 
 def main():

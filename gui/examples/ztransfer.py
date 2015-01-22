@@ -54,6 +54,10 @@ def zipdir(path, zipf):
 
 def ziputil(zip_dir_src, zip_dir_dest, zip_name):
     _LOGGING.info('#ziputil start')
+    # check if exists delete it
+    check_zip_file = os.path.join(zip_dir_dest, zip_name)
+    if os.path.isfile(check_zip_file):
+        os.remove(check_zip_file)
     zipf = zipfile.ZipFile(os.path.join(zip_dir_dest, zip_name), 'w', zipfile.ZIP_DEFLATED)
     zipdir(zip_dir_src, zipf)
     zipf.close()
@@ -63,6 +67,7 @@ def ziputil(zip_dir_src, zip_dir_dest, zip_name):
 
 def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
     _LOGGING.info('#transfer_file start')
+    local_file = os.path.join(fdir_, fname_)
     try:
         _LOGGING.info('Establishing SSH connection to: %s:%s' % (hostname_, port_))
         t = paramiko.Transport((hostname_, port_))
@@ -74,7 +79,6 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
 
         sftp = paramiko.SFTPClient.from_transport(t)
 
-        local_file = os.path.join(fdir_, fname_)
         remote_file = DIR_REMOTE + '/' + fname_
         try:
             _LOGGING.info('start transport...')
@@ -83,8 +87,6 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
             _LOGGING.error('error...')
             raise
         t.close()
-        _LOGGING.info('传输完成后删除本地的zip文件...')
-        os.remove(local_file)
     except Exception as e:
         _LOGGING.error('transfer error...')
         try:
@@ -92,6 +94,10 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
             t.close()
         except:
             pass
+    finally:
+        _LOGGING.info('传输完成后删除本地的zip文件...')
+        if os.path.isfile(local_file):
+            os.remove(local_file)
     _LOGGING.info('#transfer_file end')
 
 

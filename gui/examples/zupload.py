@@ -296,6 +296,9 @@ class MyProgressDialog(wx.Dialog):
 class UploadFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, u'小令自动发布工具')
+        ico = wx.Icon(zutil.resource_path('resources/main.ico'), wx.BITMAP_TYPE_ICO)
+        self.SetIcon(ico)
+
         self.buttonEnd = False
         self.buttonResult = False
         self.buttonMsg = ''

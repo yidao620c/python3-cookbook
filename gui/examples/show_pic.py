@@ -26,7 +26,7 @@ class MyApp(wx.App):
     """Application class."""
 
     def OnInit(self):
-        img = wx.Image(util.resource_path('resources/me.jpg'), wx.BITMAP_TYPE_JPEG)
+        img = wx.Image(util.resource_path('resources/f22.jpg'), wx.BITMAP_TYPE_JPEG)
         self.frame = MyFrame(image=img)
         self.frame.Show(True)
         self.SetTopWindow(self.frame)

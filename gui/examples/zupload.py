@@ -560,6 +560,7 @@ class UploadFrame(wx.Frame):
         ztransfer.ZIPDIR_DEST = myconfig.projdir
         if myconfig.tomcatdir.endswith('/'):
             myconfig.tomcatdir = myconfig.tomcatdir[:-1]
+        ztransfer.DIR_REMOTE_CONFIG = myconfig.tomcatdir + '/webapps/ROOT/WEB-INF/classes'
         ztransfer.DIR_REMOTE = myconfig.tomcatdir + '/webapps/ROOT/WEB-INF/classes/com'
         ztransfer.COMMAND_01 = myconfig.command1
         ztransfer.COMMAND_02 = myconfig.command2

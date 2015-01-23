@@ -21,6 +21,8 @@ pip install paramiko
 """
 import paramiko
 import os
+from os import listdir
+from os.path import isfile, join
 import zipfile
 import logging
 
@@ -31,6 +33,7 @@ PASSWORD = 'jianji2014'
 # RSA_PRIVATE_KEY = r"/home/paramikouser/.ssh/rsa_private_key"
 
 DIR_LOCAL = r'D:\Wingarden\src\trunk\ling\target\classes\com'
+DIR_REMOTE_CONFIG = r"/usr/local/apache-tomcat-8.0.15/webapps/ROOT/WEB-INF/classes"
 DIR_REMOTE = r"/usr/local/apache-tomcat-8.0.15/webapps/ROOT/WEB-INF/classes/com"
 COMMAND_01 = '/home/winhong/ling01.sh'
 COMMAND_02 = '/home/winhong/ling02.sh'
@@ -38,6 +41,7 @@ COMMAND_02 = '/home/winhong/ling02.sh'
 ZIPDIR_SRC = r'D:\Wingarden\src\trunk\ling\target\classes\com'
 ZIPDIR_DEST = r'D:\Wingarden\src\trunk\ling'
 ZIPNAME = 'ling.zip'
+ZIPNAME_CONFIG = 'lingconfig.zip'
 
 # get host key, if we know one
 # HOSTKEYTYPE = None
@@ -49,25 +53,40 @@ _LOGGING = logging.getLogger('ztransfer')
 def zipdir(path, zipf):
     for root, dirs, files in os.walk(path):
         for file in files:
-            zipf.write(os.path.join(root, file), os.path.join(root.split('\com\\', 1)[1],file))
+            zipf.write(os.path.join(root, file), os.path.join(root.split('\com\\', 1)[1], file))
 
 
-def ziputil(zip_dir_src, zip_dir_dest, zip_name):
+def zipdir_config(mypath, zipf):
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    for file in onlyfiles:
+        zipf.write(os.path.join(mypath, file), file)
+
+
+def ziputil(zip_dir_src, zip_dir_dest):
     _LOGGING.info('#ziputil start')
     # check if exists delete it
-    check_zip_file = os.path.join(zip_dir_dest, zip_name)
+    check_zip_file = os.path.join(zip_dir_dest, ZIPNAME)
+    zip_dir_dest_config = os.path.abspath(os.path.join(zip_dir_dest, '..'))
+    check_zip_file_config = os.path.join(zip_dir_dest_config, ZIPNAME_CONFIG)
     if os.path.isfile(check_zip_file):
         os.remove(check_zip_file)
-    zipf = zipfile.ZipFile(os.path.join(zip_dir_dest, zip_name), 'w', zipfile.ZIP_DEFLATED)
+    if os.path.isfile(check_zip_file_config):
+        os.remove(check_zip_file_config)
+    zipf = zipfile.ZipFile(check_zip_file, 'w', zipfile.ZIP_DEFLATED)
     zipdir(zip_dir_src, zipf)
+    zipf_config = zipfile.ZipFile(check_zip_file_config, 'w', zipfile.ZIP_DEFLATED)
+    zipdir(zip_dir_src, zipf)
+    zipdir_config(os.path.abspath(os.path.join(zip_dir_src, '..')), zipf_config)
     zipf.close()
+    zipf_config.close()
     _LOGGING.info('#ziputil end')
-    return zip_dir_dest, zip_name
+    return zip_dir_dest, ZIPNAME, zip_dir_dest_config, ZIPNAME_CONFIG
 
 
-def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
+def transfer_file(hostname_, port_, username_, password_, fdir_, fname_, fdir_config, fname_config):
     _LOGGING.info('#transfer_file start')
     local_file = os.path.join(fdir_, fname_)
+    local_file_config = os.path.join(fdir_config, fname_config)
     try:
         _LOGGING.info('Establishing SSH connection to: %s:%s' % (hostname_, port_))
         t = paramiko.Transport((hostname_, port_))
@@ -80,9 +99,11 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_):
         sftp = paramiko.SFTPClient.from_transport(t)
 
         remote_file = DIR_REMOTE + '/' + fname_
+        remote_file_config = DIR_REMOTE_CONFIG + '/' + fname_config
         try:
             _LOGGING.info('start transport...')
             sftp.put(local_file, remote_file)
+            sftp.put(local_file_config, remote_file_config)
         except:
             _LOGGING.error('error...')
             raise
@@ -128,11 +149,11 @@ def exe_command(hostname_, username_, password_, commandpaths_):
 
 
 def main():
-    # 第一步：zip压缩包
-    ffdir, ffname = ziputil(ZIPDIR_SRC, ZIPDIR_DEST, ZIPNAME)
-    # 第二步：SSH传输压缩包
-    transfer_file(HOSTNAME, PORT, USERNAME, PASSWORD, ffdir, ffname)
-    # 第三步：执行远程shell脚本，替换class文件并重启，注意sudo和非sudo分开执行
+    # 第一步：zip压缩class文件包和配置文件包
+    ffdir, ffname, cfdir, cfname = ziputil(ZIPDIR_SRC, ZIPDIR_DEST)
+    # 第二步：SSH传输class文件压缩包和配置文件压缩包
+    transfer_file(HOSTNAME, PORT, USERNAME, PASSWORD, ffdir, ffname, cfdir, cfname)
+    # 第四步：执行远程shell脚本，替换配置文件和class文件并重启，注意sudo和非sudo分开执行
     return exe_command(HOSTNAME, USERNAME, PASSWORD, [(COMMAND_01, True), (COMMAND_02, False)])
 
 

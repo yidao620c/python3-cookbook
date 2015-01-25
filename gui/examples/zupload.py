@@ -123,17 +123,23 @@ class Ling01(wx.Dialog):
                 cd /usr/local/apache-tomcat-8.0.15/webapps/ROOT/WEB-INF/classes/com<br>
                 rm -rf winhong/<br>
                 unzip ling.zip<br>
-                wait<br><br>
-
-                echo '解压成功'<br>
+                wait<br>
                 rm -f ling.zip<br>
+                echo 'class文件解压替换完成,开始替换配置文件'<br>
+                cd ..<br>
+                find . -maxdepth 1 -type f -not -name '*.zip' -print0 | xargs -0 rm<br>
+                unzip lingconfig.zip<br>
+                wait<br>
+                rm -f lingconfig.zip<br>
+                echo '配置文件解压替换完成'<br>
+
             </p>
         </body>
     </html>
     '''
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, u'ling01.sh示例', size=(600, 400))
+        wx.Dialog.__init__(self, parent, -1, u'ling01.sh示例', size=(600, 450))
         html = wx.html.HtmlWindow(self)
         html.SetPage(self.text)
         button = wx.Button(self, wx.ID_OK, u'确定')
@@ -171,7 +177,7 @@ class Ling02(wx.Dialog):
     '''
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, u'ling02.sh示例', size=(550, 360))
+        wx.Dialog.__init__(self, parent, -1, u'ling02.sh示例', size=(600, 400))
         html = wx.html.HtmlWindow(self)
         html.SetPage(self.text)
         button = wx.Button(self, wx.ID_OK, u'确定')
@@ -212,12 +218,15 @@ class SketchGuide(wx.Dialog):
             <p>
                 <b>5.Maven目录(选填)</b> 如果mvn命令还没有添加到系统PATH中就需要填这个。
             </p>
+            <p>
+                <b>6.配置文件</b> 本地:config.properties，服务器：config.properties.tmp。
+            </p>
         </body>
     </html>
     '''
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, 'Use Guide', size=(550, 360))
+        wx.Dialog.__init__(self, parent, -1, 'Use Guide', size=(600, 400))
         html = wx.html.HtmlWindow(self)
         html.SetPage(self.text)
         button = wx.Button(self, wx.ID_OK, u'确定')
@@ -239,7 +248,7 @@ class SketchAbout(wx.Dialog):
                     <td align="center"><h1>小令发布工具</h1></td>
                 </tr>
                 <tr>
-                    <td align="center"><h4>Profession Edition 0.9.0</h4></td>
+                    <td align="center"><h4>Profession Edition 1.0.0</h4></td>
                 </tr>
                 </table>
             </center>
@@ -252,7 +261,7 @@ class SketchAbout(wx.Dialog):
     '''
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, 'About', size=(550, 300))
+        wx.Dialog.__init__(self, parent, -1, 'About', size=(600, 300))
         html = wx.html.HtmlWindow(self)
         html.SetPage(self.text)
         button = wx.Button(self, wx.ID_OK, u'确定')

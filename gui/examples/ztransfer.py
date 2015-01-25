@@ -52,14 +52,20 @@ _LOGGING = logging.getLogger('ztransfer')
 
 def zipdir(path, zipf):
     for root, dirs, files in os.walk(path):
-        for file in files:
-            zipf.write(os.path.join(root, file), os.path.join(root.split('\com\\', 1)[1], file))
+        for myfile in files:
+            zipf.write(os.path.join(root, myfile),
+                       arcname=os.path.join(root.split('\com\\', 1)[1], myfile))
 
 
 def zipdir_config(mypath, zipf):
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-    for file in onlyfiles:
-        zipf.write(os.path.join(mypath, file), file)
+    for myfile in onlyfiles:
+        if myfile.endswith('config.properties'):
+            continue
+        elif myfile.endswith('config.properties.tmp'):
+            zipf.write(os.path.join(mypath, myfile), arcname='config.properties')
+        else:
+            zipf.write(os.path.join(mypath, myfile), arcname=myfile)
 
 
 def ziputil(zip_dir_src, zip_dir_dest):
@@ -72,13 +78,15 @@ def ziputil(zip_dir_src, zip_dir_dest):
         os.remove(check_zip_file)
     if os.path.isfile(check_zip_file_config):
         os.remove(check_zip_file_config)
+
     zipf = zipfile.ZipFile(check_zip_file, 'w', zipfile.ZIP_DEFLATED)
     zipdir(zip_dir_src, zipf)
-    zipf_config = zipfile.ZipFile(check_zip_file_config, 'w', zipfile.ZIP_DEFLATED)
-    zipdir(zip_dir_src, zipf)
-    zipdir_config(os.path.abspath(os.path.join(zip_dir_src, '..')), zipf_config)
     zipf.close()
+
+    zipf_config = zipfile.ZipFile(check_zip_file_config, 'w', zipfile.ZIP_DEFLATED)
+    zipdir_config(os.path.abspath(os.path.join(zip_dir_src, '..')), zipf_config)
     zipf_config.close()
+
     _LOGGING.info('#ziputil end')
     return zip_dir_dest, ZIPNAME, zip_dir_dest_config, ZIPNAME_CONFIG
 
@@ -116,9 +124,11 @@ def transfer_file(hostname_, port_, username_, password_, fdir_, fname_, fdir_co
         except:
             pass
     finally:
-        _LOGGING.info('传输完成后删除本地的zip文件...')
+        _LOGGING.info(u'传输完成后删除本地的zip文件...')
         if os.path.isfile(local_file):
             os.remove(local_file)
+        if os.path.isfile(local_file_config):
+            os.remove(local_file_config)
     _LOGGING.info('#transfer_file end')
 
 
@@ -155,8 +165,4 @@ def main():
     transfer_file(HOSTNAME, PORT, USERNAME, PASSWORD, ffdir, ffname, cfdir, cfname)
     # 第四步：执行远程shell脚本，替换配置文件和class文件并重启，注意sudo和非sudo分开执行
     return exe_command(HOSTNAME, USERNAME, PASSWORD, [(COMMAND_01, True), (COMMAND_02, False)])
-
-
-if __name__ == '__main__':
-    main()
 

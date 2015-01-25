@@ -362,7 +362,7 @@ class MyProgressDialog(wx.Dialog):
         """Constructor"""
         wx.Dialog.__init__(self, None, title=u"同步进度条", size=(350, 150))
         self.count = 0
-        self.progress = wx.Gauge(self, -1, 15, (20, 50), size=(300, 30))
+        self.progress = wx.Gauge(self, -1, 19, (20, 50), size=(300, 30))
         self.tips = wx.StaticText(self, -1, u'正在同步，请耐心等待几秒钟...')
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.progress, 0, wx.EXPAND)
@@ -387,7 +387,7 @@ class MyProgressDialog(wx.Dialog):
                 _LOGGING.error('MessageDialog.upload.error!!!')
                 wx.MessageDialog(self, u'上传失败，error:%s！' % msg[2],
                                  'MessageDialog', wx.ICON_INFORMATION).ShowModal()
-        elif self.count >= 15:
+        elif self.count >= 19:
             self.count = 1
 
         self.progress.SetValue(self.count)

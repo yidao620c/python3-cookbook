@@ -7,6 +7,7 @@
 
 __author__ = 'Xiong Neng'
 
+
 def simple():
     # 一般的%形式的格式化
     a = 42
@@ -33,7 +34,8 @@ def simple():
     name = 'Elwood'
     age = 99
     print('%(name)s is %(age)s years old.' % vars())
-    #print('{0} {1} {2}'.format())
+    # print('{0} {1} {2}'.format())
+
 
 def senior():
     """高级字符串格式化"""

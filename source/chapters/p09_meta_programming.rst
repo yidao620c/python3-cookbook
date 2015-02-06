@@ -2,12 +2,14 @@
 第九章：元编程
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+软件开发领域中最经典的口头禅就是“don’t repeat yourself”。
+也就是说，任何时候当你的程序中存在高度重复(或者是通过剪切复制)的代码时，都应该想想是否有更好的解决方案。
+在Python当中，通常都可以通过元编程来解决这类问题。
+简而言之，元编程就是关于创建操作源代码(比如修改、生成或包装原来的代码)的函数和类。
+主要技术是使用装饰器、类装饰器和元类。不过还有一些其他技术，
+包括签名对象、使用 ``exec()`` 执行代码以及对内部函数和类的反射技术等。
+本章的主要目的是向大家介绍这些元编程技术，并且给出实例来演示它们是怎样定制化你的源代码行为的。
+
 
 Contents:
 

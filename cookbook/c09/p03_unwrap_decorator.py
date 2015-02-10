@@ -7,6 +7,7 @@ Desc :
 
 from functools import wraps
 
+
 def decorator1(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -14,12 +15,14 @@ def decorator1(func):
         return func(*args, **kwargs)
     return wrapper
 
+
 def decorator2(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         print('Decorator 2')
         return func(*args, **kwargs)
     return wrapper
+
 
 @decorator1
 @decorator2

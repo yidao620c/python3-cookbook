@@ -17,11 +17,11 @@ class Profiled:
         self.ncalls += 1
         return self.__wrapped__(*args, **kwargs)
 
-    # def __get__(self, instance, cls):
-    #     if instance is None:
-    #         return self
-    #     else:
-    #         return types.MethodType(self, instance)
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        else:
+            return types.MethodType(self, instance)
 
 @Profiled
 def add(x, y):

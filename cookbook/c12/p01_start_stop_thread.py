@@ -1,4 +1,3 @@
-__author__ = 'zz'
 
 import time
 def countdown(n):

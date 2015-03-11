@@ -12,3 +12,4 @@ redis==2.10.3
 requests==2.4.3
 requests-oauthlib==0.4.2
 whitenoise==1.0.3
+openpyxl==2.2.0-b1

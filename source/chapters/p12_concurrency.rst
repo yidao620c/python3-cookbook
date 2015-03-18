@@ -2,12 +2,11 @@
 第十二章：并发编程
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+对于并发编程, Python有多种长期支持的方法, 包括多线程, 调用子进程, 以及各种各样的关于生成器函数的技巧.
+这一章将会给出并发编程各种方面的技巧, 包括通用的多线程技术以及并行计算的实现方法.
+
+像经验丰富的程序员所知道的那样, 大家担心并发的程序有潜在的危险.
+因此, 本章的主要目标之一是给出更加可信赖和易调试的代码.
 
 Contents:
 

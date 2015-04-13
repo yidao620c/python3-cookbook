@@ -203,5 +203,8 @@ def write_dest(xlsx_name, schema_name):
 if __name__ == '__main__':
     # write_xlsx()
     # write_only()
-    write_dest('贷快发数据库设计.xlsx', 'schema.sql')
+    import sys
+    # dest_file = r'D:\work\fastloan\trunk\01文档\03系统设计\03数据库设计\贷快发MySQL数据库设计.xlsx'
+    # sql_file = r'D:\work\fastloan\trunk\fastloan\src\main\resources\sql\schema.sql'
+    write_dest(sys.argv[1], sys.argv[2])
     pass

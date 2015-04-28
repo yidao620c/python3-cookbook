@@ -2,12 +2,11 @@
 第十章：模块与包
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+Modules and packages are the core of any large project, and the Python installation
+itself. This chapter focuses on common programming techniques involving modules
+and packages, such as how to organize packages, splitting large modules into multiple
+files, and creating namespace packages. Recipes that allow you to customize the operation
+of the import statement itself are also given.
 
 Contents:
 

@@ -67,7 +67,7 @@ Meanwhile you'd better follow the rules below
 
 * It's *NOT* recommended to submit a pull request directly to `master` branch. `develop` branch is more appropriate
 * Follow common Python coding conventions
-* Add the following [license](#license) in each source file
+* Add the following [license] in each source file
 
 ++++++++++++++++
 License
@@ -75,7 +75,7 @@ License
 
 (The Apache License)
 
-Copyright (c) 2010-2014 [WinHong, Inc.](http://www.winhong.com/) and other contributors
+Copyright (c) 2010-2015 `WinHong, Inc. <http://www.winhong.com/>`_ and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. You may obtain a copy of the License at

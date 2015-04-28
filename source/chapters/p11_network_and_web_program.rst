@@ -2,12 +2,11 @@
 第十一章：网络与Web编程
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+This chapter is about various topics related to using Python in networked and distributed
+applications. Topics are split between using Python as a client to access existing
+services and using Python to implement networked services as a server. Common techniques
+for writing code involving cooperating or communicating with interpreters are
+also given.
 
 Contents:
 

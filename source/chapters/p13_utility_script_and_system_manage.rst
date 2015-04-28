@@ -2,12 +2,12 @@
 第十三章：脚本编程与系统管理
 =============================
 
-Python provides a variety of useful built-in data structures, such as lists, sets, and dictionaries.
-For the most part, the use of these structures is straightforward. However,
-common questions concerning searching, sorting, ordering, and filtering often arise.
-Thus, the goal of this chapter is to discuss common data structures and algorithms
-involving data. In addition, treatment is given to the various data structures contained
-in the collections module.
+A lot of people use Python as a replacement for shell scripts, using it to automate common
+system tasks, such as manipulating files, configuring systems, and so forth. The
+main goal of this chapter is to describe features related to common tasks encountered
+when writing scripts. For example, parsing command-line options, manipulating files
+on the filesystem, getting useful system configuration data, and so forth. Chapter 5 also
+contains general information related to files and directories.
 
 Contents:
 

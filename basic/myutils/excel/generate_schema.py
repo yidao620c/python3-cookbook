@@ -84,8 +84,9 @@ def load_schema(filename):
         each_table = []  # 每张表定义
         for line in sqlfile:
             if line.startswith('--'):
-                each_table.insert(0, line.split('--')[1].strip())
+                temp_comment = line.split('--')[1].strip()
             elif 'DROP TABLE' in line:
+                each_table.insert(0, temp_comment)
                 each_table.insert(1, line.strip().split()[-1][:-1])
             elif ' COMMENT ' in line and 'ENGINE=' not in line:
                 col_arr = line.split()
@@ -96,7 +97,8 @@ def load_schema(filename):
                 else:
                     col_null = ''
                 col_remark = col_arr[-1]
-                each_table.append((col_name, col_type, col_null, col_remark))
+                cr = col_remark.replace("'", "")
+                each_table.append((col_name, col_type, col_null, cr[:-1] if cr.endswith(',') else cr))
             elif 'ENGINE=' in line:
                 # 单个表定义结束
                 result.append(list(each_table))
@@ -168,7 +170,7 @@ def write_dest(xlsx_name, schema_name):
             ws['G{}'.format(idx + 5)].style = common_style
             ws['G{}'.format(idx + 5)] = each_column[2]
             ws['H{}'.format(idx + 5)].style = common_style
-            ws['H{}'.format(idx + 5)] = each_column[3].strip().split('\'')[1]
+            ws['H{}'.format(idx + 5)] = each_column[3]
     ws = wb['首页列表']
     ws.merge_cells('D3:F3')
     ws['D3'].style = title_style

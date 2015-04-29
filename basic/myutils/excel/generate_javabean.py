@@ -215,10 +215,7 @@ def write_beans(beans_dir, package_name, schema_name):
 
         for each_column in table[2:]:
             # 列名
-            try:
-                column_name = each_column[0]
-            except Exception:
-                print(each_column)
+            column_name = each_column[0]
             if column_name in BASE_FIELS:
                 continue
             field_name = underline_to_camel(column_name, is_field=True)

@@ -29,13 +29,9 @@ def beauty2(txt_file):
     result_lines = []
     for i, line in enumerate(lines):
         if line.startswith('www.it-ebooks.info'):
-            if result_lines[len(result_lines) - 2].startswith('Chapter '):
+            if result_lines[len(result_lines) - 4].startswith('| '):
                 # 删除7
                 for k in range(7):
-                    result_lines.pop()
-            elif result_lines[len(result_lines) - 4].startswith('| '):
-                # 删除5行
-                for k in range(5):
                     result_lines.pop()
             else:
                 check_str = result_lines[len(result_lines) - 2].strip()

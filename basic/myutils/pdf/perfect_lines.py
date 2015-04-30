@@ -23,8 +23,8 @@ def beauty(txt_file):
         f.truncate()
 
 
-def beauty2(txt_file):
-    with open(txt_file, mode='r', encoding='utf-8') as f:
+def beauty2(pre_txt, after_txt):
+    with open(pre_txt, mode='r', encoding='utf-8') as f:
         lines = f.readlines()
     result_lines = []
     for i, line in enumerate(lines):
@@ -43,9 +43,9 @@ def beauty2(txt_file):
             result_lines.append(line)
 
     # 结果写入
-    with open(txt_file, mode='w', encoding='utf-8') as f:
+    with open(after_txt, mode='w', encoding='utf-8') as f:
         f.writelines(result_lines)
 
 
 if __name__ == '__main__':
-    beauty2('pc.txt')
+    beauty2('pc_pre.txt', 'pc_after')

@@ -13,8 +13,11 @@
 import logging
 import logging.handlers as handlers
 import logging.config as config
-__author__ = 'Xiong Neng'
 
+__author__ = 'Xiong Neng'
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 # 模块基本用_，类级别用__
 _log = logging.getLogger('app.' + __name__)
 
@@ -23,6 +26,7 @@ class FilterFunc(logging.Filter):
     def __init__(self, name):
         super().__init__()
         self.funcname = name
+
     def filter(self, record):
         if record.funcName == self.funcname: return False
 

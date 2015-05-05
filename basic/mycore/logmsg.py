@@ -17,7 +17,8 @@ import logging.config as config
 __author__ = 'Xiong Neng'
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    handlers=[logging.FileHandler('message.log', 'a', 'utf-8')])
 # 模块基本用_，类级别用__
 _log = logging.getLogger('app.' + __name__)
 

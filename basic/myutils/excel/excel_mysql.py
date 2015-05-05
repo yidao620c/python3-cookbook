@@ -25,9 +25,9 @@ sql_create1 = """
       address            VARCHAR(200) COMMENT '详细地址',
       postcode           VARCHAR(10) COMMENT '邮编',
       tel                VARCHAR(50) COMMENT '联系电话',
-      contact            VARCHAR(10) COMMENT '联系人',
+      contact            VARCHAR(60) COMMENT '联系人',
       fax                VARCHAR(30) COMMENT '传真',
-      mobile             VARCHAR(16) COMMENT '手机号',
+      mobile             VARCHAR(80) COMMENT '手机号',
       created_time      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       updated_time      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '企业表';
@@ -67,7 +67,7 @@ sql_insert_region = """
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
-                    handlers=[logging.FileHandler('excel.log', 'a', 'utf-8')])
+                    handlers=[logging.FileHandler('d:/logs/excel.log', 'a', 'utf-8')])
 _log = logging.getLogger('app.' + __name__)
 
 
@@ -118,8 +118,37 @@ def parse_sheet(wb, sheet_name, column_num, log_msg):
     return result_list
 
 
-def handle_wrong_line(wrong_line):
-    pass
+def handle_wrong_line(conn_, cursor_, wrong_line, ty=1):
+    # 处理企业资料创建时的错误
+    if ty == 1:
+        id1 = wrong_line[0][0]
+        many_data = wrong_line[0][1]
+        next1 = wrong_line[1][0]
+        next2 = wrong_line[1][1]
+        next3 = wrong_line[1][2]
+        many_data = many_data.replace('"', '')
+        many_data = many_data.replace('_x000D_', '')
+        many_list = [s.split() for s in many_data.split('\n') if s]
+        many_list[0].insert(0, str(id1))
+        many_list[-1][-1] = "{}{}".format(many_list[-1][-1], next1)
+        many_list[-1].append(next2)
+        many_list[-1].append(next3)
+        # 扩充至指定的长度
+        for many_item in many_list:
+            if len(many_item) < 6:
+                for i in range(6 - len(many_item)):
+                    many_item.append(None)
+        for i, v in enumerate([tuple(li) for li in many_list]):
+            try:
+                cursor_.execute(sql_insert_enterprise, v)
+            except:
+                conn_.rollback()
+                logging.exception('handle_wrong_line哈企业资料Exception,line={}'.format(i))
+                continue
+            if i % 50 == 0:
+                conn_.commit()
+        conn_.commit()
+
 
 def xlsx_to_table(xlsx_name):
     conn_ = _connect()
@@ -135,41 +164,57 @@ def xlsx_to_table(xlsx_name):
     list3 = parse_sheet(wb, 'region', 5, 'region表解析end')
     data3 = [(v[0], v[1], v[2], v[3], v[4]) for v in list3[1:]]
     _log.info('Excel文件解析end')
-    _log.info('---------------------------分割线--------------------------------')
+    _log.info('---------------------------分割线-----------------------------')
     _log.info('数据库更新start')
     cursor = conn_.cursor()
-    try:
-        _log.info('插入企业资料start')
-        for i, d1 in enumerate(data1):
-            if len(d1[1]) > 300 and not d1[2]:
-                _log.error('这一行有问题')
-                handle_wrong_line(d1)
-                continue
+    _log.info('插入企业资料start')
+    wrong1 = []
+    find_large_name = False
+    for i, d1 in enumerate(data1):
+        if find_large_name:
+            wrong1.append(d1)
+            handle_wrong_line(conn_, cursor, wrong1)
+            wrong1.clear()
+            find_large_name = False
+        try:
             cursor.execute(sql_insert_enterprise, d1)
-            if i % 50 == 0:
-                conn_.commit()
-        conn_.commit()
-        _log.info('插入企业资料end')
+        except:
+            conn_.rollback()
+            if len(str(d1[1])) > 600:
+                logging.exception('-------插入企业资料Exception,line={}--------'.format(i))
+                wrong1.append(d1)
+                find_large_name = True
+            continue
+        if i % 50 == 0:
+            conn_.commit()
+    conn_.commit()
+    _log.info('插入企业资料end')
 
-        _log.info('更新企业联系信息start')
-        for i, d2 in enumerate(data2):
+    _log.info('更新企业联系信息start')
+    for i, d2 in enumerate(data2):
+        try:
             cursor.execute(sql_update_enterprise, d2)
-            if i % 50 == 0:
-                conn_.commit()
-        conn_.commit()
-        _log.info('插入企业资料表end')
+        except:
+            conn_.rollback()
+            logging.exception('-------更新企业联系信息Exception,line={}-------'.format(i))
+            handle_wrong_line(conn_, cursor,d2, ty=2)
+        if i % 50 == 0:
+            conn_.commit()
+    conn_.commit()
+    _log.info('插入企业资料表end')
 
-        _log.info('插入区域信息start')
-        for i, d3 in enumerate(data3):
+    _log.info('插入区域信息start')
+    for i, d3 in enumerate(data3):
+        try:
             cursor.execute(sql_insert_region, d3)
-            if i % 50 == 0:
-                conn_.commit()
-        conn_.commit()
-        _log.info('插入区域信息end')
-
-    except:
-        logging.exception('Got exception on db handler')
-        raise
+        except:
+            conn_.rollback()
+            logging.exception('-------插入区域信息Exception,line={}-------'.format(i))
+            handle_wrong_line(conn_, cursor, d3, ty=3)
+        if i % 50 == 0:
+            conn_.commit()
+    conn_.commit()
+    _log.info('插入区域信息end')
 
     _log.info('数据库更新end')
     cursor.close()
@@ -177,7 +222,7 @@ def xlsx_to_table(xlsx_name):
 
 
 if __name__ == '__main__':
-    excel = r'D:\download\20150505\gdc.xlsx'
+    excel = r'D:\download\20150505\gdc2.xlsx'
     _init_table()
     conn = _connect()
     xlsx_to_table(excel)

@@ -5,7 +5,7 @@
 
 * 姓名：     熊能
 * Email：   yidao620@gmail.com
-* 博客：     http://www.pycoding.com/
+* 博客：     http://yidao620c.github.io/
 * GitHub：  https://github.com/yidao620c
 * 公司：     `广州云宏信息科技股份有限公司 <http://www.winhong.com/>`_
 
@@ -14,8 +14,8 @@
 
 *主要贡献者*
 
-1. test1 (test1@gmail.com)
-2. test2 (test2@gmail.com)
+1. ZZ (zz.at.field@gmail.com)
+2. Amy (katiechen8815@gmail.com)
 
 |
 |

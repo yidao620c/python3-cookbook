@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 ================================================
-Python Cookbook 3rd Edition Documentation!
+Python Cookbook 3rd Edition Documentation
 ================================================
 
 Contents:

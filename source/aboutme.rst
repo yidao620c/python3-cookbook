@@ -14,8 +14,8 @@
 
 *主要贡献者*
 
-1. ZZ (zz.at.field@gmail.com)
-2. Amy (katiechen8815@gmail.com)
+1. 曾志 (zz.at.field@gmail.com)
+2. 艾米 (katiechen8815@gmail.com)
 
 |
 |

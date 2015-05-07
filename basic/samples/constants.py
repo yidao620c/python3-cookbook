@@ -4,8 +4,11 @@
     Topic: sample
     Desc : 
 """
-import sys, os
-from . import consttype as const
+import sys
+import os
+
+from basic.samples import consttype as const
+
 __author__ = 'Xiong Neng'
 
 const.ROOT_PATH = os.path.dirname(sys.path[0])

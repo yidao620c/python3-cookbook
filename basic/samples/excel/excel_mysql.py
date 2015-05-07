@@ -222,7 +222,7 @@ def xlsx_to_table(xlsx_name):
 
 
 if __name__ == '__main__':
-    excel = r'D:\download\20150505\gdc2.xlsx'
+    excel = r'D:\download\20150505\gdc.xlsx'
     _init_table()
     conn = _connect()
     xlsx_to_table(excel)

@@ -7,7 +7,11 @@
 ----------
 You want to convert strings from C to Python bytes or a string object.
 
-Solution
+|
+
+----------
+解决方案
+----------
 For C strings represented as a pair char *, int, you must decide whether or not you
 want the string presented as a raw byte string or as a Unicode string. Byte objects can
 be built using Py_BuildValue() as follows:
@@ -47,7 +51,11 @@ PyObject *obj = PyUnicode_FromWideChar(w, len);
 For wide character strings, no interpretation is made of the character data—it is assumed
 to be raw Unicode code points which are directly converted to Python.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Conversion of strings from C to Python follow the same principles as I/O. Namely, the
 data from C must be explicitly decoded into a string according to some codec. Common
 encodings include ASCII, Latin-1, and UTF-8. If you’re not entirely sure of the encoding

@@ -7,7 +7,11 @@
 ----------
 You want to be able to record the time it takes to perform various tasks.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The time module contains various functions for performing timing-related functions.
 However, it’s often useful to put a higher-level interface on them that mimics a stop
 watch. For example:
@@ -71,7 +75,11 @@ with Timer() as t2:
     countdown(1000000)
 print(t2.elapsed)
 
-Discussion
+|
+
+----------
+讨论
+----------
 This recipe provides a simple yet very useful class for making timing measurements and
 tracking  elapsed  time.  It’s  also  a  nice  illustration  of  how  to  support  the  context-
 management protocol and the with statement.

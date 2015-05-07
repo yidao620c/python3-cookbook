@@ -8,7 +8,11 @@
 Your program uses threads and you want to lock critical sections of code to avoid race
 conditions.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To make mutable objects safe to use by multiple threads, use Lock objects in the thread
 ing library, as shown here:
 
@@ -41,7 +45,11 @@ one thread is allowed to execute the block of statements under the with statemen
 time. The with statement acquires the lock for the duration of the indented statements
 and releases the lock when control flow exits the indented block.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Thread scheduling is inherently nondeterministic. Because of this, failure to use locks
 in  threaded  programs  can  result  in  randomly  corrupted  data  and  bizarre  behavior
 known as a “race condition.” To avoid this, locks should always be used whenever shared

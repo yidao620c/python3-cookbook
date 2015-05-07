@@ -8,7 +8,11 @@
 You need to copy or move files and directories around, but you don’t want to do it by
 calling out to shell commands.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The shutil module has portable implementations of functions for copying files and
 directories. The usage is extremely straightforward. For example:
 
@@ -55,7 +59,11 @@ already been provided to do it. For example:
 
 shutil.copytree(src, dst, ignore=shutil.ignore_patterns('*~','*.pyc'))
 
-Discussion
+|
+
+----------
+讨论
+----------
 Using  shutil to copy files and directories is mostly straightforward. However, one
 caution concerning file metadata is that functions such as copy2() only make a best
 effort in preserving this data. Basic information, such as access times, creation times,

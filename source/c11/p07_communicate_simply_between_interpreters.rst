@@ -8,7 +8,11 @@
 You are running multiple instances of the Python interpreter, possibly on different ma‐
 chines, and you would like to exchange data between interpreters using messages.
 
-Solution
+|
+
+----------
+解决方案
+----------
 It is easy to communicate between interpreters if you use the multiprocessing.con
 nection module. Here is a simple example of writing an echo server:
 
@@ -55,7 +59,11 @@ Unlike a low-level socket, messages are kept intact (each object sent using send
 received in its entirety with recv()). In addition, objects are serialized using pickle.
 So, any object compatible with pickle can be sent or received over the connection.
 
-Discussion
+|
+
+----------
+讨论
+----------
 There are many packages and libraries related to implementing various forms of mes‐
 sage passing, such as ZeroMQ, Celery, and so forth. As an alternative, you might also
 be inclined to implement a message layer on top of low-level sockets. However, some‐

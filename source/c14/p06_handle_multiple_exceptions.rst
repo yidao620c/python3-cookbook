@@ -9,7 +9,11 @@ You have a piece of code that can throw any of several different exceptions, and
 need to account for all of the potential exceptions that could be raised without creating
 duplicate code or long, meandering code passages.
 
-Solution
+|
+
+----------
+解决方案
+----------
 If you can handle different exceptions all using a single block of code, they can be
 grouped together in a tuple like this:
 
@@ -48,7 +52,11 @@ except OSError:
 This works because OSError is a base class that’s common to both the FileNotFound
 Errorand PermissionError exceptions.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Although it’s not specific to handling multiple exceptions per se, it’s worth noting that
 you can get a handle to the thrown exception using the as keyword:
 

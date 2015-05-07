@@ -8,7 +8,11 @@
 You have multiple threads in your program and you want to safely communicate or
 exchange data between them.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Perhaps the safest way to send data from one thread to another is to use a Queue from
 the queue library. To do this, you create a Queue instance that is shared by the threads.
 Threads then use put() or get() operations to add or remove items from the queue.
@@ -170,7 +174,11 @@ def consumer(in_q):
         # Indicate completion
         evt.set()
 
-Discussion
+|
+
+----------
+讨论
+----------
 Writing threaded programs based on simple queuing is often a good way to maintain
 sanity. If you can break everything down to simple thread-safe queuing, you’ll find that
 you don’t need to litter your program with locks and other low-level synchronization.

@@ -8,7 +8,11 @@
 You want to write a program that parses options supplied on the command line (found
 in sys.argv).
 
-Solution
+|
+
+----------
+解决方案
+----------
 The argparse module can be used to parse command-line options. A simple example
 will help to illustrate the essential features:
 
@@ -97,7 +101,11 @@ speed     = fast
 Further processing of the options is up to the program. Replace the print() functions
 with something more interesting.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The argparse module is one of the largest modules in the standard library, and has a
 huge number of configuration options. This recipe shows an essential subset that can
 be used and extended to get started.

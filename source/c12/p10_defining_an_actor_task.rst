@@ -7,7 +7,11 @@
 ----------
 You’d like to define tasks with behavior similar to “actors” in the so-called “actor model.”
 
-Solution
+|
+
+----------
+解决方案
+----------
 The “actor model” is one of the oldest and most simple approaches to concurrency and
 distributed computing. In fact, its underlying simplicity is part of its appeal. In a nutshell,
 an actor is a concurrently executing task that simply acts upon messages sent to it. In
@@ -121,7 +125,11 @@ p.send('Hello')
 p.send('World')
 p.close()
 
-Discussion
+|
+
+----------
+讨论
+----------
 Part of the appeal of actors is their underlying simplicity. In practice, there is just one
 core operation, send(). Plus, the general concept of a “message” in actor-based systems
 is something that can be expanded in many different directions. For example, you could

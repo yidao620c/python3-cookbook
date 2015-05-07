@@ -9,7 +9,11 @@ You are writing an extension module that needs to pass a NULL-terminated string 
 C library. However, you’re not entirely sure how to do it with Python’s Unicode string
 implementation.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Many C libraries include functions that operate on NULL-terminated strings declared
 as type char *. Consider the following C function that we will use for the purposes of
 illustration and testing:
@@ -121,7 +125,11 @@ Both of the preceding conversions guarantee NULL-terminated data, but they do no
 check for embedded NULL bytes elsewhere inside the string. Thus, that’s something
 that you would need to check yourself if it’s important.
 
-Discussion
+|
+
+----------
+讨论
+----------
 If it all possible, you should try to avoid writing code that relies on NULL-terminated
 strings since Python has no such requirement. It is almost always better to handle strings
 using the combination of a pointer and a size if possible. Nevertheless, sometimes you

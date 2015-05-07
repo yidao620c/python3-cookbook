@@ -7,7 +7,11 @@
 ----------
 You want scripts and simple programs to write diagnostic information to log files.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The easiest way to add logging to simple programs is to use the logging module. For
 example:
 
@@ -99,7 +103,11 @@ Now make a configuration file logconfig.ini that looks like this:
 If you want to make changes to the configuration, you can simply edit the logcon‐
 fig.ini file as appropriate.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Ignoring for the moment that there are about a million advanced configuration options
 for the logging module, this solution is quite sufficient for simple programs and scripts.
 Simply make sure that you execute the basicConfig() call prior to making any logging

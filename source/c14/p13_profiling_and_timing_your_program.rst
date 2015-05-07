@@ -8,7 +8,11 @@
 You  would  like  to  find  out  where  your  program  spends  its  time  and  make  timing
 measurements.
 
-Solution
+|
+
+----------
+解决方案
+----------
 If you simply want to time your whole program, it’s usually easy enough to use something
 like the Unix time command. For example:
 
@@ -115,7 +119,11 @@ iterations, supply a number argument like this:
 1.0270336690009572
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 When making performance measurements, be aware that any results you get are ap‐
 proximations. The time.perf_counter() function used in the solution provides the
 highest-resolution timer possible on a given platform. However, it still measures wall-

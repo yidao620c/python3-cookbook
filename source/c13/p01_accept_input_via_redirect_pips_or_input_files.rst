@@ -10,7 +10,11 @@ is easiest for the user. This should include piping output from a command to the
 redirecting a file into the script, or just passing a filename, or list of filenames, to the
 script on the command line.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Python’s built-in fileinput module makes this very simple and concise. If you have a
 script that looks like this:
 #!/usr/bin/env python3
@@ -28,7 +32,11 @@ $ ls | ./filein.py          # Prints a directory listing to stdout.
 $ ./filein.py /etc/passwd   # Reads /etc/passwd to stdout.
 $ ./filein.py < /etc/passwd # Reads /etc/passwd to stdout.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The  fileinput.input() function creates and returns an instance of the  FileInput
 class. In addition to containing a few handy helper methods, the instance can also be
 used as a context manager. So, to put all of this together, if we wrote a script that expected

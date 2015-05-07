@@ -8,7 +8,11 @@
 You want to send and receive large arrays of contiguous data across a network connec‐
 tion, making as few copies of the data as possible.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The following functions utilize memoryviews to send and receive large arrays:
 
 # zerocopy.py
@@ -61,7 +65,11 @@ array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.])
 array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 In data-intensive distributed computing and parallel programming applications, it’s not
 uncommon to write programs that need to send/receive large chunks of data. However,
 to do this, you somehow need to reduce the data down to raw bytes for use with low-

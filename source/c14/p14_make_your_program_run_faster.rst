@@ -8,7 +8,11 @@
 Your program runs too slow and you’d like to speed it up without the assistance of more
 extreme solutions, such as C extensions or a just-in-time (JIT) compiler.
 
-Solution
+|
+
+----------
+解决方案
+----------
 While the first rule of optimization might be to “not do it,” the second rule is almost
 certainly “don’t optimize the unimportant.” To that end, if your program is running slow,
 you might start by profiling your code as discussed in Recipe 14.13.
@@ -192,7 +196,11 @@ copy() may be a sign of code that’s been written by someone who doesn’t full
 stand or trust Python’s memory model. In such code, it may be safe to eliminate many
 of the copies.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Before optimizing, it’s usually worthwhile to study the algorithms that you’re using first.
 You’ll get a much bigger speedup by switching to an O(n log n) algorithm than by
 trying to tweak the implementation of an an O(n**2) algorithm.

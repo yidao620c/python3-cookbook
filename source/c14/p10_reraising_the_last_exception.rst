@@ -7,7 +7,11 @@
 ----------
 You caught an exception in an except block, but now you want to reraise it.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Simply use the raise statement all by itself. For example:
 
 >>> def example():
@@ -26,7 +30,11 @@ Traceback (most recent call last):
 ValueError: invalid literal for int() with base 10: 'N/A'
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 This problem typically arises when you need to take some kind of action in response to
 an exception (e.g., logging, cleanup, etc.), but afterward, you simply want to propagate
 the exception along. A very common use might be in catch-all exception handlers:

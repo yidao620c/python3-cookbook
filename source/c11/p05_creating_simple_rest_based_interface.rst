@@ -9,7 +9,11 @@ You want to be able to control or interact with your program remotely over the n
 using a simple REST-based interface. However, you don’t want to do it by installing a
 full-fledged web programming framework.
 
-Solution
+|
+
+----------
+解决方案
+----------
 One of the easiest ways to build REST-based interfaces is to create a tiny library based
 on the WSGI standard, as described in PEP 3333. Here is an example:
 
@@ -114,7 +118,11 @@ To test your server, you can interact with it using a browser or urllib. For exa
 </time>
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 In REST-based interfaces, you are typically writing programs that respond to common
 HTTP requests. However, unlike a full-fledged website, you’re often just pushing data
 around. This data might be encoded in a variety of standard formats such as XML, JSON,

@@ -7,7 +7,11 @@
 ----------
 You want to skip or mark selected tests as an anticipated failure in your unit tests.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The unittest module has decorators that can be applied to selected test methods to
 control their handling. For example:
 
@@ -52,7 +56,11 @@ If you run this code on a Mac, you’ll get this output:
 
     OK (skipped=2, expected failures=1)
 
-Discussion
+|
+
+----------
+讨论
+----------
 The skip() decorator can be used to skip over a test that you don’t want to run at all.
 skipIf() and skipUnless() can be a useful way to write tests that only apply to certain
 platforms or Python versions, or which have other dependencies. Use the @expected

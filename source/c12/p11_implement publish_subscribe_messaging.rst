@@ -8,7 +8,11 @@
 You have a program based on communicating threads and want them to implement
 publish/subscribe messaging.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To  implement  publish/subscribe  messaging,  you  typically  introduce  a  separate  “ex‐
 change” or “gateway” object that acts as an intermediary for all messages. That is, instead
 of directly sending a message from one task to another, a message is sent to the exchange
@@ -73,7 +77,11 @@ Although there are many different variations on this theme, the overall idea is 
 Messages will be delivered to an exchange and the exchange will deliver them to attached
 subscribers.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The concept of tasks or threads sending messages to one another (often via queues) is
 easy to implement and quite popular. However, the benefits of using a public/subscribe
 (pub/sub) model instead are often overlooked.

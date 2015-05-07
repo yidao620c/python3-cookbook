@@ -8,7 +8,11 @@
 You need to access various services via HTTP as a client. For example, downloading
 data or interacting with a REST-based API.
 
-Solution
+|
+
+----------
+解决方案
+----------
 For simple things, it’s usually easy enough to use the  urllib.request module. For
 example, to send a simple HTTP GET request to a remote service, do something like this:
 
@@ -140,7 +144,11 @@ files = { 'file': ('data.csv', open('data.csv', 'rb')) }
 
 r = requests.post(url, files=files)
 
-Discussion
+|
+
+----------
+讨论
+----------
 For really simple HTTP client code, using the built-in urllib module is usually fine.
 However, if you have to do anything other than simple GET or POST requests, you really
 can’t rely on its functionality. This is where a third-party module, such as requests,

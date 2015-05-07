@@ -8,7 +8,11 @@
 You have a program that performs a lot of CPU-intensive work, and you want to make
 it run faster by having it take advantage of multiple CPUs.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The concurrent.futures library provides a ProcessPoolExecutor class that can be
 used to execute computationally intensive functions in a separately running instance of
 the Python interpreter. However, in order to use it, you first need to have some com‐
@@ -116,7 +120,11 @@ With this modification, the script produces the same result but runs about 3.5 t
 faster on our quad-core machine. The actual performance will vary according to the
 number of CPUs available on your machine.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Typical usage of a ProcessPoolExecutor is as follows:
 from concurrent.futures import ProcessPoolExecutor
 

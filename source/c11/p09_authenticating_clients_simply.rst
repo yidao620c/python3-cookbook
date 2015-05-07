@@ -8,7 +8,11 @@
 You want a simple way to authenticate the clients connecting to servers in a distributed
 system, but don’t need the complexity of something like SSL.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Simple but effective authentication can be performed by implementing a connection
 handshake using the hmac module. Here is sample code:
 
@@ -85,7 +89,11 @@ s.send(b'Hello World')
 resp = s.recv(1024)
 ...
 
-Discussion
+|
+
+----------
+讨论
+----------
 A common use of hmac authentication is in internal messaging systems and interprocess
 communication. For example, if you are writing a system that involves multiple pro‐
 cesses communicating across a cluster of machines, you can use this approach to make

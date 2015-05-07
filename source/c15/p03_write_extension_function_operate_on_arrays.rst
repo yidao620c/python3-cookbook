@@ -9,7 +9,11 @@ You want to write a C extension function that operates on contiguous arrays of d
 might be created by the array module or libraries like NumPy. However, you would like
 your function to be general purpose and not specific to any one array library.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To receive and process arrays in a portable manner, you should write code that uses the
 Buffer Protocol. Here is an example of a handwritten C extension function that receives
 array data and calls the avg(double *buf, int len) function from this chapter’s in‐
@@ -83,7 +87,11 @@ TypeError: Expected a 1-dimensional array
 2.0
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 Passing array objects to C functions might be one of the most common things you would
 want to do with a extension function. A large number of Python applications, ranging
 from image processing to scientific computing, are based on high-performance array

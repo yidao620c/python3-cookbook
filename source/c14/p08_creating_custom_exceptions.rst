@@ -8,7 +8,11 @@
 You’re building an application and would like to wrap lower-level exceptions with cus‐
 tom ones that have more meaning in the context of your application.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Creating new exceptions is easy—just define them as classes that inherit from Excep
 tion (or one of the other existing exception types if it makes more sense). For example,
 if you are writing code related to network programming, you might define some custom
@@ -35,7 +39,11 @@ except TimeoutError as e:
 except ProtocolError as e:
     ...
 
-Discussion
+|
+
+----------
+讨论
+----------
 Custom exception classes should almost always inherit from the built-in Exception
 class, or inherit from some locally defined base exception that itself inherits from Ex
 ception. Although all exceptions also derive from BaseException, you should not use

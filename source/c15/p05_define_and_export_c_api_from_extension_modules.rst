@@ -10,7 +10,11 @@ you would like to export as a public C API for use elsewhere. You would like to 
 functions inside other extension modules, but don’t know how to link them together,
 and doing it with the C compiler/linker seems excessively complicated (or impossible).
 
-Solution
+|
+
+----------
+解决方案
+----------
 This recipe focuses on the code written to handle Point objects, which were presented
 in Recipe 15.4. If you recall, that C code included some utility functions like this:
 
@@ -201,7 +205,11 @@ API functions defined in the other module:
 2.000000 3.000000
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 This recipe relies on the fact that capsule objects can hold a pointer to anything you
 wish. In this case, the defining module populates a structure of function pointers, creates
 a capsule that points to it, and saves the capsule in a module-level attribute (e.g., sam

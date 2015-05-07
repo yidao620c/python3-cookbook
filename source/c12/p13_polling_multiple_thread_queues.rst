@@ -9,7 +9,11 @@ You have a collection of thread queues, and you would like to be able to poll th
 incoming items, much in the same way as you might poll a collection of network con‐
 nections for incoming data.
 
-Solution
+|
+
+----------
+解决方案
+----------
 A common solution to polling problems involves a little-known trick involving a hidden
 loopback network connection. Essentially, the idea is as follows: for each queue (or any
 object) that you want to poll, you create a pair of connected sockets. You then write on
@@ -93,7 +97,11 @@ q2.put(15)
 If you try it, you’ll find that the consumer indeed receives all of the put items, regardless
 of which queues they are placed in.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The problem of polling non-file-like objects, such as queues, is often a lot trickier than
 it looks. For instance, if you don’t use the socket technique shown, your only option is
 to write code that cycles through the queues and uses a timer, like this:

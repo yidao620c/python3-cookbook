@@ -8,7 +8,11 @@
 You want to use Cython to make a Python extension module that wraps around an
 existing C library.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Making an extension module with Cython looks somewhat similar to writing a hand‐
 written extension, in that you will be creating a collection of wrapper functions. How‐
 ever, unlike previous recipes, you won’t be doing this in C—the code will look a lot more
@@ -150,7 +154,11 @@ True
 2.8284271247461903
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 This recipe incorporates a number of advanced features discussed in prior recipes, in‐
 cluding manipulation of arrays, wrapping opaque pointers, and releasing the GIL. Each
 of these parts will be discussed in turn, but it may help to review earlier recipes first.

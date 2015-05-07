@@ -8,7 +8,11 @@
 You have an extension module that needs to handle a pointer to a C data structure, but
 you don’t want to expose any internal details of the structure to Python.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Opaque data structures are easily handled by wrapping them inside capsule objects.
 Consider this fragment of C code from our sample code:
 
@@ -80,7 +84,11 @@ Using these functions from Python looks like this:
 2.8284271247461903
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 Capsules are similar to a typed C pointer. Internally, they hold a generic pointer along
 with an identifying name and can be easily created using the PyCapsule_New() function.
 In addition, an optional destructor function can be attached to a capsule to release the

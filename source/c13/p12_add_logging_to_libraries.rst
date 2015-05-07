@@ -8,7 +8,11 @@
 You would like to add a logging capability to a library, but don’t want it to interfere with
 programs that don’t use logging.
 
-Solution
+|
+
+----------
+解决方案
+----------
 For libraries that want to perform logging, you should create a dedicated logger object,
 and initially configure it as follows:
 
@@ -38,7 +42,11 @@ example:
 CRITICAL:somelib:A Critical Error!
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 Libraries present a special problem for logging, since information about the environ‐
 ment in which they are used isn’t known. As a general rule, you should never write
 library code that tries to configure the logging system on its own or which makes as‐

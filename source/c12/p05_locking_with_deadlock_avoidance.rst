@@ -8,7 +8,11 @@
 You’re writing a multithreaded program where threads need to acquire more than one
 lock at a time while avoiding deadlock.
 
-Solution
+|
+
+----------
+解决方案
+----------
 In multithreaded programs, a common source of deadlock is due to threads that attempt
 to acquire multiple locks at once. For instance, if a thread acquires the first lock, but
 then blocks trying to acquire the second lock, that thread can potentially block the
@@ -131,7 +135,11 @@ acquired. The acquire() function checks the list of previously acquired locks an
 forces the ordering constraint that previously acquired locks must have an object ID
 that is less than the new locks being acquired.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The issue of deadlock is a well-known problem with programs involving threads (as
 well as a common subject in textbooks on operating systems). As a rule of thumb, as
 long as you can ensure that threads can hold only one lock at a time, your program will

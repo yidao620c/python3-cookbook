@@ -7,7 +7,11 @@
 ----------
 Your program is broken and you’d like some simple strategies for debugging it.
 
-Solution
+|
+
+----------
+解决方案
+----------
 If your program is crashing with an exception, running your program as python3 -i
 someprogram.py can be a useful tool for simply looking around. The -i option starts
 an interactive shell as soon as a program terminates. From there, you can explore the
@@ -100,7 +104,11 @@ and answering questions about the control flow or arguments to functions. For in
 once the debugger starts, you can inspect variables using print or type a command such
 as w to get the stack traceback.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Don’t make debugging more complicated than it needs to be. Simple errors can often
 be resolved by merely knowing how to read program tracebacks (e.g., the actual error
 is usually the last line of the traceback). Inserting a few selected print() functions in

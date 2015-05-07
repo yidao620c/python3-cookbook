@@ -8,7 +8,11 @@
 You want to implement concurrency using generators (coroutines) as an alternative to
 system threads. This is sometimes known as user-level threading or green threading.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To implement your own concurrency using generators, you first need a fundamental
 insight concerning generator functions and the yield statement. Specifically, the fun‐
 damental behavior of yield is that it causes a generator to suspend its execution. By
@@ -333,7 +337,11 @@ essentially implementing a small operating system. There is a queue of tasks rea
 run and there are waiting areas for tasks sleeping for I/O. Much of the scheduler involves
 moving tasks between the ready queue and the I/O waiting area.
 
-Discussion
+|
+
+----------
+讨论
+----------
 When building generator-based concurrency frameworks, it is most common to work
 with the more general form of yield:
 

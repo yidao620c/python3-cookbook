@@ -8,7 +8,11 @@
 You would like to write a program that runs as a proper daemon process on Unix or
 Unix-like systems.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Creating a proper daemon process requires a precise sequence of system calls and careful
 attention to detail. The following code shows how to define a daemon process along
 with the ability to easily stop it once launched:
@@ -126,7 +130,11 @@ daemon, use:
 bash % daemon.py stop
 bash %
 
-Discussion
+|
+
+----------
+讨论
+----------
 This recipe defines a function daemonize() that should be called at program startup to
 make the program run as a daemon. The signature to daemonize() is using keyword-
 only arguments to make the purpose of the optional arguments more clear when used.

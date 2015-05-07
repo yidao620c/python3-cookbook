@@ -8,7 +8,11 @@
 You want to write C extension code that consumes data from any Python file-like object
 (e.g., normal files, StringIO objects, etc.).
 
-Solution
+|
+
+----------
+解决方案
+----------
 To consume data on a file-like object, you need to repeatedly invoke its read() method
 and take steps to properly decode the resulting data.
 Here is a sample C extension function that merely consumes all of the data on a file-like
@@ -86,7 +90,11 @@ Hello
 World
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 Unlike a normal system file, a file-like object is not necessarily built around a low-level
 file descriptor. Thus, you can’t use normal C library functions to access it. Instead, you
 need to use Python’s C API to manipulate the file-like object much like you would in

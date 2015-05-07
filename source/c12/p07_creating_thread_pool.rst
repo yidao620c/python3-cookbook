@@ -8,7 +8,11 @@
 You want to create a pool of worker threads for serving clients or performing other kinds
 of work.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The concurrent.futures library has a ThreadPoolExecutor class that can be used for
 this purpose. Here is an example of a simple TCP server that uses a thread-pool to serve
 clients:
@@ -105,7 +109,11 @@ The result objects in the example handle all of the blocking and coordination ne
 to get data back from the worker thread. Specifically, the operation a.result() blocks
 until the corresponding function has been executed by the pool and returned a value.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Generally, you should avoid writing programs that allow unlimited growth in the num‐
 ber of threads. For example, take a look at the following server:
 

@@ -8,7 +8,11 @@
 You want to implement a server that communicates with clients using the TCP Internet
 protocol.
 
-Solution
+|
+
+----------
+解决方案
+----------
 An easy way to create a TCP server is to use the socketserver library. For example,
 here is a simple echo server:
 
@@ -60,7 +64,11 @@ if __name__ == '__main__':
     serv = TCPServer(('', 20000), EchoHandler)
     serv.serve_forever()
 
-Discussion
+|
+
+----------
+讨论
+----------
 socketserver  makes  it  relatively  easy  to  create  simple  TCP  servers.  However,  you
 should be aware that, by default, the servers are single threaded and can only serve one
 client at a time. If you want to handle multiple clients, either instantiate a ForkingTCP

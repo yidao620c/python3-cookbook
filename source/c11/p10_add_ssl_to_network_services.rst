@@ -8,7 +8,11 @@
 You want to implement a network service involving sockets where servers and clients
 authenticate themselves and encrypt the transmitted data using SSL.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The ssl module provides support for adding SSL to low-level socket connections. In
 particular, the ssl.wrap_socket() function takes an existing socket and wraps an SSL
 layer around it. For example, here’s an example of a simple echo server that presents a
@@ -230,7 +234,11 @@ s = ServerProxy('https://localhost:15000',
                                                   'client_key.pem'),
                 allow_none=True)
 
-Discussion
+|
+
+----------
+讨论
+----------
 Getting this recipe to work will test your system configuration skills and understanding
 of SSL. Perhaps the biggest challenge is simply getting the initial configuration of keys,
 certificates, and other matters in order.

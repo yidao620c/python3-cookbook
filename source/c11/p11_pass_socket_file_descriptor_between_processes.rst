@@ -10,7 +10,11 @@ file descriptor from one interpreter to the other. For instance, perhaps there i
 process that is responsible for receiving connections, but the actual servicing of clients
 is to be handled by a different interpreter.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To pass a file descriptor between processes, you first need to connect the processes
 together. On Unix machines, you might use a Unix domain socket, whereas on Win‐
 dows,  you  could  use  a  named  pipe.  However,  rather  than  deal  with  such  low-level
@@ -82,7 +86,11 @@ The most important part of this example is the fact that the client socket accep
 server is actually serviced by a completely different process. The server merely hands it
 off, closes it, and waits for the next connection.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Passing file descriptors between processes is something that many programmers don’t
 even realize is possible. However, it can sometimes be a useful tool in building scalable
 systems. For example, on a multicore machine, you could have multiple instances of the

@@ -7,7 +7,11 @@
 ----------
 You want to execute an external command and collect its output as a Python string.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Use the subprocess.check_output() function. For example:
 
 import subprocess
@@ -53,7 +57,11 @@ Be aware that executing commands under the shell is a potential security risk if
 ments are derived from user input. The shlex.quote() function can be used to properly
 quote arguments for inclusion in shell commands in this case.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The check_output() function is the easiest way to execute an external command and
 get its output. However, if you need to perform more advanced communication with a
 

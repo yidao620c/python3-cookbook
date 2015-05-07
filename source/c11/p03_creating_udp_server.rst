@@ -8,7 +8,11 @@
 You want to implement a server that communicates with clients using the UDP Internet
 protocol.
 
-Solution
+|
+
+----------
+解决方案
+----------
 As with TCP, UDP servers are also easy to create using the socketserver library. For
 example, here is a simple time server:
 
@@ -42,7 +46,11 @@ to it:
 (b'Wed Aug 15 20:35:08 2012', ('127.0.0.1', 20000))
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 A typical UDP server receives an incoming datagram (message) along with a client
 address. If the server is to respond, it sends a datagram back to the client. For trans‐
 mission of datagrams, you should use the  sendto() and  recvfrom() methods of a

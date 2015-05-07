@@ -8,7 +8,11 @@
 You have existing C code that you would like to access as a C extension module. You
 would like to do this using the Swig wrapper generator.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Swig operates by parsing C header files and automatically creating extension code. To
 use it, you first need to have a C header file. For example, this header file for our sample
 code:
@@ -148,7 +152,11 @@ straightforward way. For example:
 2.0
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 Swig is one of the oldest tools for building extension modules, dating back to Python
 Python. Swig can automate much of the wrapper generation process.
 

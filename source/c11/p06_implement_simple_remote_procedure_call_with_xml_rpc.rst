@@ -8,7 +8,11 @@
 You want an easy way to execute functions or methods in Python programs running on
 remote machines.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Perhaps the easiest way to implement a simple remote procedure call mechanism is to
 use XML-RPC. Here is an example of a simple server that implements a simple key-
 value store:
@@ -63,7 +67,11 @@ Here is how you would access the server remotely from a client:
 False
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 XML-RPC can be an extremely easy way to set up a simple remote procedure call service.
 All you need to do is create a server instance, register functions with it using the regis
 ter_function() method, and then launch it using the serve_forever() method. This

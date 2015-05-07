@@ -9,7 +9,11 @@ You want to safely execute a Python callable from C and return a result back to 
 example, perhaps you are writing C code that wants to use a Python function as a
 callback.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Calling Python from C is mostly straightforward, but involves a number of tricky parts.
 The following C code shows an example of how to do it safely:
 
@@ -151,7 +155,11 @@ Using this extension function, you could test it as follows:
 7.0
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 If you are calling Python from C, the most important thing to keep in mind is that C is
 generally going to be in charge. That is, C has the responsibility of creating the argu‐
 ments, calling the Python function, checking for exceptions, checking types, extracting

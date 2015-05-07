@@ -8,7 +8,11 @@
 You’ve heard about the Global Interpreter Lock (GIL), and are worried that it might be
 affecting the performance of your multithreaded program.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Although Python fully supports thread programming, parts of the C implementation
 of the interpreter are not entirely thread safe to a level of allowing fully concurrent
 execution. In fact, the interpreter is protected by a so-called Global Interpreter Lock
@@ -107,7 +111,11 @@ If you are using other tools to access C, such as the ctypes library or Cython, 
 not need to do anything. For example, ctypes releases the GIL when calling into C by
 default.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Many programmers, when faced with thread performance problems, are quick to blame
 the GIL for all of their ills. However, doing so is shortsighted and naive. Just as a real-
 

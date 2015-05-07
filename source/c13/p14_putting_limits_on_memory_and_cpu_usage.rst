@@ -8,7 +8,11 @@
 You want to place some limits on the memory or CPU use of a program running on
 Unix system.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The resource module can be used to perform both tasks. For example, to restrict CPU
 time, do the following:
 
@@ -44,7 +48,11 @@ def limit_memory(maxsize):
 With a memory limit in place, programs will start generating MemoryError exceptions
 when no more memory is available.
 
-Discussion
+|
+
+----------
+讨论
+----------
 In this recipe, the setrlimit() function is used to set a soft and hard limit on a particular
 resource. The soft limit is a value upon which the operating system will typically restrict
 or notify the process via a signal. The hard limit represents an upper bound on the values

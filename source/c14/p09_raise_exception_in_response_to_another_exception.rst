@@ -8,7 +8,11 @@
 You want to raise an exception in response to catching a different exception, but want
 to include information about both exceptions in the traceback.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To chain exceptions, use the raise from statement instead of a simple raise statement.
 This will give you information about both errors. For example:
 
@@ -86,7 +90,11 @@ Traceback (most recent call last):
 RuntimeError: A parsing error occurred
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 In designing code, you should give careful attention to use of the raise statement inside
 of  other  except  blocks.  In  most  cases,  such  raise  statements  should  probably  be
 changed to raise from statements. That is, you should prefer this style:

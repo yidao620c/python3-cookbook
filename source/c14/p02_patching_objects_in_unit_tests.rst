@@ -9,7 +9,11 @@ You’re writing unit tests and need to apply patches to selected objects in ord
 assertions about how they were used in the test (e.g., assertions about being called with
 certain parameters, access to selected attributes, etc.).
 
-Solution
+|
+
+----------
+解决方案
+----------
 The unittest.mock.patch() function can be used to help with this problem. It’s a little
 unusual, but patch() can be used as a decorator, a context manager, or stand-alone. For
 example, here’s an example of how it’s used as a decorator:
@@ -50,7 +54,11 @@ def test2():
          patch('example.patch3') as mock3:
     ...
 
-Discussion
+|
+
+----------
+讨论
+----------
 patch() works by taking an existing object with the fully qualified name that you pro‐
 vide and replacing it with a new value. The original value is then restored after the
 completion of the decorated function or context manager. By default, values are replaced

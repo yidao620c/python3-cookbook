@@ -8,7 +8,11 @@
 You are writing an extension module that needs to pass a Python string to a C library
 function that may or may not know how to properly handle Unicode.
 
-Solution
+|
+
+----------
+解决方案
+----------
 There are many issues to be concerned with here, but the main one is that existing C
 libraries won’t understand Python’s native representation of Unicode. Therefore, your
 challenge is to convert the Python string into a form that can be more easily understood
@@ -78,7 +82,11 @@ Here is an interactive session that illustrates how these functions work:
 Carefully observe how the byte-oriented function print_chars() is receiving UTF-8
 encoded data, whereas print_wchars() is receiving the Unicode code point values.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Before considering this recipe, you should first study the nature of the C library that
 you’re accessing. For many C libraries, it might make more sense to pass bytes instead
 of a string. To do that, use this conversion code instead:

@@ -8,7 +8,11 @@
 You  want  to  read  configuration  files  written  in  the  common  .ini  configuration  file
 format.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The configparser module can be used to read configuration files. For example, suppose
 you have this configuration file:
 
@@ -88,7 +92,11 @@ signature =
           =================================
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 Configuration files are well suited as a human-readable format for specifying configu‐
 ration data to your program. Within each config file, values are grouped into different
 sections (e.g., “installation,” “debug,” and “server,” in the example). Each section then

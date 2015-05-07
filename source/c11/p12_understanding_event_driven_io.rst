@@ -9,7 +9,11 @@ You have heard about packages based on “event-driven” or “asynchronous” 
 you’re not entirely sure what it means, how it actually works under the covers, or how
 it might impact your program if you use it.
 
-Solution
+|
+
+----------
+解决方案
+----------
 At a fundamental level, event-driven I/O is a technique that takes basic I/O operations
 (e.g., reads and writes) and converts them into events that must be handled by your
 program. For example, whenever data was received on a socket, it turns into a “receive”
@@ -168,7 +172,11 @@ the connection is closed, each client must take care to remove themselves from t
 If you run this program and try connecting with Telnet or some similar tool, you’ll see
 it echoing received data back to you. It should easily handle multiple clients.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Virtually all event-driven frameworks operate in a manner that is similar to that shown
 in the solution. The actual implementation details and overall software architecture
 might vary greatly, but at the core, there is a polling loop that checks sockets for activity

@@ -8,7 +8,11 @@
 You need to pass filenames to C library functions, but need to make sure the filename
 has been encoded according to the system’s expected filename encoding.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To write an extension function that receives a filename, use code such as this:
 
 static PyObject *py_get_filename(PyObject *self, PyObject *args) {
@@ -52,7 +56,11 @@ int   filename_len;   /* Already set */
 
 PyObject *obj = PyUnicode_DecodeFSDefaultAndSize(filename, filename_len);
 
-Discussion
+|
+
+----------
+讨论
+----------
 Dealing with filenames in a portable way is a tricky problem that is best left to Python.
 If you use this recipe in your extension code, filenames will be handled in a manner that
 is consistent with filename handling in the rest of Python. This includes encoding/

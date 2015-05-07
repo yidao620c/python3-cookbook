@@ -11,7 +11,11 @@ UTF-8, but it’s not being strictly enforced. You would like to write code that
 malformed data in a graceful way that doesn’t crash Python or destroy the string data
 in the process.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Here is some C data and a function that illustrates the nature of this problem:
 
 /* Some dubious string data (malformed UTF-8) */
@@ -76,7 +80,11 @@ Careful observation will reveal that the malformed string got encoded into a Pyt
 string without errors, and that when passed back into C, it turned back into a byte string
 that exactly encoded the same bytes as the original C string.
 
-Discussion
+|
+
+----------
+讨论
+----------
 This recipe addresses a subtle, but potentially annoying problem with string handling
 in extension modules. Namely, the fact that C strings in extensions might not follow the
 strict Unicode encoding/decoding rules that Python normally expects. Thus, it’s possible

@@ -9,7 +9,11 @@ You’ve written a script that requires a password, but since the script is mean
 active use, you’d like to prompt the user for a password rather than hardcode it into the
 script.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Python’s getpass module is precisely what you need in this situation. It will allow you
 to very easily prompt for a password without having the keyed-in password displayed
 on the user’s terminal. Here’s how it’s done:
@@ -27,7 +31,11 @@ else:
 In this code, the svc_login() function is code that you must write to further process
 the password entry. Obviously, the exact handling is application-specific.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Note in the preceding code that getpass.getuser() doesn’t prompt the user for their
 username. Instead, it uses the current user’s login name, according to the user’s shell
 environment, or as a last resort, according to the local system’s password database (on

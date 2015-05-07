@@ -10,7 +10,11 @@ You  have  a  program  that  has  a  method  whose  output  goes  to  standard  
 write a test for your code to prove that, given the proper input, the proper output is
 displayed.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Using the unittest.mock module’s patch() function, it’s pretty simple to mock out
 sys.stdout for just a single test, and put it back again, without messy temporary vari‐
 ables or leaking mocked-out state between test cases.
@@ -45,7 +49,11 @@ class TestURLPrint(TestCase):
             mymodule.urlprint(protocol, host, domain)
             self.assertEqual(fake_out.getvalue(), expected_url)
 
-Discussion
+|
+
+----------
+讨论
+----------
 The urlprint() function takes three arguments, and the test starts by setting up dummy
 arguments for each one. The expected_url variable is set to a string containing the
 expected output.

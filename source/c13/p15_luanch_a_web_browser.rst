@@ -8,7 +8,11 @@
 You want to launch a browser from a script and have it point to some URL that you
 specify.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The webbrowser module can be used to launch a browser in a platform-independent
 manner. For example:
 
@@ -44,7 +48,11 @@ True
 
 A full list of supported browser names can be found in the Python documentation.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Being able to easily launch a browser can be a useful operation in many scripts. For
 example, maybe a script performs some kind of deployment to a server and you’d like
 to have it quickly launch a browser so you can verify that it’s working. Or maybe a

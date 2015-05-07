@@ -9,7 +9,11 @@ You have a CIDR network address such as “123.45.67.89/27,” and you want to g
 a range of all the IP addresses that it represents (e.g., “123.45.67.64,” “123.45.67.65,” …,
 “123.45.67.95”).
 
-Solution
+|
+
+----------
+解决方案
+----------
 The ipaddress module can be easily used to perform such calculations. For example:
 
 >>> import ipaddress
@@ -79,7 +83,11 @@ IPv4Network('123.45.67.64/27')
 IPv4Address('123.45.67.73')
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 The ipaddress module has classes for representing IP addresses, networks, and inter‐
 faces. This can be especially useful if you want to write code that needs to manipulate
 network addresses in some way (e.g., parsing, printing, validating, etc.).

@@ -8,7 +8,11 @@
 You want to write C extension code that consumes items from any iterable object such
 as a list, tuple, file, or generator.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Here is a sample C extension function that shows how to consume the items on an
 iterable:
 
@@ -33,7 +37,11 @@ static PyObject *py_consume_iterable(PyObject *self, PyObject *args) {
   return Py_BuildValue("");
 }
 
-Discussion
+|
+
+----------
+讨论
+----------
 The code in this recipe mirrors similar code in Python. The PyObject_GetIter() call
 is the same as calling iter() to get an iterator. The PyIter_Next() function invokes
 the next method on the iterator returning the next item or NULL if there are no more

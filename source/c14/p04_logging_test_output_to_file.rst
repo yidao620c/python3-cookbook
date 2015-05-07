@@ -8,7 +8,11 @@
 You want the results of running unit tests written to a file instead of printed to standard
 output.
 
-Solution
+|
+
+----------
+解决方案
+----------
 A very common technique for running unit tests is to include a small code fragment
 like this at the bottom of your testing file:
 
@@ -34,7 +38,11 @@ if __name__ == '__main__':
     with open('testing.out', 'w') as f:
         main(f)
 
-Discussion
+|
+
+----------
+讨论
+----------
 The interesting thing about this recipe is not so much the task of getting test results
 redirected to a file, but the fact that doing so exposes some notable inner workings of
 the unittest module.

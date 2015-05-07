@@ -8,7 +8,11 @@
 You have an open file object in Python, but need to pass it to C extension code that will
 use the file.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To convert a file to an integer file descriptor, use PyFile_FromFd(), as shown:
 
 PyObject *fobj;     /* File object (already obtained somehow) */
@@ -31,7 +35,11 @@ The arguments to PyFile_FromFd() mirror those of the built-in open() function. N
 values simply indicate that the default settings for the encoding, errors, and newline
 arguments are being used.
 
-Discussion
+|
+
+----------
+讨论
+----------
 If you are passing file objects from Python to C, there are a few tricky issues to be
 concerned about. First, Python performs its own I/O buffering through the io module.
 Prior to passing any kind of file descriptor to C, you should first flush the I/O buffers

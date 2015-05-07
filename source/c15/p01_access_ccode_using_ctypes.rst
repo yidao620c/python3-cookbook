@@ -9,7 +9,11 @@ You have a small number of C functions that have been compiled into a shared lib
 or DLL. You would like to call these functions purely from Python without having to
 write additional C code or using a third-party extension tool.
 
-Solution
+|
+
+----------
+解决方案
+----------
 For small problems involving C code, it is often easy enough to use the ctypes module
 that is part of Python’s standard library. In order to use ctypes, you must first make
 sure the C code you want to access has been compiled into a shared library that is
@@ -118,7 +122,11 @@ For example:
 4.242640687119285
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 There are several aspects of this recipe that warrant some discussion. The first issue
 concerns the overall packaging of C and Python code together. If you are using ctypes
 to access C code that you have compiled yourself, you will need to make sure that the

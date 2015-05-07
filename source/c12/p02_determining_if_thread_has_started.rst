@@ -7,7 +7,11 @@
 ----------
 You’ve launched a thread, but want to know when it actually starts running.
 
-Solution
+|
+
+----------
+解决方案
+----------
 A key feature of threads is that they execute independently and nondeterministically.
 This can present a tricky synchronization problem if other threads in the program need
 to know if a thread has reached a certain point in its execution before carrying out
@@ -48,7 +52,11 @@ When you run this code, the “countdown is running” message will always appea
 the “countdown starting” message. This is coordinated by the event that makes the main
 thread wait until the countdown() function has first printed the startup message.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Event objects are best used for one-time events. That is, you create an event, threads
 wait for the event to be set, and once set, the Event is discarded. Although it is possible
 to clear an event using its clear() method, safely clearing an event and waiting for it

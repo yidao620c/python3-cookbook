@@ -9,7 +9,11 @@ The interpreter violently crashes with a segmentation fault, bus error, access v
 or other fatal error. You would like to get a Python traceback that shows you where your
 program was running at the point of failure.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The  faulthandler module can be used to help you solve this problem. Include the
 following code in your program:
 
@@ -36,7 +40,11 @@ back being printed on failures. For example:
 Although this won’t tell you where in the C code things went awry, at least it can tell you
 how it got there from Python.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The faulthandler will show you the stack traceback of the Python code executing at
 the time of failure. At the very least, this will show you the top-level extension function
 that was invoked. With the aid of pdb or other Python debugger, you can investigate the

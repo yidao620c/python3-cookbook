@@ -9,7 +9,11 @@ You need to write a script that involves finding files, like a file renaming scr
 archiver utility, but you’d rather not have to call shell utilities from within your Python
 script, or you want to provide specialized behavior not easily available by “shelling out.”
 
-Solution
+|
+
+----------
+解决方案
+----------
 To search for files, use the os.walk() function, supplying it with the top-level directory.
 Here is an example of a function that finds a specific filename and prints out the full
 path of all matches:
@@ -31,7 +35,11 @@ point and the name as positional arguments, like this:
 
 bash % ./findfile.py . myfile.txt
 
-Discussion
+|
+
+----------
+讨论
+----------
 The os.walk() method traverses the directory hierarchy for us, and for each directory
 it enters, it returns a 3-tuple, containing the relative path to the directory it’s inspecting,
 a list containing all of the directory names in that directory, and a list of filenames in

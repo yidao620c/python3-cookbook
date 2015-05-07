@@ -8,7 +8,11 @@
 You want to have your program issue warning messages (e.g., about deprecated features
 or usage problems).
 
-Solution
+|
+
+----------
+解决方案
+----------
 To have your program issue a warning message, use the warnings.warn() function. For
 example:
 
@@ -42,7 +46,11 @@ warnings into exceptions, use the -W error option:
     DeprecationWarning: logfile argument is deprecated
     bash %
 
-Discussion
+|
+
+----------
+讨论
+----------
 Issuing a warning message is often a useful technique for maintaining software and
 assisting users with issues that don’t necessarily rise to the level of being a full-fledged
 exception. For example, if you’re going to change the behavior of a library or framework,

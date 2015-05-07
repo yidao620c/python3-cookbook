@@ -116,6 +116,18 @@ def convert_cookbook(txt_file, base_dir):
                     with open(write_file, mode='w', encoding='utf-8') as wf:
                         wf.writelines(temp_lines)
                     temp_lines.clear()
+            elif re.match('^Solution$', line.strip()):
+                temp_lines.append('|\n')
+                temp_lines.append('\n')
+                temp_lines.append('----------\n')
+                temp_lines.append('解决方案\n')
+                temp_lines.append('----------\n')
+            elif re.match('^Discussion$', line.strip()):
+                temp_lines.append('|\n')
+                temp_lines.append('\n')
+                temp_lines.append('----------\n')
+                temp_lines.append('讨论\n')
+                temp_lines.append('----------\n')
             else:
                 temp_lines.append(line)
 

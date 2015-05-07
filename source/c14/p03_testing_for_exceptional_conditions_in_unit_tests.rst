@@ -7,7 +7,11 @@
 ----------
 You want to write a unit test that cleanly tests if an exception is raised.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To test for exceptions, use the assertRaises() method. For example, if you want to test
 that a function raised a ValueError exception, use this code:
 
@@ -36,7 +40,11 @@ class TestIO(unittest.TestCase):
         else:
             self.fail('IOError not raised')
 
-Discussion
+|
+
+----------
+讨论
+----------
 The assertRaises() method provides a convenient way to test for the presence of an
 exception. A common pitfall is to write tests that manually try to do things with excep‐
 tions on their own. For instance:

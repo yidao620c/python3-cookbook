@@ -8,7 +8,11 @@
 You need to store state that’s specific to the currently executing thread and not visible
 to other threads.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Sometimes in multithreaded programs, you need to store data that is only specific to
 the currently executing thread. To do this, create a thread-local storage object using
 threading.local(). Attributes stored and read on this object are only visible to the
@@ -69,7 +73,11 @@ nection (stored as self.local.sock). Thus, when the different threads perform so
 operations, they don’t interfere with one another as they are being performed on dif‐
 ferent sockets.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Creating and manipulating thread-specific state is not a problem that often arises in
 most programs. However, when it does, it commonly involves situations where an object
 being used by multiple threads needs to manipulate some kind of dedicated system

@@ -9,7 +9,11 @@ You would like to write some high-performance array processing functions to oper
 on arrays from libraries such as NumPy. You’ve heard that tools such as Cython can
 make this easier, but aren’t sure how to do it.
 
-Solution
+|
+
+----------
+解决方案
+----------
 As an example, consider the following code which shows a Cython function for clipping
 the values in a simple one-dimensional array of doubles:
 
@@ -99,7 +103,11 @@ mentation in a head-to-head battle with the clip() function already present in n
 As you can see, it’s quite a bit faster—an interesting result considering the core of the
 NumPy version is written in C.
 
-Discussion
+|
+
+----------
+讨论
+----------
 This recipe utilizes Cython typed memoryviews, which greatly simplify code that op‐
 erates on arrays. The declaration cpdef clip() declares clip() as both a C-level and
 Python-level function. In Cython, this is useful, because it means that the function call

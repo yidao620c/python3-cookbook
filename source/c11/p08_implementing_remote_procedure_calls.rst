@@ -8,7 +8,11 @@
 You want to implement simple remote procedure call (RPC) on top of a message passing
 layer, such as sockets, multiprocessing connections, or ZeroMQ.
 
-Solution
+|
+
+----------
+解决方案
+----------
 RPC is easy to implement by encoding function requests, arguments, and return values
 using  pickle, and passing the pickled byte strings between interpreters. Here is an
 example of a simple RPC handler that could be incorporated into a server:
@@ -106,7 +110,11 @@ It should be noted that many messaging layers (such as multiprocessing) already 
 rialize data using pickle. If this is the case, the pickle.dumps() and pickle.loads()
 calls can be eliminated.
 
-Discussion
+|
+
+----------
+讨论
+----------
 The general idea of the RPCHandler and RPCProxy classes is relatively simple. If a client
 wants to call a remote function, such as foo(1, 2, z=3), the proxy class creates a tuple
 ('foo', (1, 2), {'z': 3}) that contains the function name and arguments. This

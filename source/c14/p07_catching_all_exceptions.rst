@@ -7,7 +7,11 @@
 ----------
 You want to write code that catches all exceptions.
 
-Solution
+|
+
+----------
+解决方案
+----------
 To catch all exceptions, write an exception handler for Exception, as shown here:
 
 try:
@@ -19,7 +23,11 @@ except Exception as e:
 This will catch all exceptions save SystemExit, KeyboardInterrupt, and GeneratorEx
 it. If you also want to catch those exceptions, change Exception to BaseException.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Catching all exceptions is sometimes used as a crutch by programmers who can’t re‐
 member all of the possible exceptions that might occur in complicated operations. As
 such, it is also a very good way to write undebuggable code if you are not careful.

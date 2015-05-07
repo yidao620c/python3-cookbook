@@ -8,7 +8,11 @@
 You want to write a simple C extension module directly using Python’s extension API
 and no other tools.
 
-Solution
+|
+
+----------
+解决方案
+----------
 For simple C code, it is straightforward to make a handcrafted extension module. As a
 preliminary step, you probably want to make sure your C code has a proper header file.
 For example,
@@ -146,7 +150,11 @@ correctly.  Binary  distributions  of  Python  are  typically  built  using  Mic
 Studio. To get extensions to work, you may have to compile them using the same or
 compatible tools. See the Python documentation.
 
-Discussion
+|
+
+----------
+讨论
+----------
 Before attempting any kind of handwritten extension, it is absolutely critical that you
 consult Python’s documentation on “Extending and Embedding the Python Interpret‐
 er”. Python’s C extension API is large, and repeating all of it here is simply not practical.

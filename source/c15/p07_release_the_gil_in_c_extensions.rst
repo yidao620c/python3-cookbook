@@ -9,7 +9,11 @@ You have C extension code in that you want to execute concurrently with other th
 in the Python interpreter. To do this, you need to release and reacquire the global in‐
 terpreter lock (GIL).
 
-Solution
+|
+
+----------
+解决方案
+----------
 In C extension code, the GIL can be released and reacquired by inserting the following
 macros in the code:
 
@@ -26,7 +30,11 @@ PyObject *pyfunc(PyObject *self, PyObject *args) {
    return result;
 }
 
-Discussion
+|
+
+----------
+讨论
+----------
 The GIL can only safely be released if you can guarantee that no Python C API functions
 will be executed in the C code. Typical examples where the GIL might be released are
 in computationally intensive code that performs calculations on C arrays (e.g., in ex‐

@@ -9,7 +9,11 @@ You have a program that involves a mix of C, Python, and threads, but some of th
 threads are created from C outside the control of the Python interpreter. Moreover,
 certain threads utilize functions in the Python C API.
 
-Solution
+|
+
+----------
+解决方案
+----------
 If you’re going to mix C, Python, and threads together, you need to make sure you
 properly initialize and manage Python’s global interpreter lock (GIL). To do this, include
 the following code somewhere in your C code and make sure it’s called prior to creation
@@ -40,7 +44,11 @@ PyGILState_Release(), as shown in the following:
 Every  call  to  PyGILState_Ensure()  must  have  a  matching  call  to  PyGILState_Re
 lease().
 
-Discussion
+|
+
+----------
+讨论
+----------
 In advanced applications involving C and Python, it is not uncommon to have many
 things going on at once—possibly involving a mix of a C code, Python code, C threads,
 and Python threads. As long as you diligently make sure the interpreter is properly

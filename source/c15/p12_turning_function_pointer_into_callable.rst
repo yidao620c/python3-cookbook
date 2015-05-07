@@ -8,7 +8,11 @@
 You have (somehow) obtained the memory address of a compiled function, but want
 to turn it into a Python callable that you can use as an extension function.
 
-Solution
+|
+
+----------
+解决方案
+----------
 The ctypes module can be used to create Python callables that wrap around arbitrary
 memory addresses. The following example shows how to obtain the raw, low-level ad‐
 dress of a C function and how to turn it back into a callable object:
@@ -33,7 +37,11 @@ dress of a C function and how to turn it back into a callable object:
 0.0
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 To make a callable, you must first create a CFUNCTYPE instance. The first argument to
 CFUNCTYPE() is the return type. Subsequent arguments are the types of the arguments.
 Once you have defined the function type, you wrap it around an integer memory address

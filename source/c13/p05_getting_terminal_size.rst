@@ -7,7 +7,11 @@
 ----------
 You need to get the terminal size in order to properly format the output of your program.
 
-Solution
+|
+
+----------
+解决方案
+----------
 Use the os.get_terminal_size() function to do this:
 
 >>> import os
@@ -20,7 +24,11 @@ os.terminal_size(columns=80, lines=24)
 24
 >>>
 
-Discussion
+|
+
+----------
+讨论
+----------
 There are many other possible approaches for obtaining the terminal size, ranging from
 reading environment variables to executing low-level system calls involving ioctl()
 and TTYs. Frankly, why would you bother with that when this one simple call will

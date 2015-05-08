@@ -14,6 +14,36 @@ import datetime
 import mysql.connector
 from mysql.connector import errorcode
 
+class_map = {
+    7: '事务所',
+    5: '其他',
+    1: '个人',
+    2: '税务机关',
+    3: '企业',
+    4: '经销商',
+    6: '集团客户',
+    8: '公安'
+}
+enterprise_type_map = {
+    1: '国有企业',
+    2: '集体企业',
+    3: '股份合作企业',
+    4: '联营企业',
+    5: '有限责任公司',
+    6: '股份有限公司',
+    7: '私营企业',
+    8: '其他企业',
+    9: '合资经营企业（港或澳、台资）',
+    10: '合作经营企业（港或澳、台资）',
+    11: '港、澳、台商独资经营企业',
+    12: '港、澳、台商投资股份有限公司',
+    13: '中外合资经营企业',
+    14: '中外合作经营企业',
+    15: '外资企业',
+    16: '外商投资股份有限公司',
+    17: '个体工商户'
+}
+
 sql_create1 = """
     CREATE TABLE t_enterprise (
       id                  BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
@@ -197,7 +227,7 @@ def xlsx_to_table(xlsx_name):
         except:
             conn_.rollback()
             logging.exception('-------更新企业联系信息Exception,line={}-------'.format(i))
-            handle_wrong_line(conn_, cursor,d2, ty=2)
+            handle_wrong_line(conn_, cursor, d2, ty=2)
         if i % 50 == 0:
             conn_.commit()
     conn_.commit()

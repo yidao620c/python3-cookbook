@@ -22,6 +22,11 @@
 译者会坚持对自己每一句的翻译负责，力求高质量。但受能力限制，也难免有疏漏或者表意不当的地方。
 如果译文中有什么错漏的地方请大家见谅，也欢迎大家随时指正： yidao620@gmail.com
 
+最后也非常欢迎各位pythoner大虾能参与进来，一起加速完成这本书，共享给python社区。
+
+参与方式很简单，参考下面的“How to Contribute”说明。
+每一位贡献者我都会记下了，感谢你们！
+
 --------------------------------------------------------------
 
 ++++++++++++++++
@@ -47,6 +52,17 @@
     # otherwise, readthedocs.org uses their theme by default, so no need to specify it
 
 
+--------------------------------------------------------------
+
+
+++++++++++++++++
+主要贡献者
+++++++++++++++++
+
+1. 艾米 (katiechen8815@gmail.com)
+1. littlezz (zz.at.field@gmail.com)
+1. xiaotiaobu (https://github.com/xiaotiaobu)
+1. Eskibear (https://github.com/Eskibear)
 
 -----------------------------------------------------
 

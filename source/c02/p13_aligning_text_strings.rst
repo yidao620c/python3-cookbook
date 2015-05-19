@@ -18,11 +18,11 @@
 
     >>> text = 'Hello World'
     >>> text.ljust(20)
-    'Hello World '
+    'Hello World         '
     >>> text.rjust(20)
-    ' Hello World'
+    '         Hello World'
     >>> text.center(20)
-    ' Hello World '
+    '    Hello World     '
     >>>
 所有这些方法都能接受一个可选的填充字符。比如：
 
@@ -40,11 +40,11 @@
 .. code-block:: python
 
     >>> format(text, '>20')
-    ' Hello World'
+    '         Hello World'
     >>> format(text, '<20')
-    'Hello World '
+    'Hello World         '
     >>> format(text, '^20')
-    ' Hello World '
+    '    Hello World     '
     >>>
 
 如果你想指定一个非空格的填充字符，将它写到对齐字符的前面即可：
@@ -62,7 +62,7 @@
 .. code-block:: python
 
     >>> '{:>10s} {:>10s}'.format('Hello', 'World')
-    ' Hello World'
+    '     Hello      World'
     >>>
 
 ``format()`` 函数的一个好处是它不仅适用于字符串。它可以用来格式化任何值，使得它非常的通用。
@@ -72,9 +72,9 @@
 
     >>> x = 1.2345
     >>> format(x, '>10')
-    ' 1.2345'
+    '    1.2345'
     >>> format(x, '^10.2f')
-    ' 1.23 '
+    '   1.23   '
     >>>
 
 |
@@ -87,9 +87,9 @@
 .. code-block:: python
 
     >>> '%-20s' % text
-    'Hello World '
+    'Hello World         '
     >>> '%20s' % text
-    ' Hello World'
+    '         Hello World'
     >>>
 
 但是，在新版本代码中，你应该优先选择 ``format()`` 函数或者方法。

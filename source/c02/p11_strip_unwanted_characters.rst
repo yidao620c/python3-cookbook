@@ -49,7 +49,7 @@
     >>> s = ' hello     world \n'
     >>> s = s.strip()
     >>> s
-    'hello world'
+    'hello     world'
     >>>
 
 如果你想处理中间的空格，那么你需要求助其他技术。比如使用 ``replace()`` 方法或者是用正则表达式替换。示例如下：

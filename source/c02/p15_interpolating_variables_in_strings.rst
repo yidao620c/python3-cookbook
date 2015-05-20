@@ -61,7 +61,7 @@ Python并没有对在字符串中简单替换变量值提供直接的支持。
 
 .. code-block:: python
 
-    class SafeSub(dict):
+    class safesub(dict):
     """防止key找不到"""
     def __missing__(self, key):
         return '{' + key + '}'

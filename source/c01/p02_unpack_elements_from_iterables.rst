@@ -29,7 +29,7 @@ Python的星号表达式可以用来解决这个问题。比如，你在学习�
 .. code-block:: python
 
     >>> record = ('Dave', 'dave@example.com', '773-555-1212', '847-555-1212')
-    >>> name, email, *phone_numbers = user_record
+    >>> name, email, *phone_numbers = record
     >>> name
     'Dave'
     >>> email

@@ -24,15 +24,15 @@
 
     >>> # Right justified in 10 chars, one-digit accuracy
     >>> format(x, '>10.1f')
-    ' 1234.6'
+    '    1234.6'
 
     >>> # Left justified
     >>> format(x, '<10.1f')
-    '1234.6 '
+    '1234.6    '
 
     >>> # Centered
     >>> format(x, '^10.1f')
-    ' 1234.6 '
+    '  1234.6  '
 
     >>> # Inclusion of thousands separator
     >>> format(x, ',')
@@ -98,9 +98,9 @@
     >>> '%0.2f' % x
     '1234.57'
     >>> '%10.1f' % x
-    ' 1234.6'
+    '    1234.6'
     >>> '%-10.1f' % x
-    '1234.6 '
+    '1234.6    '
     >>>
 
 这种格式化方法也是可行的，不过比更加先进的 ``format()`` 要差一点。

@@ -63,6 +63,8 @@
 2. littlezz (zz.at.field@gmail.com)
 3. xiaotiaobu (https://github.com/xiaotiaobu)
 4. Eskibear (https://github.com/Eskibear)
+5. LiHaoGit (dahao647@gmail.com)
+6. Jason Chang (crazycashier@icoud.com)
 
 -----------------------------------------------------
 

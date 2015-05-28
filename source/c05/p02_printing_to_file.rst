@@ -16,7 +16,7 @@
 
 .. code-block:: python
 
-    with open('somefile.txt', 'wt') as f:
+    with open('somefile.txt', 'rt') as f:
         print('Hello World!', file=f)
 
 ----------

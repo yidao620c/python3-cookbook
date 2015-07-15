@@ -1,23 +1,20 @@
 ===============================
-9.16 强制*args和**kwargs的参数签名
+9.16 *args和**kwargs的强制参数签名
 ===============================
 
 ----------
 问题
 ----------
-You’ve written a function or method that uses *args and **kwargs, so that it can be
-general purpose, but you would also like to check the passed arguments to see if they
-match a specific function calling signature.
+你有一个函数或方法，它使用*args和**kwargs作为参数，这样使得它比较通用，
+但有时候你想检查传递进来的参数是不是某个你想要的类型。
 
 |
 
 ----------
 解决方案
 ----------
-For any problem where you want to manipulate function calling signatures, you should
-use the signature features found in the inspect module. Two classes, Signature and
-Parameter, are of particular interest here. Here is an interactive example of creating a
-function signature:
+对任何涉及到操作函数调用签名的问题，你都应该使用 ``inspect`` 模块中的签名特性。
+我们最主要关注两个类：``Signature`` 和 ``Parameter`` 。下面是一个创建函数前面的交互例子：
 
 .. code-block:: python
 
@@ -31,8 +28,8 @@ function signature:
     (x, y=42, *, z=None)
     >>>
 
-Once you have a signature object, you can easily bind it to *args and **kwargs using
-the signature’s bind() method, as shown in this simple example:
+一旦你有了一个签名对象，你就可以使用它的 ``bind()`` 方法很容易的将它绑定到 ``*args`` 和 ``**kwargs`` 上去。
+下面是一个简单的演示：
 
 .. code-block:: python
 
@@ -74,13 +71,10 @@ the signature’s bind() method, as shown in this simple example:
     TypeError: multiple values for argument 'x'
     >>>
 
-As you can see, the binding of a signature to the passed arguments enforces all of the
-usual function calling rules concerning required arguments, defaults, duplicates, and
-so forth.
+可以看出来，通过将签名和传递的参数绑定起来，可以强制函数调用遵循特定的规则，比如必填、默认、重复等等。
 
-Here is a more concrete example of enforcing function signatures. In this code, a base
-class has defined an extremely general-purpose version of __init__(), but subclasses
-are expected to supply an expected signature.
+下面是一个强制函数签名更具体的例子。在代码中，我们在基类中先定义了一个非常通用的 ``__init__()`` 方法，
+然后我们强制所有的子类必须提供一个特定的参数签名。
 
 .. code-block:: python
 
@@ -105,7 +99,7 @@ are expected to supply an expected signature.
     class Point(Structure):
         __signature__ = make_sig('x', 'y')
 
-Here is an example of how the Stock class works:
+下面是使用这个 ``Stock`` 类的示例：
 
 .. code-block:: python
 
@@ -123,19 +117,16 @@ Here is an example of how the Stock class works:
     TypeError: multiple values for argument 'shares'
     >>>
 
+|
 
 ----------
 讨论
 ----------
-The use of functions involving *args and **kwargs is very common when trying to
-make general-purpose libraries, write decorators or implement proxies. However, one
-downside of such functions is that if you want to implement your own argument checking,
-it can quickly become an unwieldy mess. As an example, see Recipe 8.11. The use
-of a signature object simplifies this.
+在我们需要构建通用函数库、编写装饰器或实现代理的时候，对于 ``*args`` 和 ``**kwargs`` 的使用是很普遍的。
+但是，这样的函数有一个缺点就是当你想要实现自己的参数检验时，代码就会笨拙混乱。在8.11小节里面有这样一个例子。
+这时候我们可以通过一个签名对象来简化它。
 
-In the last example of the solution, it might make sense to create signature objects
-through the use of a custom metaclass. Here is an alternative implementation that shows
-how to do this:
+在最后的一个方案实例中，我们还可以通过使用自定义元类来创建签名对象。下面演示怎样来实现：
 
 .. code-block:: python
 
@@ -165,10 +156,8 @@ how to do this:
     class Point(Structure):
         _fields = ['x', 'y']
 
-When defining custom signatures, it is often useful to store the signature in a special
-attribute __signature__, as shown. If you do this, code that uses the inspect module
-to perform introspection will see the signature and report it as the calling convention.
-For example:
+当我们自定义签名的时候，将签名存储在特定的属性 ``__signature__`` 中通常是很有用的。
+这样的话，在使用 ``inspect`` 模块执行内省的代码就能发现签名并将它作为调用约定。
 
 .. code-block:: python
 

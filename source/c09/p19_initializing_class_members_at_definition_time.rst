@@ -5,20 +5,16 @@
 ----------
 问题
 ----------
-You want to initialize parts of a class definition once at the time a class is defined, not
-when instances are created.
+你想在类被定义的时候就初始化一部分类的成员，而不是要等到实例被创建后。
 
 
 ----------
 解决方案
 ----------
-Performing initialization or setup actions at the time of class definition is a classic use
-of metaclasses. Essentially, a metaclass is triggered at the point of a definition, at which
-point you can perform additional steps.
+在类定义时就执行初始化或设置操作是元类的一个典型应用场景。本质上讲，一个元类会在定义时被触发，
+这时候你可以执行一些额外的操作。
 
-
-Here is an example that uses this idea to create classes similar to named tuples from the
-collections module:
+下面是一个例子，利用这个思路来创建类似于 ``collections`` 模块中的命名元组的类：
 
 .. code-block:: python
 
@@ -37,7 +33,7 @@ collections module:
                 raise ValueError('{} arguments required'.format(len(cls._fields)))
             return super().__new__(cls,args)
 
-This code allows simple tuple-based data structures to be defined, like this:
+这段代码可以用来定义简单的基于元组的数据结构，如下所示：
 
 .. code-block:: python
 
@@ -47,7 +43,7 @@ This code allows simple tuple-based data structures to be defined, like this:
     class Point(StructTuple):
         _fields = ['x', 'y']
 
-Here’s how they work:
+下面演示它如何工作：
 
 .. code-block:: python
 
@@ -72,42 +68,33 @@ Here’s how they work:
 讨论
 ----------
 
-In this recipe, the StructTupleMeta class takes the listing of attribute names in the
-_fields class attribute and turns them into property methods that access a particular
-tuple slot. The operator.itemgetter() function creates an accessor function and the
-property() function turns it into a property.
+这一小节中，类 ``StructTupleMeta`` 获取到类属性 ``_fields`` 中的属性名字列表，
+然后将它们转换成相应的可访问特定元组槽的方法。函数 ``operator.itemgetter()`` 创建一个访问器函数，
+然后 ``property()`` 函数将其转换成一个属性。
 
-The trickiest part of this recipe is knowing when the different initialization steps occur.
-The __init__() method in StructTupleMeta is only called once for each class that is
-defined. The cls argument is the class that has just been defined. Essentially, the code
-is using the _fields class variable to take the newly defined class and add some new
-parts to it.
+本节最难懂的部分是知道不同的初始化步骤是什么时候发生的。
+``StructTupleMeta`` 中的 ``__init__()`` 方法只在每个类被定义时被调用一次。
+``cls`` 参数就是那个被定义的类。实际上，上述代码使用了 ``_fields`` 类变量来保存新的被定义的类，
+然后给它再添加一点新的东西。
 
-The StructTuple class serves as a common base class for users to inherit from. The
-__new__() method in that class is responsible for making new instances. The use of
-__new__() here is a bit unusual, but is partly related to the fact that we’re modifying the
-calling signature of tuples so that we can create instances with code that uses a normallooking
-calling convention like this:
+``StructTuple`` 类作为一个普通的基类，供其他使用者来继承。
+这个类中的 ``__new__()`` 方法用来构造新的实例。
+这里使用 ``__new__()`` 并不是很常见，主要是因为我们要修改元组的调用签名，
+使得我们可以像普通的实例调用那样创建实例。就像下面这样：
 
 .. code-block:: python
 
     s = Stock('ACME', 50, 91.1) # OK
     s = Stock(('ACME', 50, 91.1)) # Error
 
-Unlike __init__(), the __new__() method gets triggered before an instance is created.
-Since tuples are immutable, it’s not possible to make any changes to them once they
-have been created. An __init__() function gets triggered too late in the instance creation
-process to do what we want. That’s why __new__() has been defined.
+跟 ``__init__()`` 不同的是，``__new__()`` 方法在实例被创建之前被触发。
+由于元组是不可修改的，所以一旦它们被创建了就不可能对它做任何改变。而 ``__init__()`` 会在实例创建的最后被触发，
+这样的话我们就可以做我们想做的了。这也是为什么 ``__new__()`` 方法已经被定义了。
 
+尽管本机很短，还是需要你能仔细研读，深入思考Python类是如何被定义的，实例是如何被创建的，
+还有就是元类和类的各个不同的方法究竟在什么时候被调用。
 
-Although this is a short recipe, careful study will reward the reader with a deep insight
-about how Python classes are defined, how instances are created, and the points at which
-different methods of metaclasses and classes are invoked.
-
-
-`PEP 422 <http://www.python.org/dev/peps/pep-0422>`_ may provide an alternative
-means for performing the task described in this recipe.
-However, as of this writing, it has not been adopted or accepted. Nevertheless,
-it might be worth a look in case you’re working with a version of Python newer than
-Python 3.3.
-
+`PEP 422 <http://www.python.org/dev/peps/pep-0422>`_
+提供了一个解决本节问题的另外一种方法。
+但是，截止到我写这本书的时候，它还没被采纳和接受。
+尽管如此，如果你使用的是Python 3.3或更高的版本，那么还是值得去看一下的。

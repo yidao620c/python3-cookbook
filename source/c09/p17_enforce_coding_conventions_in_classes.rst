@@ -5,18 +5,15 @@
 ----------
 问题
 ----------
-Your program consists of a large class hierarchy and you would like to enforce certain
-kinds of coding conventions (or perform diagnostics) to help maintain programmer
-sanity.
+你的程序包含一个很大的类继承体系，你希望强制执行某些编程规约（或者代码诊断）来帮助程序员保持清醒。
 
 |
 
 ----------
 解决方案
 ----------
-If you want to monitor the definition of classes, you can often do it by defining a
-metaclass. A basic metaclass is usually defined by inheriting from type and redefining
-its __new__() method or __init__() method. For example:
+如果你想监控类的定义，通常可以通过定义一个元类。一个基本元类通常是继承自 ``type`` 并重定义它的 ``__new__()`` 方法
+或者是 ``__init__()`` 方法。比如：
 
 .. code-block:: python
 
@@ -27,7 +24,7 @@ its __new__() method or __init__() method. For example:
             # clsdict is class dictionary
             return super().__new__(cls, clsname, bases, clsdict)
 
-Alternatively, if __init__() is defined:
+另一种是，定义 ``__init__()`` 方法：
 
 .. code-block:: python
 
@@ -38,8 +35,7 @@ Alternatively, if __init__() is defined:
             # bases is tuple of base classes
             # clsdict is class dictionary
 
-To use a metaclass, you would generally incorporate it into a top-level base class from
-which other objects inherit. For example:
+为了使用这个元类，你通常要将它放到到一个顶级父类定义中，然后其他的类继承这个顶级父类。例如：
 
 .. code-block:: python
 
@@ -52,16 +48,11 @@ which other objects inherit. For example:
     class B(Root):
         pass
 
-A key feature of a metaclass is that it allows you to examine the contents of a class at the
-time of definition. Inside the redefined __init__() method, you are free to inspect the
-class dictionary, base classes, and more. Moreover, once a metaclass has been specified
-for a class, it gets inherited by all of the subclasses. Thus, a sneaky framework builder
-can specify a metaclass for one of the top-level classes in a large hierarchy and capture
-the definition of all classes under it.
+元类的一个关键特点是它允许你在定义的时候检查类的内容。在重新定义 ``__init__()`` 方法中，
+你可以很轻松的检查类字典、父类等等。并且，一旦某个元类被指定给了某个类，那么就会被继承到所有子类中去。
+因此，一个框架的构建者就能在大型的继承体系中通过给一个顶级父类指定一个元类去捕获所有下面子类的定义。
 
-As a concrete albeit whimsical example, here is a metaclass that rejects any class definition
-containing methods with mixed-case names (perhaps as a means for annoying
-Java programmers):
+作为一个具体的应用例子，下面定义了一个元类，它会拒绝任何有混合大小写名字作为方法的类定义（可能是想气死Java程序员^_^）：
 
 .. code-block:: python
 
@@ -83,9 +74,7 @@ Java programmers):
         def fooBar(self): # TypeError
             pass
 
-As a more advanced and useful example, here is a metaclass that checks the definition
-of redefined methods to make sure they have the same calling signature as the original
-method in the superclass.
+作为更高级和实用的例子，下面有一个元类，它用来检测重载方法，确保它的调用参数跟父类中原始方法有着相同的参数签名。
 
 .. code-block:: python
 
@@ -128,50 +117,38 @@ method in the superclass.
         def spam(self,x,z):
             pass
 
-If you run this code, you will get output such as the following:
+如果你运行这段代码，就会得到下面这样的输出结果：
 
 .. code-block:: python
 
     WARNING:root:Signature mismatch in B.spam. (self, x, *, z) != (self, x, z)
     WARNING:root:Signature mismatch in B.foo. (self, x, y) != (self, a, b)
 
-Such warnings might be useful in catching subtle program bugs. For example, code that
-relies on keyword argument passing to a method will break if a subclass changes the
-argument names.
+这种警告信息对于捕获一些微妙的程序bug是很有用的。例如，如果某个代码依赖于传递给方法的关键字参数，
+那么当子类改变参数名字的时候就会调用出错。
 
 |
 
 ----------
 讨论
 ----------
-In large object-oriented programs, it can sometimes be useful to put class definitions
-under the control of a metaclass. The metaclass can observe class definitions and be
-used to alert programmers to potential problems that might go unnoticed (e.g., using
-slightly incompatible method signatures).
+在大型面向对象的程序中，通常将类的定义放在元类中控制是很有用的。
+元类可以监控类的定义，警告编程人员某些没有注意到的可能出现的问题。
 
-One might argue that such errors would be better caught by program analysis tools or
-IDEs. To be sure, such tools are useful. However, if you’re creating a framework or library
-that’s going to be used by others, you often don’t have any control over the rigor of their
-development practices. Thus, for certain kinds of applications, it might make sense to
-put a bit of extra checking in a metaclass if such checking would result in a better user
-experience.
+有人可能会说，像这样的错误可以通过程序分析工具或IDE去做会更好些。诚然，这些工具是很有用。
+但是，如果你在构建一个框架或函数库供其他人使用，那么你没办法去控制使用者要使用什么工具。
+因此，对于这种类型的程序，如果可以在元类中做检测或许可以带来更好的用户体验。
 
-The choice of redefining __new__() or __init__() in a metaclass depends on how you
-want to work with the resulting class. __new__() is invoked prior to class creation and
-is typically used when a metaclass wants to alter the class definition in some way (by
-changing the contents of the class dictionary). The __init__() method is invoked after
-a class has been created, and is useful if you want to write code that works with the fully
-formed class object. In the last example, this is essential since it is using the super()
-function to search for prior definitions. This only works once the class instance has been
-created and the underlying method resolution order has been set.
+在元类中选择重新定义 ``__new__()`` 方法还是 ``__init__()`` 方法取决于你想怎样使用结果类。
+``__new__()`` 方法在类创建之前被调用，通常用于通过某种方式（比如通过改变类字典的内容）修改类的定义。
+而 ``__init__()`` 方法是在类被创建之后被调用，当你需要完整构建类对象的时候会很有用。
+在最后一个例子中，这是必要的，因为它使用了 ``super()`` 函数来搜索之前的定义。
+它只能在类的实例被创建之后，并且相应的方法解析顺序也已经被设置好了。
 
-The last example also illustrates the use of Python’s function signature objects. Essentially,
-the metaclass takes each callable definition in a class, searches for a prior definition
-(if any), and then simply compares their calling signatures using inspect.signature().
+最后一个例子还演示了Python的函数签名对象的使用。
+实际上，元类会管理中每个一个调用定义，搜索前一个定义（如果有的话），
+然后通过使用 ``inspect.signature()`` 来简单的比较它们的调用签名。
 
-Last, but not least, the line of code that uses super(self, self) is not a typo. When
-working with a metaclass, it’s important to realize that the self is actually a class object.
-So, that statement is actually being used to find definitions located further up the class
-hierarchy that make up the parents of self.
-
-
+最后一点，代码中有一行使用了 ``super(self, self)`` 并不是排版错误。
+当使用元类的时候，我们要时刻记住一点就是 ``self`` 实际上是一个类对象。
+因此，这条语句其实就是用来寻找位于继承体系中构建 ``self`` 父类的定义。

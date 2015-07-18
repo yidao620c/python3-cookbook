@@ -5,17 +5,15 @@
 ----------
 问题
 ----------
-You’ve learned about function argument annotations and you have a thought that you
-might be able to use them to implement multiple-dispatch (method overloading) based
-on types. However, you’re not quite sure what’s involved (or if it’s even a good idea).
+你已经学过怎样使用函数参数注解，那么你可能会想利用它来实现基于类型的方法重载。
+但是你不确定应该怎样去实现（或者到底行得通不）。
 
 |
 
 ----------
 解决方案
 ----------
-This recipe is based on a simple observation—namely, that since Python allows arguments
-to be annotated, perhaps it might be possible to write code like this:
+本小节的技术是基于一个简单的技术，那就是Python允许参数注解，代码可以像下面这样写：
 
 .. code-block:: python
 
@@ -30,8 +28,7 @@ to be annotated, perhaps it might be possible to write code like this:
     s.bar(2, 3) # Prints Bar 1: 2 3
     s.bar('hello') # Prints Bar 2: hello 0
 
-Here is the start of a solution that does just that, using a combination of metaclasses and
-descriptors:
+下面是我们第一步的尝试，使用到了一个元类和描述器：
 
 .. code-block:: python
 
@@ -121,7 +118,7 @@ descriptors:
         def __prepare__(cls, clsname, bases):
             return MultiDict()
 
-To use this class, you write code like this:
+为了使用这个类，你可以像下面这样写：
 
 .. code-block:: python
 
@@ -145,7 +142,7 @@ To use this class, you write code like this:
             t = time.localtime()
             self.__init__(t.tm_year, t.tm_mon, t.tm_mday)
 
-Here is an interactive session that verifies that it works:
+下面是一个交互示例来验证它能正确的工作：
 
 .. code-block:: python
 
@@ -179,32 +176,25 @@ Here is an interactive session that verifies that it works:
 ----------
 讨论
 ----------
-Honestly, there might be too much magic going on in this recipe to make it applicable
-to real-world code. However, it does dive into some of the inner workings of metaclasses
-and descriptors, and reinforces some of their concepts. Thus, even though you might
-not apply this recipe directly, some of its underlying ideas might influence other programming
-techniques involving metaclasses, descriptors, and function annotations.
+坦白来讲，相对于通常的代码而已本节使用到了很多的魔法代码。
+但是，它却能让我们深入理解元类和描述器的底层工作原理，
+并能加深对这些概念的印象。因此，就算你并不会立即去应用本节的技术，
+它的一些底层思想却会影响到其它涉及到元类、描述器和函数注解的编程技术。
 
+本节的实现中的主要思路其实是很简单的。``MutipleMeta`` 元类使用它的 ``__prepare__()`` 方法
+来提供一个作为 ``MultiDict`` 实例的自定义字典。这个跟普通字典不一样的是，
+``MultiDict`` 会在元素被设置的时候检查是否已经存在，如果存在的话，重复的元素会在 ``MultiMethod``
+实例中合并。
 
-The main idea in the implementation is relatively simple. The MutipleMeta metaclass
-uses its __prepare__() method to supply a custom class dictionary as an instance of
-MultiDict. Unlike a normal dictionary, MultiDict checks to see whether entries already
-exist when items are set. If so, the duplicate entries get merged together inside an instance
-of MultiMethod.
+``MultiMethod`` 实例通过构建从类型签名到函数的映射来收集方法。
+在这个构建过程中，函数注解被用来收集这些签名然后构建这个映射。
+这个过程在 ``MultiMethod.register()`` 方法中实现。
+这种映射的一个关键特点是对于多个方法，所有参数类型都必须要指定，否则就会报错。
 
-
-Instances of MultiMethod collect methods by building a mapping from type signatures
-to functions. During construction, function annotations are used to collect these signatures
-and build the mapping. This takes place in the MultiMethod.register()
-method. One critical part of this mapping is that for multimethods, types must be
-specified on all of the arguments or else an error occurs.
-
-
-To make MultiMethod instances emulate a callable, the __call__() method is implemented.
-This method builds a type tuple from all of the arguments except self, looks
-up the method in the internal map, and invokes the appropriate method. The __get__()
-is required to make MultiMethod instances operate correctly inside class definitions. In
-the implementation, it’s being used to create proper bound methods. For example:
+为了让 ``MultiMethod`` 实例模拟一个调用，它的 ``__call__()`` 方法被实现了。
+这个方法从所有排除 ``slef`` 的参数中构建一个类型元组，在内部map中查找这个方法，
+然后调用相应的方法。为了能让 ``MultiMethod`` 实例在类定义时正确操作，``__get__()`` 是必须得实现的。
+它被用来构建正确的绑定方法。比如：
 
 .. code-block:: python
 
@@ -221,9 +211,7 @@ the implementation, it’s being used to create proper bound methods. For exampl
     Bar 2: hello 0
     >>>
 
-To be sure, there are a lot of moving parts to this recipe. However, it’s all a little unfortunate
-considering how many limitations there are. For one, the solution doesn’t work
-with keyword arguments: For example:
+不过本节的实现还有一些限制，其中一个是它不能使用关键字参数。例如：
 
 .. code-block:: python
 
@@ -238,15 +226,11 @@ with keyword arguments: For example:
     TypeError: __call__() got an unexpected keyword argument 's'
     >>>
 
-There might be some way to add such support, but it would require a completely different
-approach to method mapping. The problem is that the keyword arguments don’t
-arrive in any kind of particular order. When mixed up with positional arguments, you
-simply get a jumbled mess of arguments that you have to somehow sort out in the
-__call__() method.
+也许有其他的方法能添加这种支持，但是它需要一个完全不同的方法映射方式。
+问题在于关键字参数的出现是没有顺序的。当它跟位置参数混合使用时，
+那你的参数就会变得比较混乱了，这时候你不得不在 ``__call__()`` 方法中先去做个排序。
 
-
-This recipe is also severely limited in its support for inheritance. For example, something
-like this doesn’t work:
+同样对于继承也是有限制的，例如，类似下面这种代码就不能正常工作：
 
 .. code-block:: python
 
@@ -266,8 +250,7 @@ like this doesn’t work:
         def foo(self, x:C):
             print('Foo 2:', x)
 
-The reason it fails is that the x:A annotation fails to match instances that are subclasses
-(such as instances of B). For example:
+原因是因为 ``x:A`` 注解不能成功匹配子类实例（比如B的实例），如下：
 
 .. code-block:: python
 
@@ -287,8 +270,7 @@ The reason it fails is that the x:A annotation fails to match instances that are
     TypeError: No matching method for types (<class '__main__.B'>,)
     >>>
 
-As an alternative to using metaclasses and annotations, it is possible to implement a
-similar recipe using decorators. For example:
+作为使用元类和注解的一种替代方案，可以通过描述器来实现类似的效果。例如：
 
 .. code-block:: python
 
@@ -322,7 +304,7 @@ similar recipe using decorators. For example:
             else:
                 return self
 
-To use the decorator version, you would write code like this:
+为了使用描述器版本，你需要像下面这样写：
 
 .. code-block:: python
 
@@ -340,21 +322,14 @@ To use the decorator version, you would write code like this:
         def bar(self, s, n = 0):
             print('Bar 2:', s, n)
 
-The decorator solution also suffers the same limitations as the previous implementation
-(namely, no support for keyword arguments and broken inheritance).
+描述器方案同样也有前面提到的限制（不支持关键字参数和继承）。
 
+所有事物都是平等的，有好有坏，也许最好的办法就是在普通代码中避免使用方法重载。
+不过有些特殊情况下还是有意义的，比如基于模式匹配的方法重载程序中。
+举个例子，8.21小节中的访问者模式可以修改为一个使用方法重载的类。
+但是，除了这个以外，通常不应该使用方法重载（就简单的使用不同名称的方法就行了）。
 
-All things being equal, it’s probably best to stay away from multiple dispatch in generalpurpose
-code. There are special situations where it might make sense, such as in programs
-that are dispatching methods based on some kind of pattern matching. For example,
-perhaps the visitor pattern described in Recipe 8.21 could be recast into a class
-that used multiple dispatch in some way. However, other than that, it’s usually never a
-bad idea to stick with a more simple approach (simply use methods with different
-names).
-
-
-Ideas concerning different ways to implement multiple dispatch have floated around
-the Python community for years. As a decent starting point for that discussion, see
-Guido van Rossum’s blog post
+在Python社区对于实现方法重载的讨论已经由来已久。
+对于引发这个争论的原因，可以参考下Guido van Rossum的这篇博客：
 `Five-Minute Multimethods in Python <http://www.artima.com/weblogs/viewpost.jsp?thread=101605>`_
 

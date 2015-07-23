@@ -101,7 +101,7 @@
     with conn as s1:
         pass
             with conn as s2:
-            pass
+                pass
             # s1 and s2 are independent sockets
 
 在第二个版本中，``LazyConnection`` 类可以被看做是某个连接工厂。在内部，一个列表被用来构造一个栈。

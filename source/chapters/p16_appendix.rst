@@ -7,23 +7,23 @@
 -------------------
 http://docs.python.org
    
-   如果你需要深入了解探究语言和模块的细节，那么不必说，Python自家的在线文档是一个卓越的资源。只要保证你查看的是python 3 的文档而不是以前的老版本
+如果你需要深入了解探究语言和模块的细节，那么不必说，Python自家的在线文档是一个卓越的资源。只要保证你查看的是python 3 的文档而不是以前的老版本
   
 http://www.python.org/dev/peps
    
-   如果你向理解为python语言添加新特性的动机以及实现的细节，那么PEPs（Python Enhancement Proposals----Python开发编码规范）绝对是非常宝贵的资源。尤其是一些高级语言功能更是如此。在写这本书的时候，PEPS通常比官方文档管用。
+如果你向理解为python语言添加新特性的动机以及实现的细节，那么PEPs（Python Enhancement Proposals----Python开发编码规范）绝对是非常宝贵的资源。尤其是一些高级语言功能更是如此。在写这本书的时候，PEPS通常比官方文档管用。
 
 http://pyvideo.org
 
-   这里有来自最近的PyCon大会、用户组见面会等的大量视频演讲和教程素材。对于学习潮流的python开发是非常宝贵的资源。许多视频中都会有Python的核心开发者现身说法，讲解Python 3中添加的的新特性。
+这里有来自最近的PyCon大会、用户组见面会等的大量视频演讲和教程素材。对于学习潮流的python开发是非常宝贵的资源。许多视频中都会有Python的核心开发者现身说法，讲解Python 3中添加的的新特性。
    
 http://code.activestate.com/recipes/langs/python
    
-   长期以来，ActiveState的Python版块已经成为一个找到数以千计的针对特定编程问题的解决方案。到写作此书位置，已经包含了大约300个特定于Python3的秘籍。你回发现，其中多数的秘籍要么对本书覆盖的话题进行了扩展，要么专精于具体的任务。所以说，它是一个好伴侣。
+长期以来，ActiveState的Python版块已经成为一个找到数以千计的针对特定编程问题的解决方案。到写作此书位置，已经包含了大约300个特定于Python3的秘籍。你回发现，其中多数的秘籍要么对本书覆盖的话题进行了扩展，要么专精于具体的任务。所以说，它是一个好伴侣。
    
 http://stackoverflow.com/questions/tagged/python
    
-   Stack Overflow 木器啊有超过175，000个问题呗标记为Python相关（而其中大约5000个问题是针对Python 3的）。尽管问题和回答的质量不同，但是任仍然能发现很多好优秀的素材。
+Stack Overflow 木器啊有超过175，000个问题呗标记为Python相关（而其中大约5000个问题是针对Python 3的）。尽管问题和回答的质量不同，但是任仍然能发现很多好优秀的素材。
 
 -------------------
 Python学习书籍

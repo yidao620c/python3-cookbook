@@ -2,21 +2,9 @@
 第十五章：C语言扩展
 =============================
 
-This chapter looks at the problem of accessing C code from Python. Many of Python’s
-built-in libraries are written in C, and accessing C is an important part of making Python
-talk to existing libraries. It’s also an area that might require the most study if you’re faced
-with the problem of porting extension code from Python 2 to 3.
+本章着眼于从Python访问C代码的问题。许多Python内置库是用C写的，访问C是让Python的对现有库进行交互一个重要的组成部分。这也是一个当你面临从Python 2 到 Python 3扩展代码的问题。虽然Python提供了一个广泛的编程API，实际上有很多方法来处理C的代码。相比试图给出对于每一个可能的工具或技术的详细参考，我么采用的是是集中在一个小片段的C++代码，以及一些有代表性的例子来展示如何与代码交互。这个目标是提供一系列的编程模板，有经验的程序员可以扩展自己的使用。
 
-
-Although Python provides an extensive C programming API, there are actually many
-different approaches for dealing with C. Rather than trying to give an exhaustive reference
-for every possible tool or technique, the approach is to focus on a small fragment
-of C code along with some representative examples of how to work with the code. The
-goal is to provide a series of programming templates that experienced programmers
-can expand upon for their own use.
-
-
-Here is the C code we will work with in most of the recipes:
+这里是我们将在大部分秘籍中工作的代码：
 
 .. code-block:: c
 

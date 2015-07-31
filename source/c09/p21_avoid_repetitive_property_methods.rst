@@ -5,14 +5,12 @@
 ----------
 问题
 ----------
-You are writing classes where you are repeatedly having to define property methods that
-perform common tasks, such as type checking. You would like to simplify the code so
-there is not so much code repetition.
+你在类中需要重复的定义一些执行相同逻辑的属性方法，比如进行类型检查，怎样去简化这些重复代码呢？
 
 ----------
 解决方案
 ----------
-Consider a simple class where attributes are being wrapped by property methods:
+考虑下一个简单的类，它的属性由属性方法包装：
 
 .. code-block:: python
 
@@ -41,10 +39,9 @@ Consider a simple class where attributes are being wrapped by property methods:
                 raise TypeError('age must be an int')
             self._age = value
 
-As you can see, a lot of code is being written simply to enforce some type assertions on
-attribute values. Whenever you see code like this, you should explore different ways of
-simplifying it. One possible approach is to make a function that simply defines the
-property for you and returns it. For example:
+可以看到，为了实现属性值的类型检查我们写了很多的重复代码。
+只要你以后看到类似这样的代码，你都应该想办法去简化它。
+一个可行的方法是创建一个函数用来定义属性并返回它。例如：
 
 .. code-block:: python
 
@@ -77,18 +74,14 @@ property for you and returns it. For example:
 ----------
 讨论
 ----------
-This recipe illustrates an important feature of inner function or closures—namely, their
-use in writing code that works a lot like a macro. The typed_property() function in
-this example may look a little weird, but it’s really just generating the property code for
-you and returning the resulting property object. Thus, when it’s used in a class, it operates
-exactly as if the code appearing inside typed_property() was placed into the
-class definition itself. Even though the property getter and setter methods are accessing
-local variables such as name, expected_type, and storage_name, that is fine—those
-values are held behind the scenes in a closure.
+本节我们演示内部函数或者闭包的一个重要特性，它们很像一个宏。例子中的函数 ``typed_property()``
+看上去有点难理解，其实它所做的仅仅就是为你生成属性并返回这个属性对象。
+因此，当在一个类中使用它的时候，效果跟将它里面的代码放到类定义中去是一样的。
+尽管属性的 ``getter`` 和 ``setter`` 方法访问了本地变量如 ``name`` , ``expected_type``
+以及 ``storate_name`` ，这个很正常，这些变量的值会保存在闭包当中。
 
 
-This recipe can be tweaked in an interesting manner using the functools.partial()
-function. For example, you can do this:
+我们还可以使用 ``functools.partial()`` 来稍稍改变下这个例子，很有趣。例如，你可以像下面这样：
 
 .. code-block:: python
 
@@ -106,6 +99,5 @@ function. For example, you can do this:
             self.name = name
             self.age = age
 
-Here the code is starting to look a lot like some of the type system descriptor code shown
-in Recipe 8.13.
+其实你可以发现，这里的代码跟8.13小节中的类型系统描述器代码有些相似。
 

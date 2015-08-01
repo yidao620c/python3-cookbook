@@ -2,11 +2,7 @@
 第十一章：网络与Web编程
 =============================
 
-This chapter is about various topics related to using Python in networked and distributed
-applications. Topics are split between using Python as a client to access existing
-services and using Python to implement networked services as a server. Common techniques
-for writing code involving cooperating or communicating with interpreters are
-also given.
+本章是关于在网络应用和分布式应用中使用的各种主题。主题划分为使用Python编写客户端程序来访问已有的服务，以及使用Python实现网络服务端程序。也给出了一些常见的技术，用于编写涉及协同或通信的的代码。
 
 Contents:
 

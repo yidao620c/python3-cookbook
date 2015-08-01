@@ -2,11 +2,8 @@
 第十章：模块与包
 =============================
 
-Modules and packages are the core of any large project, and the Python installation
-itself. This chapter focuses on common programming techniques involving modules
-and packages, such as how to organize packages, splitting large modules into multiple
-files, and creating namespace packages. Recipes that allow you to customize the operation
-of the import statement itself are also given.
+模块于包是任何大型程序的和兴，就连Python安装程序本身也是一个包。本章重点涉及有关模块和包的常用编程技术，例如如何组织包、把大型模块分割成多个文件、创建命名空间包。同时，也给出了让你自定义导入语句的秘籍。
+
 
 Contents:
 

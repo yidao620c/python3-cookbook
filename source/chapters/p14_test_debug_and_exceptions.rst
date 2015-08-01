@@ -1,13 +1,9 @@
 =============================
-第十四章：测试调试和异常
+第十四章：测试、调试和异常
 =============================
 
-Testing rocks, but debugging? Not so much. The fact that there’s no compiler to analyze
-your code before Python executes it makes testing a critical part of development. The
-goal of this chapter is to discuss some common problems related to testing, debugging,
-and exception handling. It is not meant to be a gentle introduction to test-driven development
-or the unittest module. Thus, some familiarity with testing concepts is
-assumed.
+试验还是很棒的，但是调试？就没那么有趣了。事实是，在Python测试代码之前没有编译器来分析你的代码，因此使的测试成为开发的一个重要部分。本章的目标是讨论一些关于测试、调试和异常处理的常见问题。但是并不是为测试驱动开发或者单元测试模块做一个简要的介绍。因此，笔者假定读者熟悉测试概念。
+
 
 Contents:
 

@@ -18,6 +18,11 @@
 2. littlezz (zz.at.field@gmail.com)
 3. xiaotiaobu (https://github.com/xiaotiaobu)
 4. Eskibear (https://github.com/Eskibear)
+5. LiHaoGit (dahao647@gmail.com)
+6. Jason Chang (crazycashier@icoud.com)
+7. Yu Longjun (https://github.com/yulongjun)
+8. hanxlleon (leonhanxl@gmail.com)
+9. slideclick (https://github.com/slideclick)
 
 |
 |

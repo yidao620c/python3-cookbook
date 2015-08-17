@@ -100,7 +100,7 @@
     # Decoded text returned by the request
     text = resp.text
 
-关于requests库，一个值得一提的特性就是它能以多种凡是从请求中返回响应结果的内容。从上面的代码来看， ``resp.text`` 带给我们的是以Unicode解码的响应文本。但是，如果去访问 ``resp.content`` ，就会得到原始的二进制数据。另一方面，如果访问 ``resp.json``` ，那么就会得到JSON格式的响应内容。
+关于requests库，一个值得一提的特性就是它能以多种凡是从请求中返回响应结果的内容。从上面的代码来看， ``resp.text`` 带给我们的是以Unicode解码的响应文本。但是，如果去访问 ``resp.content`` ，就会得到原始的二进制数据。另一方面，如果访问 ``resp.json`` ，那么就会得到JSON格式的响应内容。
 
 下面这个示例利用 ``requests`` 库发起一个HEAD请求，并从响应中提取出一些HTTP头数据的字段：
 

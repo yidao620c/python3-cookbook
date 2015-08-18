@@ -5,210 +5,199 @@
 ----------
 问题
 ----------
-You need to access various services via HTTP as a client. For example, downloading
-data or interacting with a REST-based API.
-
-|
+你需要以客户端的方式通过HTTP协议方位多种服务。例如，下载数据或者与基于REST的API进行交互。
 
 ----------
 解决方案
 ----------
-For simple things, it’s usually easy enough to use the  urllib.request module. For
-example, to send a simple HTTP GET request to a remote service, do something like this:
+对于简单的事情来说，通常使用 ``urllib.request`` 模块就够了。例如，发送一个简单的HTTP GET请求到远程的服务上，可以这样做：
 
-from urllib import request, parse
+.. code-block:: python
 
-# Base URL being accessed
-url = 'http://httpbin.org/get'
+    from urllib import request, parse
 
-# Dictionary of query parameters (if any)
-parms = {
-   'name1' : 'value1',
-   'name2' : 'value2'
-}
+    # Base URL being accessed
+    url = 'http://httpbin.org/get'
 
-# Encode the query string
-querystring = parse.urlencode(parms)
+    # Dictionary of query parameters (if any)
+    parms = {
+       'name1' : 'value1',
+       'name2' : 'value2'
+    }
 
-# Make a GET request and read the response
-u = request.urlopen(url+'?' + querystring)
-resp = u.read()
+    # Encode the query string
+    querystring = parse.urlencode(parms)
 
-If you need to send the query parameters in the request body using a POST method,
-encode them and supply them as an optional argument to urlopen() like this:
+    # Make a GET request and read the response
+    u = request.urlopen(url+'?' + querystring)
+    resp = u.read()
 
-from urllib import request, parse
+如果你需要使用POST方法在请求主体中发送查询参数，可以将参数编码后作为可选参数提供给 ``URLopen()`` 函数，就像这样：
 
-# Base URL being accessed
-url = 'http://httpbin.org/post'
+.. code-block:: python
 
-# Dictionary of query parameters (if any)
-parms = {
-   'name1' : 'value1',
-   'name2' : 'value2'
-}
+    from urllib import request, parse
 
-# Encode the query string
-querystring = parse.urlencode(parms)
+    # Base URL being accessed
+    url = 'http://httpbin.org/post'
 
-# Make a POST request and read the response
-u = request.urlopen(url, querystring.encode('ascii'))
-resp = u.read()
+    # Dictionary of query parameters (if any)
+    parms = {
+       'name1' : 'value1',
+       'name2' : 'value2'
+    }
 
-If you need to supply some custom HTTP headers in the outgoing request such as a
-change to the user-agent field, make a dictionary containing their value and create a
-Request instance and pass it to urlopen() like this:
+    # Encode the query string
+    querystring = parse.urlencode(parms)
 
-from urllib import request, parse
-...
+    # Make a POST request and read the response
+    u = request.urlopen(url, querystring.encode('ascii'))
+    resp = u.read()
 
-# Extra headers
-headers = {
-    'User-agent' : 'none/ofyourbusiness',
-    'Spam' : 'Eggs'
-}
+如果你需要在发出的请求中提供一些自定义的HTTP头，例如修改 ``user-agent`` 字段,可以创建一个包含字段值的字典，并创建一个Request实例然后将其传给 ``urlopen()`` ，如下：
 
-req = request.Request(url, querystring.encode('ascii'), headers=headers)
+.. code-block:: python
 
-# Make a request and read the response
-u = request.urlopen(req)
-resp = u.read()
+    from urllib import request, parse
+    ...
 
-If your interaction with a service is more complicated than this, you should probably
-look at the requests library. For example, here is equivalent requests code for the
-preceding operations:
+    # Extra headers
+    headers = {
+        'User-agent' : 'none/ofyourbusiness',
+        'Spam' : 'Eggs'
+    }
 
-import requests
+    req = request.Request(url, querystring.encode('ascii'), headers=headers)
 
-# Base URL being accessed
-url = 'http://httpbin.org/post'
+    # Make a request and read the response
+    u = request.urlopen(req)
+    resp = u.read()
 
-# Dictionary of query parameters (if any)
-parms = {
-   'name1' : 'value1',
-   'name2' : 'value2'
-}
+如果需要交互的服务比上面的例子都要复杂，也许应该去看看 requests 库（https://pypi.python.org/pypi/requests）。例如，下面这个示例采用requests库重新实现了上面的操作：
 
-# Extra headers
-headers = {
-    'User-agent' : 'none/ofyourbusiness',
-    'Spam' : 'Eggs'
-}
+.. code-block:: python
 
-resp = requests.post(url, data=parms, headers=headers)
+    import requests
 
-# Decoded text returned by the request
-text = resp.text
+    # Base URL being accessed
+    url = 'http://httpbin.org/post'
 
-A notable feature of requests is how it returns the resulting response content from a
-request. As shown, the resp.text attribute gives you the Unicode decoded text of a
-request. However, if you access resp.content, you get the raw binary content instead.
-On the other hand, if you access resp.json, then you get the response content inter‐
-preted as JSON.
-Here is an example of using requests to make a HEAD request and extract a few fields
-of header data from the response:
+    # Dictionary of query parameters (if any)
+    parms = {
+       'name1' : 'value1',
+       'name2' : 'value2'
+    }
 
-import requests
+    # Extra headers
+    headers = {
+        'User-agent' : 'none/ofyourbusiness',
+        'Spam' : 'Eggs'
+    }
 
-resp = requests.head('http://www.python.org/index.html')
+    resp = requests.post(url, data=parms, headers=headers)
 
-status = resp.status_code
-last_modified = resp.headers['last-modified']
-content_type = resp.headers['content-type']
-content_length = resp.headers['content-length']
+    # Decoded text returned by the request
+    text = resp.text
 
-Here is a requests example that executes a login into the Python Package index using
-basic authentication:
-import requests
+关于requests库，一个值得一提的特性就是它能以多种凡是从请求中返回响应结果的内容。从上面的代码来看， ``resp.text`` 带给我们的是以Unicode解码的响应文本。但是，如果去访问 ``resp.content`` ，就会得到原始的二进制数据。另一方面，如果访问 ``resp.json`` ，那么就会得到JSON格式的响应内容。
 
-resp = requests.get('http://pypi.python.org/pypi?:action=login',
-                    auth=('user','password'))
+下面这个示例利用 ``requests`` 库发起一个HEAD请求，并从响应中提取出一些HTTP头数据的字段：
 
-Here is an example of using requests to pass HTTP cookies from one request to the
-next:
+.. code-block:: python
 
-import requests
+    import requests
 
-# First request
-resp1 = requests.get(url)
-...
+    resp = requests.head('http://www.python.org/index.html')
 
-# Second requests with cookies received on first requests
-resp2 = requests.get(url, cookies=resp1.cookies)
+    status = resp.status_code
+    last_modified = resp.headers['last-modified']
+    content_type = resp.headers['content-type']
+    content_length = resp.headers['content-length']
 
-Last, but not least, here is an example of using requests to upload content:
+    Here is a requests example that executes a login into the Python Package index using
+    basic authentication:
+    import requests
 
-import requests
-url = 'http://httpbin.org/post'
-files = { 'file': ('data.csv', open('data.csv', 'rb')) }
+    resp = requests.get('http://pypi.python.org/pypi?:action=login',
+                        auth=('user','password'))
 
-r = requests.post(url, files=files)
+    Here is an example of using requests to pass HTTP cookies from one request to the
+    next:
 
-|
+    import requests
+
+    # First request
+    resp1 = requests.get(url)
+    ...
+
+    # Second requests with cookies received on first requests
+    resp2 = requests.get(url, cookies=resp1.cookies)
+
+    Last, but not least, here is an example of using requests to upload content:
+
+    import requests
+    url = 'http://httpbin.org/post'
+    files = { 'file': ('data.csv', open('data.csv', 'rb')) }
+
+    r = requests.post(url, files=files)
+
 
 ----------
 讨论
 ----------
-For really simple HTTP client code, using the built-in urllib module is usually fine.
-However, if you have to do anything other than simple GET or POST requests, you really
-can’t rely on its functionality. This is where a third-party module, such as requests,
-comes in handy.
-For example, if you decided to stick entirely with the standard library instead of a library
-like requests, you might have to implement your code using the low-level http.cli
-ent module instead. For example, this code shows how to execute a HEAD request:
+对于真的很简单HTTP客户端代码，用内置的 ``urllib`` 模块通常就足够了。但是，如果你要做的不仅仅只是简单的GET或POST请求，那就真的不能在依赖它的功能了。这时候就是第三方模块比如 ``requests`` 大显身手的时候了。
 
-from http.client import HTTPConnection
-from urllib import parse
+例如，如果你决定坚持使用标准的程序库而不考虑像 ``requests`` 这样的第三方库，那么也许就不得不使用底层的 ``http.client`` 模块来实现自己的代码。比方说，下面的代码展示了如何执行一个HEAD请求：
 
-c = HTTPConnection('www.python.org', 80)
-c.request('HEAD', '/index.html')
-resp = c.getresponse()
+.. code-block:: python
 
-print('Status', resp.status)
-for name, value in resp.getheaders():
-    print(name, value)
+    from http.client import HTTPConnection
+    from urllib import parse
 
-Similarly, if you have to write code involving proxies, authentication, cookies, and other
-details, using urllib is awkward and verbose. For example, here is a sample of code that
-authenticates to the Python package index:
+    c = HTTPConnection('www.python.org', 80)
+    c.request('HEAD', '/index.html')
+    resp = c.getresponse()
 
-import urllib.request
+    print('Status', resp.status)
+    for name, value in resp.getheaders():
+        print(name, value)
 
-auth = urllib.request.HTTPBasicAuthHandler()
-auth.add_password('pypi','http://pypi.python.org','username','password')
-opener = urllib.request.build_opener(auth)
 
-r = urllib.request.Request('http://pypi.python.org/pypi?:action=login')
-u = opener.open(r)
-resp = u.read()
+同样地，如果必须编写涉及代理、认证、cookies以及其他一些细节方面的代码，那么使用 ``urllib`` 就显得特别别扭和啰嗦。比方说，下面这个示例实现在Python包索引上的认证：
 
-# From here. You can access more pages using opener
-...
+.. code-block:: python
 
-Frankly, all of this is much easier in requests.
-Testing HTTP client code during development can often be frustrating because of all
-the tricky details you need to worry about (e.g., cookies, authentication, headers, en‐
-codings, etc.). To do this, consider using the httpbin service. This site receives requests
-and then echoes information back to you in the form a JSON response. Here is an
-interactive example:
+    import urllib.request
 
->>> import requests
->>> r = requests.get('http://httpbin.org/get?name=Dave&n=37',
-...     headers = { 'User-agent': 'goaway/1.0' })
->>> resp = r.json
->>> resp['headers']
-{'User-Agent': 'goaway/1.0', 'Content-Length': '', 'Content-Type': '',
-'Accept-Encoding': 'gzip, deflate, compress', 'Connection':
-'keep-alive', 'Host': 'httpbin.org', 'Accept': '*/*'}
->>> resp['args']
-{'name': 'Dave', 'n': '37'}
->>>
+    auth = urllib.request.HTTPBasicAuthHandler()
+    auth.add_password('pypi','http://pypi.python.org','username','password')
+    opener = urllib.request.build_opener(auth)
 
-Working with a site such as httpbin.org is often preferable to experimenting with a real
-site—especially if there’s a risk it might shut down your account after three failed login
-attempts (i.e., don’t try to learn how to write an HTTP authentication client by logging
-into your bank).
-Although it’s not discussed here, requests provides support for many more advanced
-HTTP-client protocols, such as OAuth. The requests documentation is excellent (and
-frankly better than anything that could be provided in this short space). Go there for
-more information.
+    r = urllib.request.Request('http://pypi.python.org/pypi?:action=login')
+    u = opener.open(r)
+    resp = u.read()
+
+    # From here. You can access more pages using opener
+    ...
+
+坦白说，所有的这些操作在 ``equests`` 库中都变得简单的多。
+
+在开发过程中测试HTTP客户端代码常常是很令人沮丧的，因为所有棘手的细节问题都需要考虑（例如cookies、认证、HTTP头、编码方式等）。要完成这些任务，考虑使用httpbin服务（http://httpbin.org）。这个站点会接收发出的请求，然后以JSON的形式将相应信息回传回来。下面是一个交互式的例子：
+
+.. code-block:: python
+
+    >>> import requests
+    >>> r = requests.get('http://httpbin.org/get?name=Dave&n=37',
+    ...     headers = { 'User-agent': 'goaway/1.0' })
+    >>> resp = r.json
+    >>> resp['headers']
+    {'User-Agent': 'goaway/1.0', 'Content-Length': '', 'Content-Type': '',
+    'Accept-Encoding': 'gzip, deflate, compress', 'Connection':
+    'keep-alive', 'Host': 'httpbin.org', 'Accept': '*/*'}
+    >>> resp['args']
+    {'name': 'Dave', 'n': '37'}
+    >>>
+
+在要同一个真正的站点进行交互前，先在 httpbin.org 这样的万展上做实验常常是可取的办法。尤其是当我们面对3次登录失败就会关闭账户这样的风险时尤为有用（不要尝试自己编写HTTP认证客户端来登录你的银行账户）。
+
+尽管本节没有涉及， ``request`` 库还对许多高级的HTTP客户端协议提供了支持，比如OAuth。 ``requests`` 模块的文档（http://docs.python-requests.org)质量很高（坦白说比在这短短的一节的篇幅中所提供的任何信息都好），可以参考文档以获得更多地信息。

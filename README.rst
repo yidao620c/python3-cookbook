@@ -68,6 +68,8 @@
 7. Yu Longjun (https://github.com/yulongjun)
 8. hanxlleon (leonhanxl@gmail.com)
 9. slideclick (https://github.com/slideclick)
+10. Tony Yang (liuliu036@gmail.com)
+11. nivance (https://github.com/nivance)
 
 -----------------------------------------------------
 

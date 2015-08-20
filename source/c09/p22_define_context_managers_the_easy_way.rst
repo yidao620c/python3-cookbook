@@ -5,16 +5,15 @@
 ----------
 问题
 ----------
-You want to implement new kinds of context managers for use with the with statement.
+你想自己去实现一个新的上下文管理器，以便使用with语句。
 
 |
 
 ----------
 解决方案
 ----------
-One of the most straightforward ways to write a new context manager is to use the
-@contextmanager decorator in the contextlib module. Here is an example of a context
-manager that times the execution of a code block:
+实现一个新的上下文管理器的最简单的方法就是使用 ``contexlib`` 模块中的 ``@contextmanager`` 装饰器。
+下面是一个实现了代码块计时功能的上下文管理器例子：
 
 .. code-block:: python
 
@@ -36,13 +35,11 @@ manager that times the execution of a code block:
         while n > 0:
             n -= 1
 
-In the timethis() function, all of the code prior to the yield executes as the __en
-ter__() method of a context manager. All of the code after the yield executes as the
-__exit__() method. If there was an exception, it is raised at the yield statement.
+在函数 ``timethis()`` 中，``yield`` 之前的代码会在上下文管理器中作为 ``__enter__()`` 方法执行，
+所有在 ``yield`` 之后的代码会作为 ``__exit__()`` 方法执行。
+如果出现了异常，异常会在yield语句那里抛出。
 
-
-Here is a slightly more advanced context manager that implements a kind of transaction
-on a list object:
+下面是一个更加高级一点的上下文管理器，实现了列表对象上的某种事务：
 
 .. code-block:: python
 
@@ -52,8 +49,8 @@ on a list object:
         yield working
         orig_list[:] = working
 
-The idea here is that changes made to a list only take effect if an entire code block runs
-to completion with no exceptions. Here is an example that illustrates:
+这段代码的作用是任何对列表的修改只有当所有代码运行完成并且不出现异常的情况下才会生效。
+下面我们来演示一下：
 
 .. code-block:: python
 
@@ -81,8 +78,8 @@ to completion with no exceptions. Here is an example that illustrates:
 ----------
 讨论
 ----------
-Normally, to write a context manager, you define a class with an __enter__() and
-__exit__() method, like this:
+通常情况下，如果要写一个上下文管理器，你需要定义一个类，里面包含一个 ``__enter__()`` 和一个
+``__exit__()`` 方法，如下所示：
 
 .. code-block:: python
 
@@ -99,14 +96,8 @@ __exit__() method, like this:
             end = time.time()
             print('{}: {}'.format(self.label, end - self.start))
 
-Although this isn’t hard, it’s a lot more tedious than writing a simple function using
-@contextmanager.
+尽管这个也不难写，但是相比较写一个简单的使用 ``@contextmanager`` 注解的函数而言还是稍显乏味。
 
-
-@contextmanager is really only used for writing self-contained context-management
-functions. If you have some object (e.g., a file, network connection, or lock) that needs
-to support the with statement, you still need to implement the __enter__() and
-__exit__() methods separately.
-
-
-
+``@contextmanager`` 应该仅仅用来写自包含的上下文管理函数。
+如果你有一些对象(比如一个文件、网络连接或锁)，需要支持 ``with`` 语句，那么你就需要单独实现
+``__enter__()`` 方法和 ``__exit__()`` 方法。

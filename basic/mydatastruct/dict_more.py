@@ -8,6 +8,8 @@ Desc :
 
 
 def dict_demo():
+    aa = ('2', '3')
+    bb = {aa: '3333'}
     tel = {'jack': 4098, 'sape': 4139}
     tel = dict([('sape', 4139), ('guido', 4127), ('jack', 4098)])
     # 字典推导式

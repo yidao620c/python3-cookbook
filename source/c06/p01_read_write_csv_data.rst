@@ -15,7 +15,7 @@
 对于大多数的CSV格式的数据读写问题，都可以使用 ``csv`` 库。
 例如：假设你在一个名叫stocks.csv文件中有一些股票市场数据，就像这样：
 
-.. code-block::
+.. code-block:: python
 
     Symbol,Price,Date,Time,Change,Volume
     "AA",39.48,"6/11/2007","9:36am",-0.18,181800

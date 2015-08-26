@@ -61,11 +61,11 @@ property的一个关键特征是它看上去跟普通的attribute没什么两样
     >>> del a.first_name
     Traceback (most recent call last):
         File "<stdin>", line 1, in <module>
-    AttributeError: can't delete attribute
+    AttributeError: can`t delete attribute
     >>>
 
 在实现一个property的时候，底层数据(如果有的话)仍然需要存储在某个地方。
-因此，在get和set方法中，你会看到对 ``_first_name``属性的操作，这也是实际数据保存的地方。
+因此，在get和set方法中，你会看到对 ``_first_name`` 属性的操作，这也是实际数据保存的地方。
 另外，你可能还会问为什么 ``__init__()`` 方法中设置了 ``self.first_name`` 而不是 ``self._first_name`` 。
 在这个例子中，我们创建一个property的目的就是在设置attribute的时候进行检查。
 因此，你可能想在初始化的时候也进行这种类型检查。通过设置 ``self.first_name`` ，自动调用 ``setter`` 方法，

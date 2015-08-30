@@ -5,156 +5,120 @@
 ----------
 问题
 ----------
-Your program uses threads and you want to lock critical sections of code to avoid race
-conditions.
 
-|
+你需要对多线程程序中的临界区加锁以避免竞争条件。
 
 ----------
 解决方案
 ----------
-To make mutable objects safe to use by multiple threads, use Lock objects in the thread
-ing library, as shown here:
+要在多线程程序中安全使用可变对象，你需要使用 threading 库中的 ``Lock`` 对象，就像下边这个例子这样：
 
-import threading
+.. code-block:: python
 
-class SharedCounter:
-    '''
-    A counter object that can be shared by multiple threads.
-    '''
-    def __init__(self, initial_value = 0):
-        self._value = initial_value
-        self._value_lock = threading.Lock()
+   import threading
 
-    def incr(self,delta=1):
-        '''
-        Increment the counter with locking
-        '''
-        with self._value_lock:
-             self._value += delta
+   class SharedCounter:
+       '''
+       A counter object that can be shared by multiple threads.
+       '''
+       def __init__(self, initial_value = 0):
+           self._value = initial_value
+           self._value_lock = threading.Lock()
 
-    def decr(self,delta=1):
-        '''
-        Decrement the counter with locking
-        '''
-        with self._value_lock:
-             self._value -= delta
+       def incr(self,delta=1):
+           '''
+           Increment the counter with locking
+           '''
+           with self._value_lock:
+                self._value += delta
 
-A Lock guarantees mutual exclusion when used with the with statement—that is, only
-one thread is allowed to execute the block of statements under the with statement at a
-time. The with statement acquires the lock for the duration of the indented statements
-and releases the lock when control flow exits the indented block.
+       def decr(self,delta=1):
+           '''
+           Decrement the counter with locking
+           '''
+           with self._value_lock:
+                self._value -= delta
 
-|
+``Lock`` 对象和 ``with`` 语句块一起使用可以保证互斥执行，就是每次只有一个线程可以执行 with 语句包含的代码块。with 语句会在这个代码块执行前自动获取锁，在执行结束后自动释放锁。
 
 ----------
 讨论
 ----------
-Thread scheduling is inherently nondeterministic. Because of this, failure to use locks
-in  threaded  programs  can  result  in  randomly  corrupted  data  and  bizarre  behavior
-known as a “race condition.” To avoid this, locks should always be used whenever shared
-mutable state is accessed by multiple threads.
+线程调度本质上是不确定的，因此，在多线程程序中错误地使用锁机制可能会导致随机数据损坏或者其他的异常行为，我们称之为竞争条件。为了避免竞争条件，最好只在临界区（对临界资源进行操作的那部分代码）使用锁。
+在一些“老的” Python 代码中，显式获取和释放锁是很常见的。下边是一个上一个例子的变种：
 
-In older Python code, it is common to see locks explicitly acquired and released. For
-example, in this variant of the last example:
+.. code-block:: python
+   
+   import threading
 
-import threading
+   class SharedCounter:
+       '''
+       A counter object that can be shared by multiple threads.
+       '''
+       def __init__(self, initial_value = 0):
+           self._value = initial_value
+           self._value_lock = threading.Lock()
 
-class SharedCounter:
-    '''
-    A counter object that can be shared by multiple threads.
-    '''
-    def __init__(self, initial_value = 0):
-        self._value = initial_value
-        self._value_lock = threading.Lock()
+       def incr(self,delta=1):
+           '''
+           Increment the counter with locking
+           '''
+           self._value_lock.acquire()
+           self._value += delta
+           self._value_lock.release()
 
-    def incr(self,delta=1):
-        '''
-        Increment the counter with locking
-        '''
-        self._value_lock.acquire()
-        self._value += delta
-        self._value_lock.release()
+       def decr(self,delta=1):
+           '''
+           Decrement the counter with locking
+           '''
+           self._value_lock.acquire()
+           self._value -= delta
+           self._value_lock.release()
 
-    def decr(self,delta=1):
-        '''
-        Decrement the counter with locking
-        '''
-        self._value_lock.acquire()
-        self._value -= delta
-        self._value_lock.release()
+相比于这种显式调用的方法，with 语句更加优雅，也更不容易出错，特别是程序员可能会忘记调用 release() 方法或者程序在获得锁之后产生异常这两种情况（使用 with 语句可以保证在这两种情况下仍能正确释放锁）。
+为了避免出现死锁的情况，使用锁机制的程序应该设定为每个线程一次只允许获取一个锁。如果不能这样做的话，你就需要更高级的死锁避免机制，我们将在12.5节介绍。
+在 ``threading`` 库中还提供了其他的同步原语，比如 ``RLoct`` 和 ``Semaphore`` 对象。但是根据以往经验，这些原语是用于一些特殊的情况，如果你只是需要简单地对可变对象进行锁定，那就不应该使用它们。一个 ``RLock`` （可重入锁）可以被同一个线程多次获取，主要用来实现基于监测对象模式的锁定和同步。在使用这种锁的情况下，当锁被持有时，只有一个线程可以使用完整的函数或者类中的方法。比如，你可以实现一个这样的 SharedCounter 类：
 
-The with statement is more elegant and less prone to error—especially in situations
-where a programmer might forget to call the release() method or if a program happens
-to raise an exception while holding a lock (the with statement guarantees that locks are
-always released in both cases).
-To avoid the potential for deadlock, programs that use locks should be written in a way
-such that each thread is only allowed to acquire one lock at a time. If this is not possible,
-you may need to introduce more advanced deadlock avoidance into your program, as
-described in Recipe 12.5.
-In the threading library, you’ll find other synchronization primitives, such as RLock
-and Semaphore objects. As a general rule of thumb, these are more special purpose and
-should not be used for simple locking of mutable state. An RLock or re-entrant lock
-object is a lock that can be acquired multiple times by the same thread. It is primarily
-used to implement code based locking or synchronization based on a construct known
-as a “monitor.” With this kind of locking, only one thread is allowed to use an entire
-function or the methods of a class while the lock is held. For example, you could im‐
-plement the SharedCounter class like this:
+.. code-block:: python
 
-import threading
+   import threading
 
-class SharedCounter:
-    '''
-    A counter object that can be shared by multiple threads.
-    '''
-    _lock = threading.RLock()
-    def __init__(self, initial_value = 0):
-        self._value = initial_value
+   class SharedCounter:
+       '''
+       A counter object that can be shared by multiple threads.
+       '''
+       _lock = threading.RLock()
+       def __init__(self, initial_value = 0):
+           self._value = initial_value
 
-    def incr(self,delta=1):
-        '''
-        Increment the counter with locking
-        '''
-        with SharedCounter._lock:
-            self._value += delta
+       def incr(self,delta=1):
+           '''
+           Increment the counter with locking
+           '''
+           with SharedCounter._lock:
+               self._value += delta
 
-    def decr(self,delta=1):
-        '''
-        Decrement the counter with locking
-        '''
-        with SharedCounter._lock:
-             self.incr(-delta)
+       def decr(self,delta=1):
+           '''
+           Decrement the counter with locking
+           '''
+           with SharedCounter._lock:
+                self.incr(-delta)
 
-In this variant of the code, there is just a single class-level lock shared by all instances
-of the class. Instead of the lock being tied to the per-instance mutable state, the lock is
-meant to synchronize the methods of the class. Specifically, this lock ensures that only
-one thread is allowed to be using the methods of the class at once. However, unlike a
-standard lock, it is OK for methods that already have the lock to call other methods that
-also use the lock (e.g., see the decr() method).
-One feature of this implementation is that only one lock is created, regardless of how
-many counter instances are created. Thus, it is much more memory-efficient in situa‐
-tions where there are a large number of counters. However, a possible downside is that
-it may cause more lock contention in programs that use a large number of threads and
-make frequent counter updates.
-A Semaphore object is a synchronization primitive based on a shared counter. If the
-counter is nonzero, the with statement decrements the count and a thread is allowed to
-proceed. The counter is incremented upon the conclusion of the  with block. If the
-counter is zero, progress is blocked until the counter is incremented by another thread.
-Although a semaphore can be used in the same manner as a standard Lock, the added
-complexity in implementation negatively impacts performance. Instead of simple lock‐
-ing, Semaphore objects are more useful for applications involving signaling between
-threads or throttling. For example, if you want to limit the amount of concurrency in a
-part of code, you might use a semaphore, as follows:
+在上边这个例子中，没有对每一个实例中的可变对象加锁，取而代之的是一个被所有实例共享的类级锁。这个锁用来同步类方法，具体来说就是，这个锁可以保证一次只有一个线程可以调用这个类方法。不过，与一个标准的锁不同的是，已经持有这个锁的方法在调用同样使用这个锁的方法时，无需再次获取锁。比如 decr 方法。
+这种实现方式的一个特点是，无论这个类有多少个实例都只用一个锁。因此在需要大量使用计数器的情况下内存效率更高。不过这样做也有缺点，就是在程序中使用大量线程并频繁更新计数器时会有争用锁的问题。
+信号量对象是一个建立在共享计数器基础上的同步原语。如果计数器不为0，with 语句将计数器减1，线程被允许执行。with 语句执行结束后，计数器加１。如果计数器为0，线程将被阻塞，直到其他线程结束将计数器加1。尽管你可以在程序中像标准锁一样使用信号量来做线程同步，但是这种方式并不被推荐，因为使用信号量为程序增加的复杂性会影响程序性能。相对于简单地作为锁使用，信号量更适用于那些需要在线程之间引入信号或者限制的程序。比如，你需要限制一段代码的并发访问量，你就可以像下面这样使用信号量完成：
 
-from threading import Semaphore
-import urllib.request
+.. code-block:: python
 
-# At most, five threads allowed to run at once
-_fetch_url_sema = Semaphore(5)
+   from threading import Semaphore
+   import urllib.request
 
-def fetch_url(url):
-    with _fetch_url_sema:
-        return urllib.request.urlopen(url)
+   # At most, five threads allowed to run at once
+   _fetch_url_sema = Semaphore(5)
 
-If you’re interested in the underlying theory and implementation of thread synchroni‐
-zation primitives, consult almost any textbook on operating systems.
+   def fetch_url(url):
+       with _fetch_url_sema:
+           return urllib.request.urlopen(url)
+
+如果你对线程同步原语的底层理论和实现感兴趣，可以参考操作系统相关书籍，绝大多数都有提及。

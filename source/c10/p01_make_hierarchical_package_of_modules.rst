@@ -5,16 +5,15 @@
 ----------
 问题
 ----------
-You want to organize your code into a package consisting of a hierarchical collection of
-modules.
+你想将你的代码组织成由很多分层模块构成的包。
 
 |
 
 ----------
 解决方案
 ----------
-Making a package structure is simple. Just organize your code as you wish on the filesystem
-and make sure that every directory defines an __init__.py file. For example:
+封装成包是很简单的。在文件系统上组织你的代码，并确保每个目录都定义了一个__init__.py文件。
+例如：
 
 .. code-block:: python
 
@@ -30,8 +29,7 @@ and make sure that every directory defines an __init__.py file. For example:
             png.py
             jpg.py
 
-Once you have done this, you should be able to perform various import statements,
-such as the following:
+一旦你做到了这一点，你应该能够执行各种import语句，如下：
 
 .. code-block:: python
 
@@ -44,18 +42,15 @@ such as the following:
 ----------
 讨论
 ----------
-Defining a hierarchy of modules is as easy as making a directory structure on the filesystem.
-The purpose of the __init__.py files is to include optional initialization code
-that runs as different levels of a package are encountered. For example, if you have the
-statement import graphics, the file graphics/__init__.py will be imported and form
-the contents of the graphics namespace. For an import such as import graphics.for
-mats.jpg, the files graphics/__init__.py and graphics/formats/__init__.py will both be
-imported prior to the final import of the graphics/formats/jpg.py file.
+定义模块的层次结构就像在文件系统上建立目录结构一样容易。
+文件__init__.py的目的是要包含不同运行级别的包的可选的初始化代码。
+举个例子，如果你执行了语句import graphics， 文件graphics/__init__.py将被导入,
+建立graphics命名空间的内容。像import graphics.format.jpg这样导入，文件graphics/__init__.py
+和文件graphics/graphics/formats/__init__.py将在文件graphics/formats/jpg.py导入之前导入。
 
 
-More often that not, it’s fine to just leave the __init__.py files empty. However, there are
-certain situations where they might include code. For example, an __init__.py file can
-be used to automatically load submodules like this:
+绝大部分时候让__init__.py空着就好。但是有些情况下可能包含代码。
+举个例子，__init__.py能够用来自动加载子模块:
 
 .. code-block:: python
 
@@ -63,18 +58,14 @@ be used to automatically load submodules like this:
     from . import jpg
     from . import png
 
-For such a file, a user merely has to use a single import graphics.formats instead of
-a separate import for graphics.formats.jpg and graphics.formats.png.
+
+像这样一个文件,用户可以仅仅通过import grahpics.formats来代替import graphics.formats.jpg
+以及import graphics.formats.png。
 
 
-Other common uses of __init__.py include consolidating definitions from multiple files
-into a single logical namespace, as is sometimes done when splitting modules. This is
-discussed in Recipe 10.4.
+__init__.py的其他常用用法包括将多个文件合并到一个逻辑命名空间，这将在10.4小节讨论。
 
 
-Astute programmers will notice that Python 3.3 still seems to perform package imports
-even if no __init__.py files are present. If you don’t define __init__.py, you actually
-create what’s known as a “namespace package,” which is described in Recipe 10.5. All
-things being equal, include the __init__.py files if you’re just starting out with the creation
-of a new package.
-
+敏锐的程序员会发现，即使没有__init__.py文件存在，python仍然会导入包。如果你没有定义
+__init__.py时，实际上创建了一个所谓的“命名空间包”，这将在10.5小节讨论。万物平等，
+如果你着手创建一个新的包的话，包含一个__init__.py文件吧。

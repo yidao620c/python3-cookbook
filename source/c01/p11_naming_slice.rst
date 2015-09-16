@@ -60,12 +60,12 @@
 
 .. code-block:: python
 
-    >>> a = slice(5, 50, 2)
-    >>> a.start
+    >>> s = slice(5, 50, 2)
+    >>> s.start
     5
-    >>> a.stop
+    >>> s.stop
     50
-    >>> a.step
+    >>> s.step
     2
     >>>
 

@@ -5,16 +5,17 @@
 ----------
 问题
 ----------
-You want precise control over the symbols that are exported from a module or package
-when a user uses the from module import * statement.
+当使用'from module import *' 语句时，希望对从模块或包导出的符号进行精确控制。
+
 
 |
 
 ----------
 解决方案
 ----------
-Define a variable __all__ in your module that explicitly lists the exported names. For
-example:
+在你的模块中定义一个变量 __all__ 来明确地列出需要导出的内容。
+
+举个例子:
 
 .. code-block:: python
 
@@ -34,12 +35,12 @@ example:
 ----------
 讨论
 ----------
-Although the use of from module import * is strongly discouraged, it still sees frequent
-use in modules that define a large number of names. If you don’t do anything, this form
-of import will export all names that don’t start with an underscore. On the other hand,
-if __all__ is defined, then only the names explicitly listed will be exported.
+尽管强烈反对使用 'from module import *', 但是在定义了大量变量名的模块中频繁使用。
+如果你不做任何事, 这样的导入将会导入所有不以下划线开头的。
+另一方面,如果定义了 __all__ , 那么只有被列举出的东西会被导出。
 
 
-If you define __all__ as an empty list, then nothing will be exported. An AttributeEr
-ror is raised on import if __all__ contains undefined names.
+
+如果你将 __all__ 定义成一个空列表, 没有东西将被导出。
+如果 __all__ 包含未定义的名字, 在导入时引起AttributeError。
 

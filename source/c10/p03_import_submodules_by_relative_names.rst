@@ -90,6 +90,6 @@ import语句的 ``.`` 和 ``..``看起来很滑稽, 但它指定目录名.为当
 
     % python3 -m mypackage.A.spam # Relative imports work
 
-更对的包的相对导入的背景知识,请看 `PEP 328 <http://www.python.org/dev/peps/pep-0328>`_ .
+更多的包的相对导入的背景知识,请看 `PEP 328 <http://www.python.org/dev/peps/pep-0328>`_ .
 
 

@@ -5,31 +5,33 @@
 ----------
 问题
 ----------
-You need to get the terminal size in order to properly format the output of your program.
+你需要知道当前终端的大小以便正确的格式化输出。
 
 |
 
 ----------
 解决方案
 ----------
-Use the os.get_terminal_size() function to do this:
+使用 ``os.get_terminal_size()`` 函数来做到这一点。
 
->>> import os
->>> sz = os.get_terminal_size()
->>> sz
-os.terminal_size(columns=80, lines=24)
->>> sz.columns
-80
->>> sz.lines
-24
->>>
+代码示例：
+
+.. code-block:: python
+
+    >>> import os
+    >>> sz = os.get_terminal_size()
+    >>> sz
+    os.terminal_size(columns=80, lines=24)
+    >>> sz.columns
+    80
+    >>> sz.lines
+    24
+    >>>
 
 |
 
 ----------
 讨论
 ----------
-There are many other possible approaches for obtaining the terminal size, ranging from
-reading environment variables to executing low-level system calls involving ioctl()
-and TTYs. Frankly, why would you bother with that when this one simple call will
-suffice?
+有太多方式来得知终端大小了，从读取环境变量到执行底层的 ``ioctl()`` 函数等等。
+不过，为什么要去研究这些复杂的办法而不是仅仅调用一个简单的函数呢？

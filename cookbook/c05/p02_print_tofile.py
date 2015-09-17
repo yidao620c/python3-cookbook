@@ -7,7 +7,7 @@ Desc :
 
 
 def print_tofile():
-    with open('somefile.txt', 'rt') as f:
+    with open('d:/work/test.txt', 'wt') as f:
         print('Hello World!', file=f)
 
 if __name__ == '__main__':

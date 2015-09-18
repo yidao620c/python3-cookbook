@@ -12,7 +12,7 @@
 ----------
 解决方案
 ----------
-Python的datetime模块中有工具函数和类可以帮助你执行这样的计算。
+Python的 ``datetime`` 模块中有工具函数和类可以帮助你执行这样的计算。
 下面是对类似这样的问题的一个通用解决方案：
 
 .. code-block:: python
@@ -54,7 +54,7 @@ Python的datetime模块中有工具函数和类可以帮助你执行这样的计
     datetime.datetime(2012, 8, 24, 22, 5, 9, 911393)
     >>>
 
-可选的start_date参数可以由另外一个datetime实例来提供。比如：
+可选的 ``start_date`` 参数可以由另外一个 ``datetime`` 实例来提供。比如：
 
 .. code-block:: python
 
@@ -70,8 +70,8 @@ Python的datetime模块中有工具函数和类可以帮助你执行这样的计
 上面的算法原理是这样的：先将开始日期和目标日期映射到星期数组的位置上(星期一索引为0)，
 然后通过模运算计算出目标日期要经过多少天才能到达开始日期。然后用开始日期减去那个时间差即得到结果日期。
 
-如果你要像这样执行大量的日期计算的话，你最好安装第三方包python-dateutil来代替。
-比如，下面是是使用dateutil模块中的 ``relativedelta()`` 函数执行同样的计算：
+如果你要像这样执行大量的日期计算的话，你最好安装第三方包 ``python-dateutil`` 来代替。
+比如，下面是是使用 ``dateutil`` 模块中的 ``relativedelta()`` 函数执行同样的计算：
 
 .. code-block:: python
 

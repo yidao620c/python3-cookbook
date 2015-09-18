@@ -12,8 +12,8 @@
 ----------
 解决方案
 ----------
-默认情况下re模块已经对一些Unicode字符类有了基本的支持。
-比如，\\d已经匹配任意的unicode数字字符了：
+默认情况下 ``re`` 模块已经对一些Unicode字符类有了基本的支持。
+比如， ``\\d`` 已经匹配任意的unicode数字字符了：
 
 .. code-block:: python
 
@@ -27,7 +27,7 @@
     <_sre.SRE_Match object at 0x101234030>
     >>>
 
-如果你想在模式中包含指定的Unicode字符，你可以使用Unicode字符对应的转义序列(比如\uFFF或者\UFFFFFFF)。
+如果你想在模式中包含指定的Unicode字符，你可以使用Unicode字符对应的转义序列(比如 ``\uFFF`` 或者 ``\UFFFFFFF`` )。
 比如，下面是一个匹配几个不同阿拉伯编码页面中所有字符的正则表达式：
 
 .. code-block:: python

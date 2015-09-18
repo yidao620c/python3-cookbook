@@ -59,9 +59,9 @@ True
 32
 >>> print(cfg.get('server','signature'))
 
-=================================
+\=================================
 Brought to you by the Python Cookbook
-=================================
+\=================================
 >>>
 
 If desired, you can also modify the configuration and write it back to a file using the

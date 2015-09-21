@@ -5,26 +5,18 @@
 ----------
 问题
 ----------
-You have a large base of code with parts possibly maintained and distributed by different
-people. Each part is organized as a directory of files, like a package. However, instead
-of having each part installed as a separated named package, you would like all of the
-parts to join together under a common package prefix.
+你可能有大量的代码，由不同的人来分散地维护。每个部分被组织为文件目录，如一个包。然而，你希望能用共同的包前缀将所有组件连接起来，不是将每一个部分作为独立的包来安装。
 
 |
 
 ----------
 解决方案
 ----------
-Essentially, the problem here is that you would like to define a top-level Python package
-that serves as a namespace for a large collection of separately maintained subpackages.
-This problem often arises in large application frameworks where the framework developers
-want to encourage users to distribute plug-ins or add-on packages.
+从本质上讲，你要定义一个顶级Python包，作为一个大集合分开维护子包的命名空间。这个问题经常出现在大的应用框架中，框架开发者希望鼓励用户发布插件或附加包。
 
 
-To unify separate directories under a common namespace, you organize the code just
-like a normal Python package, but you omit __init__.py files in the directories where
-the components are going to join together. To illustrate, suppose you have two different
-directories of Python code like this:
+在统一不同的目录里统一相同的命名空间，但是要删去用来将组件联合起来的__init__.py文件。假设你有Python代码的两个不同的目录如下：
+
 
 .. code-block:: python
 
@@ -36,12 +28,11 @@ directories of Python code like this:
         spam/
             grok.py
 
-In these directories, the name spam is being used as a common namespace. Observe that
-there is no __init__.py file in either directory.
+在这2个目录里，都有着共同的命名空间spam。在任何个目录里都没有__init__.py文件。
 
 
-Now watch what happens if you add both foo-package and bar-package to the Python
-module path and try some imports:
+让我们看看，如果将foo-package和bar-package都加到python模块路径并尝试导入会发生什么
+
 
 .. code-block:: python
 
@@ -51,29 +42,19 @@ module path and try some imports:
     >>> import spam.grok
     >>>
 
-You’ll observe that, by magic, the two different package directories merge together and
-you can import either spam.blah or spam.grok. It just works.
+两个不同的包目录被合并到一起，你可以导入spam.blah和spam.grok，并且它们能够工作。
+
 
 |
 
 ----------
 讨论
 ----------
-The mechanism at work here is a feature known as a “namespace package.” Essentially,
-a namespace package is a special kind of package designed for merging different directories
-of code together under a common namespace, as shown. For large frameworks,
-this can be useful, since it allows parts of a framework to be broken up into separately
-installed downloads. It also enables people to easily make third-party add-ons and other
-extensions to such frameworks.
+在这里工作的机制被称为“包命名空间”的一个特征。从本质上讲，包命名空间是一种特殊的封装设计，为合并不同的目录的代码到一个共同的命名空间。对于大的框架，这可能是有用的，因为它允许一个框架的部分被单独地安装下载。它也使人们能够轻松地将第三方附加组件和其他扩展到这样的框架中。
 
 
-The key to making a namespace package is to make sure there are no __init__.py files
-in the top-level directory that is to serve as the common namespace. The missing
-__init__.py file causes an interesting thing to happen on package import. Instead of
-causing an error, the interpreter instead starts creating a list of all directories that happen
-to contain a matching package name. A special namespace package module is then
-created and a read-only copy of the list of directories is stored in its __path__ variable.
-For example:
+在这里工作的机制被称为“包命名空间”的一个特征。从本质上讲，包命名空间是一种特殊的封装设计，为合并不同的目录的代码到一个共同的命名空间。对于大的框架，这可能是有用的，因为它允许一个框架的部分被单独地安装下载。它也使人们能够轻松地将第三方附加组件和其他扩展到这样的框架中。包命名空间的关键是确保顶级目录没有__init__.py文件来作为共同的命名空间。缺失__init__.py文件在导入包的时候会有有趣的事情发生。特殊的包命名空间模块被创建，只读的目录列表副本被存储在其__path__变量中。
+举个例子：
 
 .. code-block:: python
 
@@ -82,12 +63,10 @@ For example:
     _NamespacePath(['foo-package/spam', 'bar-package/spam'])
     >>>
 
-The directories on __path__ are used when locating further package subcomponents
-(e.g., when importing spam.grok or spam.blah).
+在定位包的子组件时，目录__path__将被用到(例如, 当导入spam.grok或者spam.blah的时候).
 
-An important feature of namespace packages is that anyone can extend the namespace
-with their own code. For example, suppose you made your own directory of code like
-this:
+包命名空间的一个重要特点是任何人都可以用自己的代码来扩展命名空间。举个例子，假设你自己的代码目录像这样：
+
 
 .. code-block:: python
 
@@ -95,8 +74,8 @@ this:
         spam/
             custom.py
 
-If you added your directory of code to sys.path along with the other packages, it would
-just seamlessly merge together with the other spam package directories:
+如果你将你的代码目录和其他包一起添加到sys.path，这将无缝地合并到别的spam包目录中：
+
 
 .. code-block:: python
 
@@ -105,9 +84,8 @@ just seamlessly merge together with the other spam package directories:
     >>> import spam.blah
     >>>
 
-As a debugging tool, the main way that you can tell if a package is serving as a namespace
-package is to check its __file__ attribute. If it’s missing altogether, the package is a
-namespace. This will also be indicated in the representation string by the word “namespace”:
+一个包是否被作为一个包命名空间的主要方法是检查其__fife__属性。如果没有，那包是个命名空间。这也将表现在字符串中的“namespace”这个词
+
 
 .. code-block:: python
 
@@ -119,6 +97,6 @@ namespace. This will also be indicated in the representation string by the word 
     <module 'spam' (namespace)>
     >>>
 
-Further information about namespace packages can be found in
+更多的包命名空间信息可以查看
 `PEP 420 <https://www.python.org/dev/peps/pep-0420/>`_.
 

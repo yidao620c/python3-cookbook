@@ -1,4 +1,4 @@
-PIL==1.1.6
+PIL==1.1.7
 greenlet==0.4.5
 gunicorn==19.1.1
 oauthlib==0.7.2

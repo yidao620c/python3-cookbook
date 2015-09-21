@@ -8,6 +8,7 @@ import os
 
 
 if __name__ == '__main__':
-    print('----start----')
-    print('aaa;'[:-1])
+    aa = {"1", 2}
+    print("aaa='{}','{}'".format(*aa))
+    print("a'a'a'".replace("'", ";"))
 

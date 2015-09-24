@@ -5,17 +5,15 @@
 ----------
 问题
 ----------
-You have Python code that can’t be imported because it’s not located in a directory listed
-in sys.path. You would like to add new directories to Python’s path, but don’t want to
-hardwire it into your code.
+你无法导入你的Python代码因为它所在的目录不在sys.path里。你想将添加新目录到Python路径，但是不想硬链接到你的代码。
+
 
 |
 
 ----------
 解决方案
 ----------
-There are two common ways to get new directories added to sys.path. First, you can
-add them through the use of the PYTHONPATH environment variable. For example:
+有两种常用的方式将新目录添加到sys.path。第一种，你可以使用PYTHONPATH环境变量来添加。例如：
 
 .. code-block:: python
 
@@ -28,10 +26,9 @@ add them through the use of the PYTHONPATH environment variable. For example:
     ['', '/some/dir', '/other/dir', ...]
     >>>
 
-In a custom application, this environment variable could be set at program startup or
-through a shell script of some kind.
+在自定义应用程序中，这样的环境变量可在程序启动时设置或通过shell脚本。
 
-The second approach is to create a .pth file that lists the directories like this:
+第二种方法是创建一个.pth文件，将目录列举出来，像这样：
 
 .. code-block:: python
 
@@ -39,19 +36,15 @@ The second approach is to create a .pth file that lists the directories like thi
     /some/dir
     /other/dir
 
-This .pth file needs to be placed into one of Python’s site-packages directories, which are
-typically located at /usr/local/lib/python3.3/site-packages or ~/.local/lib/python3.3/sitepackages.
-On interpreter startup, the directories listed in the .pth file will be added to
-sys.path as long as they exist on the filesystem. Installation of a .pth file might require
-administrator access if it’s being added to the system-wide Python interpreter.
+这个.pth文件需要放在某个Python的site-packages目录，通常位于/usr/local/lib/python3.3/site-packages 或者 ~/.local/lib/python3.3/sitepackages。当解释器启动时，.pth文件里列举出来的存在于文件系统的目录将被添加到sys.path。安装一个.pth文件可能需要管理员权限，如果它被添加到系统级的Python解释器。
+
 
 |
 
 ----------
 讨论
 ----------
-Faced with trouble locating files, you might be inclined to write code that manually
-adjusts the value of sys.path. For example:
+比起费力地找文件，你可能会倾向于写一个代码手动调节sys.path的值。例如:
 
 .. code-block:: python
 
@@ -59,15 +52,7 @@ adjusts the value of sys.path. For example:
     sys.path.insert(0, '/some/dir')
     sys.path.insert(0, '/other/dir')
 
-Although this “works,” it is extremely fragile in practice and should be avoided if possible.
-Part of the problem with this approach is that it adds hardcoded directory names
-to your source. This can cause maintenance problems if your code ever gets moved
-around to a new location. It’s usually much better to configure the path elsewhere in a
-manner that can be adjusted without making source code edits.
-
-You can sometimes work around the problem of hardcoded directories if you carefully
-construct an appropriate absolute path using module-level variables, such as
-__file__. For example:
+虽然这能“工作”，它是在实践中极为脆弱，应尽量避免使用。这种方法的问题是，它将目录名硬编码到了你的源。如果你的代码被移到一个新的位置，这会导致维护问题。更好的做法是在不修改源代码的情况下，将path配置到其他地方。如果您使用模块级的变量来精心构造一个适当的绝对路径，有时你可以解决硬编码目录的问题，比如__file__。举个例子：
 
 .. code-block:: python
 
@@ -75,13 +60,7 @@ __file__. For example:
     from os.path import abspath, join, dirname
     sys.path.insert(0, abspath(dirname('__file__'), 'src'))
 
-This adds an src directory to the path where that directory is located in the same directory
-as the code that’s executing the insertion step.
+这将src目录添加到path里，和执行插入步骤的代码在同一个目录里。
 
-The site-packages directories are the locations where third-party modules and packages
-normally get installed. If your code was installed in that manner, that’s where it would
-be placed. Although .pth files for configuring the path must appear in site-packages, they
-can refer to any directories on the system that you wish. Thus, you can elect to have
-your code in a completely different set of directories as long as those directories are
-included in a .pth file.
+site-packages目录是第三方包和模块安装的目录。如果你手动安装你的代码，它将被安装到site-packages目录。虽然.pth文件配置的path必须出现在site-packages里，但代码可以在系统上任何你想要的目录。因此，你可以把你的代码放在一系列不同的目录，只要那些目录包含在.pth文件里。
 

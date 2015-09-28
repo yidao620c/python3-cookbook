@@ -5,15 +5,14 @@
 ----------
 问题
 ----------
-You want to write programs that parse and analyze Python source code.
+你想写解析并分析Python源代码的程序。
 
 |
 
 ----------
 解决方案
 ----------
-Most programmers know that Python can evaluate or execute source code provided in
-the form of a string. For example:
+大部分程序员知道Python能够计算或执行字符串形式的源代码。例如：
 
 .. code-block:: python
 
@@ -33,8 +32,7 @@ the form of a string. For example:
     9
     >>>
 
-However, the ast module can be used to compile Python source code into an abstract
-syntax tree (AST) that can be analyzed. For example:
+尽管如此，``ast`` 模块能被用来将Python源码编译成一个可被分析的抽象语法树（AST）。例如：
 
 .. code-block:: python
 
@@ -59,11 +57,9 @@ syntax tree (AST) that can be analyzed. For example:
     kwargs=None))], orelse=[])])"
     >>>
 
-Analyzing the source tree requires a bit of study on your part, but it consists of a collection
-of AST nodes. The easiest way to work with these nodes is to define a visitor
-class that implements various visit_NodeName() methods where NodeName() matches
-the node of interest. Here is an example of such a class that records information about
-which names are loaded, stored, and deleted.
+分析源码树需要你自己更多的学习，它是由一系列AST节点组成的。
+分析这些节点最简单的方法就是定义一个访问者类，实现很多 ``visit_NodeName()`` 方法，
+``NodeName()`` 匹配那些你感兴趣的节点。下面是这样一个类，记录了哪些名字被加载、存储和删除的信息。
 
 .. code-block:: python
 
@@ -102,7 +98,7 @@ which names are loaded, stored, and deleted.
         print('Stored:', c.stored)
         print('Deleted:', c.deleted)
 
-If you run this program, you’ll get output like this:
+如果你运行这个程序，你会得到下面这样的输出：
 
 .. code-block:: python
 
@@ -110,7 +106,7 @@ If you run this program, you’ll get output like this:
     Stored: {'i'}
     Deleted: {'i'}
 
-Finally, ASTs can be compiled and executed using the compile() function. For example:
+最后，AST可以通过 ``compile()`` 函数来编译并执行。例如：
 
 .. code-block:: python
 
@@ -132,18 +128,14 @@ Finally, ASTs can be compiled and executed using the compile() function. For exa
 ----------
 讨论
 ----------
-The fact that you can analyze source code and get information from it could be the start
-of writing various code analysis, optimization, or verification tools. For instance, instead
-of just blindly passing some fragment of code into a function like exec(), you could
-turn it into an AST first and look at it in some detail to see what it’s doing. You could
-also write tools that look at the entire source code for a module and perform some sort
-of static analysis over it.
+当你能够分析源代码并从中获取信息的时候，你就能写很多代码分析、优化或验证工具了。
+例如，相比盲目的传递一些代码片段到类似 ``exec()`` 函数中，你可以先将它转换成一个AST，
+然后观察它的细节看它到底是怎样做的。
+你还可以写一些工具来查看某个模块的全部源码，并且在此基础上执行某些静态分析。
 
-
-It should be noted that it is also possible to rewrite the AST to represent new code if you
-really know what you’re doing. Here is an example of a decorator that lowers globally
-accessed names into the body of a function by reparsing the function body’s source code,
-rewriting the AST, and recreating the function’s code object:
+需要注意的是，如果你知道自己在干啥，你还能够重写AST来表示新的代码。
+下面是一个装饰器例子，可以通过重新解析函数体源码、
+重写AST并重新创建函数代码对象来将全局访问变量降为函数体作用范围，
 
 .. code-block:: python
 
@@ -198,7 +190,7 @@ rewriting the AST, and recreating the function’s code object:
             return func
         return lower
 
-To use this code, you would write code such as the following:
+为了使用这个代码，你可以像下面这样写：
 
 .. code-block:: python
 
@@ -208,7 +200,7 @@ To use this code, you would write code such as the following:
         while n > 0:
             n -= INCR
 
-The decorator rewrites the source code of the countdown() function to look like this:
+装饰器会将 ``countdown()`` 函数重写为类似下面这样子：
 
 .. code-block:: python
 
@@ -218,16 +210,11 @@ The decorator rewrites the source code of the countdown() function to look like 
         while n > 0:
             n -= INCR
 
-In a performance test, it makes the function run about 20% faster.
+在性能测试中，它会让函数运行快20%
 
+现在，你是不是想为你所有的函数都加上这个装饰器呢？或许不会。
+但是，这却是对于一些高级技术比如AST操作、源码操作等等的一个很好的演示说明
 
-Now, should you go applying this decorator to all of your functions? Probably not.
-However, it’s a good illustration of some very advanced things that might be possible
-through AST manipulation, source code manipulation, and other techniques.
-
-
-This recipe was inspired by a similar recipe at ActiveState that worked by manipulating
-Python’s byte code. Working with the AST is a higher-level approach that might be a bit
-more straightforward. See the next recipe for more information about byte code.
-
+本节受另外一个在 ``ActiveState`` 中处理Python字节码的章节的启示。
+使用AST是一个更加高级点的技术，并且也更简单些。参考下面一节获得字节码的更多信息。
 

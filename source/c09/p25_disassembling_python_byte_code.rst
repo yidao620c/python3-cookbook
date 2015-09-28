@@ -5,16 +5,14 @@
 ----------
 问题
 ----------
-You want to know in detail what your code is doing under the covers by disassembling
-it into lower-level byte code used by the interpreter.
+你想通过将你的代码反编译成低级的字节码来查看它底层的工作机制。
 
 |
 
 ----------
 解决方案
 ----------
-The dis module can be used to output a disassembly of any Python function. For
-example:
+``dis`` 模块可以被用来输出任何Python函数的反编译结果。例如：
 
 .. code-block:: python
 
@@ -34,9 +32,8 @@ example:
 ----------
 讨论
 ----------
-The dis module can be useful if you ever need to study what’s happening in your program
-at a very low level (e.g., if you’re trying to understand performance characteristics).
-The raw byte code interpreted by the dis() function is available on functions as follows:
+当你想要知道你的程序底层的运行机制的时候，``dis`` 模块是很有用的。比如如果你想试着理解性能特征。
+被 ``dis()`` 函数解析的原始字节码如下所示：
 
 .. code-block:: python
 
@@ -46,8 +43,7 @@ The raw byte code interpreted by the dis() function is available on functions as
     \x01\x00\x01d\x00\x00S"
     >>>
 
-If you ever want to interpret this code yourself, you would need to use some of the
-constants defined in the opcode module. For example:
+如果你想自己解释这段代码，你需要使用一些在 ``opcode`` 模块中定义的常量。例如：
 
 .. code-block:: python
 
@@ -60,9 +56,8 @@ constants defined in the opcode module. For example:
     'LOAD_FAST'
     >>>
 
-Ironically, there is no function in the dis module that makes it easy for you to process
-the byte code in a programmatic way. However, this generator function will take the raw
-byte code sequence and turn it into opcodes and arguments.
+奇怪的是，在 ``dis`` 模块中并没有函数让你以编程方式很容易的来处理字节码。
+不过，下面的生成器函数可以将原始字节码序列转换成 ``opcodes`` 和参数。
 
 .. code-block:: python
 
@@ -86,15 +81,15 @@ byte code sequence and turn it into opcodes and arguments.
                 oparg = None
             yield (op, oparg)
 
-To use this function, you would use code like this:
+使用方法如下：
 
 .. code-block:: python
 
     >>> for op, oparg in generate_opcodes(countdown.__code__.co_code):
     ...     print(op, opcode.opname[op], oparg)
 
-It’s a little-known fact, but you can replace the raw byte code of any function that you
-want. It takes a bit of work to do it, but here’s an example of what’s involved:
+这种方式很少有人知道，你可以利用它替换任何你想要替换的函数的原始字节码。
+下面我们用一个示例来演示整个过程：
 
 .. code-block:: python
 
@@ -120,10 +115,6 @@ want. It takes a bit of work to do it, but here’s an example of what’s invol
     >>> add(2,3)
     Segmentation fault
 
-Having the interpreter crash is a pretty likely outcome of pulling a crazy stunt like this.
-However, developers working on advanced optimization and metaprogramming tools
-might be inclined to rewrite byte code for real. This last part illustrates how to do it. See
+你可以像这样耍大招让解释器奔溃。但是，对于编写更高级优化和元编程工具的程序员来讲，
+他们可能真的需要重写字节码。本节最后的部分演示了这个是怎样做到的。你还可以参考另外一个类似的例子：
 `this code on ActiveState <http://code.activestate.com/recipes/277940-decorator-for-bindingconstants-at-compile-time/>`_
-for another example of such code in action.
-
-

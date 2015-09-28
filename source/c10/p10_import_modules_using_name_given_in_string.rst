@@ -5,16 +5,14 @@
 ----------
 问题
 ----------
-You have the name of a module that you would like to import, but it’s being held in a
-string. You would like to invoke the import command on the string.
+你想导入一个模块，但是模块的名字在字符串里。你想对字符串调用导入命令。
 
 |
 
 ----------
 解决方案
 ----------
-Use the importlib.import_module() function to manually import a module or part of
-a package where the name is given as a string. For example:
+使用importlib.import_module()函数来手动导入名字为字符串给出的一个模块或者包的一部分。举个例子：
 
 .. code-block:: python
 
@@ -26,13 +24,10 @@ a package where the name is given as a string. For example:
     >>> u = mod.urlopen('http://www.python.org')
     >>>
 
-import_module simply performs the same steps as import, but returns the resulting
-module object back to you as a result. You just need to store it in a variable and use it
-like a normal module afterward.
+import_module只是简单地执行和import相同的步骤，但是返回生成的模块对象。你只需要将其存储在一个变量，然后像正常的模块一样使用。
 
 
-If you are working with packages, import_module() can also be used to perform relative
-imports. However, you need to give it an extra argument. For example:
+如果你正在使用的包，import_module()也可用于相对导入。但是，你需要给它一个额外的参数。例如：
 
 .. code-block:: python
 
@@ -43,15 +38,10 @@ imports. However, you need to give it an extra argument. For example:
 ----------
 讨论
 ----------
-The problem of manually importing modules with import_module() most commonly
-arises when writing code that manipulates or wraps around modules in some way. For
-example, perhaps you’re implementing a customized importing mechanism of some
-kind where you need to load a module by name and perform patches to the loaded code.
+使用import_module()手动导入模块的问题通常出现在以某种方式编写修改或覆盖模块的代码时候。例如，也许你正在执行某种自定义导入机制，需要通过名称来加载一个模块，通过补丁加载代码。
 
 
-In older code, you will sometimes see the built-in __import__() function used to perform
-imports. Although this works, importlib.import_module() is usually easier to
-use.
+在旧的代码，有时你会看到用于导入的内建函数__import__()。尽管它能工作，但是importlib.import_module() 通常更容易使用。
 
-See Recipe 10.11 for an advanced example of customizing the import process.
+自定义导入过程的高级实例见10.11小节
 

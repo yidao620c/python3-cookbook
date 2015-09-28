@@ -5,16 +5,14 @@
 ----------
 问题
 ----------
-You are using exec() to execute a fragment of code in the scope of the caller, but after
-execution, none of its results seem to be visible.
+你想在使用范围内执行某个代码片段，并且希望在执行后所有的结果都不可见。
 
 |
 
 ----------
 解决方案
 ----------
-To better understand the problem, try a little experiment. First, execute a fragment of
-code in the global namespace:
+为了理解这个问题，先试试一个简单场景。首先，在全局命名空间内执行一个代码片段：
 
 .. code-block:: python
 
@@ -24,7 +22,7 @@ code in the global namespace:
     14
     >>>
 
-Now, try the same experiment inside a function:
+然后，再在一个函数中执行同样的代码：
 
 .. code-block:: python
 
@@ -40,14 +38,11 @@ Now, try the same experiment inside a function:
     NameError: global name 'b' is not defined
     >>>
 
-As you can see, it fails with a NameError almost as if the exec() statement never actually
-executed. This can be a problem if you ever want to use the result of the exec() in a
-later calculation.
+可以看出，最后抛出了一个NameError异常，就跟在 ``exec()`` 语句从没执行过一样。
+要是你想在后面的计算中使用到 ``exec()`` 执行结果的话就会有问题了。
 
-
-To fix this kind of problem, you need to use the locals() function to obtain a dictionary
-of the local variables prior to the call to exec(). Immediately afterward, you can extract
-modified values from the locals dictionary. For example:
+为了修正这样的错误，你需要在调用 ``exec()`` 之前使用 ``locals()`` 函数来得到一个局部变量字典。
+之后你就能从局部字典中获取修改过后的变量值了。例如：
 
 .. code-block:: python
 
@@ -67,17 +62,14 @@ modified values from the locals dictionary. For example:
 ----------
 讨论
 ----------
-Correct use of exec() is actually quite tricky in practice. In fact, in most situations where
-you might be considering the use of exec(), a more elegant solution probably exists
-(e.g., decorators, closures, metaclasses, etc.).
+实际上对于 ``exec()`` 的正确使用是比较难的。大多数情况下当你要考虑使用 ``exec()`` 的时候，
+还有另外更好的解决方案（比如装饰器、闭包、元类等等）。
 
-
-However, if you still must use exec(), this recipe outlines some subtle aspects of using
-it correctly. By default, exec() executes code in the local and global scope of the caller.
-However, inside functions, the local scope passed to exec() is a dictionary that is a copy
-of the actual local variables. Thus, if the code in exec() makes any kind of modification,
-that modification is never reflected in the actual local variables. Here is another example
-that shows this effect:
+然而，如果你仍然要使用 ``exec()`` ，本节列出了一些如何正确使用它的方法。
+默认情况下，``exec()`` 会在调用者局部和全局范围内执行代码。然而，在函数里面，
+传递给 ``exec()`` 的局部范围是拷贝实际局部变量组成的一个字典。
+因此，如果 ``exec()`` 如果执行了修改操作，这种修改后的结果对实际局部变量值是没有影响的。
+下面是另外一个演示它的例子：
 
 .. code-block:: python
 
@@ -90,10 +82,8 @@ that shows this effect:
     0
     >>>
 
-When you call locals() to obtain the local variables, as shown in the solution, you get
-the copy of the locals that is passed to exec(). By inspecting the value of the dictionary
-after execution, you can obtain the modified values. Here is an experiment that shows
-this:
+上面代码里，当你调用 ``locals()`` 获取局部变量时，你获得的是传递给 ``exec()`` 的局部变量的一个拷贝。
+通过在代码执行后审查这个字典的值，那就能获取修改后的值了。下面是一个演示例子：
 
 .. code-block:: python
 
@@ -111,13 +101,11 @@ this:
     x = 0
     >>>
 
-Carefully observe the output of the last step. Unless you copy the modified value from
-loc back to x, the variable remains unchanged.
+仔细观察最后一步的输出，除非你将 ``loc`` 中被修改后的值手动赋值给x，否则x变量值是不会变的。
 
-
-With any use of locals(), you need to be careful about the order of operations. Each
-time it is invoked, locals() will take the current value of local variables and overwrite
-the corresponding entries in the dictionary. Observe the outcome of this experiment:
+在使用 ``locals()`` 的时候，你需要注意操作顺序。每次它被调用的时候，
+``locals()`` 会获取局部变量值中的值并覆盖字典中相应的变量。
+请注意观察下下面这个试验的输出结果：
 
 .. code-block:: python
 
@@ -136,10 +124,9 @@ the corresponding entries in the dictionary. Observe the outcome of this experim
     {'loc': {...}, 'x': 0}
     >>>
 
-Notice how the last call to locals() caused x to be overwritten.
+注意最后一次调用 ``locals()`` 的时候x的值是如何被覆盖掉的。
 
-As an alternative to using locals(), you might make your own dictionary and pass it
-to exec(). For example:
+作为 ``locals()`` 的一个替代方案，你可以使用你自己的字典，并将它传递给 ``exec()`` 。例如：
 
 .. code-block:: python
 
@@ -155,12 +142,9 @@ to exec(). For example:
     14
     >>>
 
-For most uses of exec(), this is probably good practice. You just need to make sure that
-the global and local dictionaries are properly initialized with names that the executed
-code will access.
+大部分情况下，这种方式是使用 ``exec()`` 的最佳实践。
+你只需要保证全局和局部字典在后面代码访问时已经被初始化。
 
-
-Last, but not least, before using exec(), you might ask yourself if other alternatives are
-available. Many problems where you might consider the use of exec() can be replaced
-by closures, decorators, metaclasses, or other metaprogramming features.
-
+还有一点，在使用 ``exec()`` 之前，你可能需要问下自己是否有其他更好的替代方案。
+大多数情况下当你要考虑使用 ``exec()`` 的时候，
+还有另外更好的解决方案，比如装饰器、闭包、元类，或其他一些元编程特性。

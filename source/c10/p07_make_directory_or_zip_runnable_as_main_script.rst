@@ -5,16 +5,14 @@
 ----------
 问题
 ----------
-You have a program that has grown beyond a simple script into an application involving
-multiple files. You’d like to have some easy way for users to run the program.
+您有已经一个复杂的脚本到涉及多个文件的应用程序。你想有一些简单的方法让用户运行程序。
 
 |
 
 ----------
 解决方案
 ----------
-If your application program has grown into multiple files, you can put it into its own
-directory and add a __main__.py file. For example, you can create a directory like this:
+如果你的应用程序已经有多个文件，你可以把你的应用程序放进它自己的目录并添加一个__main__.py文件。 举个例子，你可以像这样创建目录：
 
 .. code-block:: python
 
@@ -24,16 +22,15 @@ directory and add a __main__.py file. For example, you can create a directory li
         grok.py
         __main__.py
 
-If __main__.py is present, you can simply run the Python interpreter on the top-level
-directory like this:
+如果__main__.py存在，你可以简单地在顶级目录运行Python解释器：
 
 .. code-block:: python
 
     bash % python3 myapplication
 
-The interpreter will execute the __main__.py file as the main program.
+解释器将执行__main__.py文件作为主程序。
 
-This technique also works if you package all of your code up into a zip file. For example:
+如果你将你的代码打包成zip文件，这种技术同样也适用，举个例子：
 
 .. code-block:: python
 
@@ -48,15 +45,11 @@ This technique also works if you package all of your code up into a zip file. Fo
 ----------
 讨论
 ----------
-Creating a directory or zip file and adding a __main__.py file is one possible way to
-package a larger Python application. It’s a little bit different than a package in that the
-code isn’t meant to be used as a standard library module that’s installed into the Python
-library. Instead, it’s just this bundle of code that you want to hand someone to execute.
+创建一个目录或zip文件并添加__main__.py文件来将一个更大的Python应用打包是可行的。这和作为标准库被安装到Python库的代码包是有一点区别的。相反，这只是让别人执行的代码包。
 
 
-Since directories and zip files are a little different than normal files, you may also want
-to add a supporting shell script to make execution easier. For example, if the code was
-in a file named myapp.zip, you could make a top-level script like this:
+由于目录和zip文件与正常文件有一点不同，你可能还需要增加一个shell脚本，使执行更加容易。例如，如果代码文件名为myapp.zip，你可以创建这样一个顶级脚本：
+
 
 .. code-block:: bash
 

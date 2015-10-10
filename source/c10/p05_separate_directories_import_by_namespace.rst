@@ -28,7 +28,7 @@
         spam/
             grok.py
 
-在这2个目录里，都有着共同的命名空间spam。在任何个目录里都没有__init__.py文件。
+在这2个目录里，都有着共同的命名空间spam。在任何一个目录里都没有__init__.py文件。
 
 
 让我们看看，如果将foo-package和bar-package都加到python模块路径并尝试导入会发生什么

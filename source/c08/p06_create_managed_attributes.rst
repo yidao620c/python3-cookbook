@@ -124,7 +124,7 @@ property的一个关键特征是它看上去跟普通的attribute没什么两样
 
     class Person:
         def __init__(self, first_name):
-            self.first_name = name
+            self.first_name = first_name
 
         @property
         def first_name(self):

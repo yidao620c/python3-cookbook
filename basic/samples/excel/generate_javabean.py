@@ -11,7 +11,7 @@ import datetime
 BASE_DOMAIN = """
 _package_location_
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -154,6 +154,7 @@ def underline_to_camel(underline_format, is_field=False):
     result = ''.join([s.capitalize() for s in underline_format.split('_')])
     return result[0].lower() + result[1:] if is_field else result
 
+
 def load_schema(filename):
     """先加载schema.sql文件来获取所有建表语句"""
     result = []
@@ -173,8 +174,8 @@ def load_schema(filename):
                     col_null = 'NOT NULL'
                 else:
                     col_null = ''
-                col_remark = col_arr[-1]
-                cr = col_remark.replace("'", "")
+                col_remark = line.split(' COMMENT ')
+                cr = col_remark[-1].strip().replace("'", "")
                 each_table.append((col_name, col_type, col_null, cr[:-1] if cr.endswith(',') else cr))
             elif 'ENGINE=' in line:
                 # 单个表定义结束
@@ -276,9 +277,9 @@ def write_beans(beans_dir, package_name, schema_name):
 if __name__ == '__main__':
     # print(camel_to_underline("CompanyServiceImpl"))
     # print(underline_to_camel("company_service_impl", True))
-    # beans_dir = r'D:\work\zbeans'
-    # package_name = r'com.winhong.fastloan.domain'
-    # schema_name = r'D:\work\fastloan\trunk\fastloan\src\main\resources\sql\schema.sql'
-    # write_beans(beans_dir, package_name, schema_name)
-    write_beans(sys.argv[1], sys.argv[2], sys.argv[3])
+    beans_dir = r'D:\work\zbeans\tobacco'
+    package_name = r'com.cmback.tobacco.domain;'
+    schema_name = r'D:\work\projects\gitprojects\tobacco\src\main\resources\sql\schema.sql'
+    write_beans(beans_dir, package_name, schema_name)
+    # write_beans(sys.argv[1], sys.argv[2], sys.argv[3])
     pass

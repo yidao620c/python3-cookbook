@@ -13,6 +13,7 @@ from openpyxl.writer.dump_worksheet import WriteOnlyCell
 from openpyxl.comments import Comment
 from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font, Color
 from openpyxl.styles import colors, borders, fills
+import re
 
 
 def load_xlsx():
@@ -80,8 +81,10 @@ def write_only():
 def load_schema(filename):
     """先加载schema.sql文件来获取所有建表语句"""
     result = []
+    pat = re.compile(r'.* DEFAULT (\S+) .*')
     with open(filename, encoding='utf-8') as sqlfile:
         each_table = []  # 每张表定义
+        temp_comment = ''
         for line in sqlfile:
             if line.startswith('--'):
                 temp_comment = line.split('--')[1].strip()
@@ -96,9 +99,12 @@ def load_schema(filename):
                     col_null = 'NOT NULL'
                 else:
                     col_null = ''
-                col_remark = col_arr[-1]
-                cr = col_remark.replace("'", "")
-                each_table.append((col_name, col_type, col_null, cr[:-1] if cr.endswith(',') else cr))
+                col_remark = line.split(' COMMENT ')
+                cr = col_remark[-1].strip().replace("'", "")
+                defaultmatch = pat.match(line)
+                default = defaultmatch.group(1) if defaultmatch else ''
+                each_table.append((col_name, col_type, col_null,
+                                   default, cr[:-1] if cr.endswith(',') else cr))
             elif 'ENGINE=' in line:
                 # 单个表定义结束
                 result.append(list(each_table))
@@ -139,7 +145,7 @@ def write_dest(xlsx_name, schema_name):
 
     for table in table_data:
         ws = wb.create_sheet(title=table[0])
-        ws.merge_cells('E3:H3')  # 合并单元格
+        ws.merge_cells('E3:I3')  # 合并单元格
         ws['E3'].style = title_style
         ws['F2'].style = Style(border=Border(
             bottom=Side(border_style=borders.BORDER_THIN, color='FF000000')))
@@ -147,7 +153,9 @@ def write_dest(xlsx_name, schema_name):
             bottom=Side(border_style=borders.BORDER_THIN, color='FF000000')))
         ws['H2'].style = Style(border=Border(
             bottom=Side(border_style=borders.BORDER_THIN, color='FF000000')))
-        ws['I3'].style = Style(border=Border(
+        ws['I2'].style = Style(border=Border(
+            bottom=Side(border_style=borders.BORDER_THIN, color='FF000000')))
+        ws['J3'].style = Style(border=Border(
             left=Side(border_style=borders.BORDER_THIN, color='FF000000')))
         ws['E3'] = table[0]
         ws['E4'].style = header_style
@@ -157,11 +165,14 @@ def write_dest(xlsx_name, schema_name):
         ws['G4'].style = header_style
         ws['G4'] = '空值约束'
         ws['H4'].style = header_style
-        ws['H4'] = '备注'
+        ws['H4'] = '默认值'
+        ws['I4'].style = header_style
+        ws['I4'] = '备注'
         ws.column_dimensions['E'].width = 20
         ws.column_dimensions['F'].width = 20
-        ws.column_dimensions['G'].width = 16
-        ws.column_dimensions['H'].width = 45
+        ws.column_dimensions['G'].width = 12
+        ws.column_dimensions['H'].width = 16
+        ws.column_dimensions['I'].width = 45
         for idx, each_column in enumerate(table[2:]):
             ws['E{}'.format(idx + 5)].style = common_style
             ws['E{}'.format(idx + 5)] = each_column[0]
@@ -171,6 +182,8 @@ def write_dest(xlsx_name, schema_name):
             ws['G{}'.format(idx + 5)] = each_column[2]
             ws['H{}'.format(idx + 5)].style = common_style
             ws['H{}'.format(idx + 5)] = each_column[3]
+            ws['I{}'.format(idx + 5)].style = common_style
+            ws['I{}'.format(idx + 5)] = each_column[4]
     ws = wb['首页列表']
     ws.merge_cells('D3:F3')
     ws['D3'].style = title_style
@@ -180,7 +193,7 @@ def write_dest(xlsx_name, schema_name):
         bottom=Side(border_style=borders.BORDER_THIN, color='FF000000')))
     ws['G3'].style = Style(border=Border(
         left=Side(border_style=borders.BORDER_THIN, color='FF000000')))
-    ws['D3'] = '贷快发数据库系统表'
+    ws['D3'] = 'MySQL数据库系统表'
     ws['D4'].style = header_style
     ws['D4'] = '编号'
     ws['E4'].style = header_style
@@ -206,7 +219,8 @@ if __name__ == '__main__':
     # write_xlsx()
     # write_only()
     import sys
-    # dest_file = r'D:\work\fastloan\trunk\01文档\03系统设计\03数据库设计\贷快发MySQL数据库设计.xlsx'
-    # sql_file = r'D:\work\fastloan\trunk\fastloan\src\main\resources\sql\schema.sql'
-    write_dest(sys.argv[1], sys.argv[2])
+    dest_file = r'D:\work\MySQL数据库设计.xlsx'
+    schema_file = r'D:\work\projects\gitprojects\tobacco\src\main\resources\sql\schema.sql'
+    write_dest(dest_file, schema_file)
+    # write_dest(sys.argv[1], sys.argv[2])
     pass

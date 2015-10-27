@@ -12,6 +12,7 @@ import logging
 import datetime
 import mysql.connector
 from mysql.connector import errorcode
+import traceback
 
 # 查询航信CRM表
 sql_select_taxcode_name = """
@@ -77,8 +78,8 @@ def _connect():
     config = {
         'user': 'root',
         'password': 'mysql',
-        'host': '192.168.203.95',
-        'database': 'fastloan_test',
+        'host': '183.232.56.59',
+        'database': 'fastloan3',
         'raise_on_warnings': True,
     }
     cnx = None
@@ -90,7 +91,7 @@ def _connect():
         elif err.errno == errorcode.ER_BAD_DB_ERROR:
             print("Database does not exist")
         else:
-            print(err)
+            traceback.print_exc()
         if cnx:
             cnx.close()
     return cnx
@@ -116,6 +117,7 @@ def merge_table():
                 cursor.execute(sql_update_crm.format(*u_list))
         except:
             _log.error('--合并企业资料Exception,taxcode={},name={}--'.format(d2[0], d2[1]))
+            traceback.print_exc()
             cursor.close()
             conn_.rollback()
             conn_.close()

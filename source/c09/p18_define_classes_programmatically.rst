@@ -40,7 +40,7 @@
     Stock = types.new_class('Stock', (), {}, lambda ns: ns.update(cls_dict))
     Stock.__module__ = __name__
 
-这种方式会构建一个普通的类对象，并且安装你的期望工作：
+这种方式会构建一个普通的类对象，并且按照你的期望工作：
 
 .. code-block:: python
 

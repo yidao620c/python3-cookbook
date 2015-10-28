@@ -5,123 +5,125 @@
 ----------
 问题
 ----------
-You want an easy way to execute functions or methods in Python programs running on
-remote machines.
+你想找到一个简单的方式去执行运行在远程机器上面的Python程序中的函数或方法。
 
 |
 
 ----------
 解决方案
 ----------
-Perhaps the easiest way to implement a simple remote procedure call mechanism is to
-use XML-RPC. Here is an example of a simple server that implements a simple key-
-value store:
+实现一个远程方法调用的最简单方式是使用XML-RPC。下面我们演示一下一个实现了键-值存储功能的简单服务器：
 
-from xmlrpc.server import SimpleXMLRPCServer
+.. code-block:: python
 
-class KeyValueServer:
-    _rpc_methods_ = ['get', 'set', 'delete', 'exists', 'keys']
-    def __init__(self, address):
-        self._data = {}
-        self._serv = SimpleXMLRPCServer(address, allow_none=True)
-        for name in self._rpc_methods_:
-            self._serv.register_function(getattr(self, name))
+    from xmlrpc.server import SimpleXMLRPCServer
 
-    def get(self, name):
-        return self._data[name]
+    class KeyValueServer:
+        _rpc_methods_ = ['get', 'set', 'delete', 'exists', 'keys']
+        def __init__(self, address):
+            self._data = {}
+            self._serv = SimpleXMLRPCServer(address, allow_none=True)
+            for name in self._rpc_methods_:
+                self._serv.register_function(getattr(self, name))
 
-    def set(self, name, value):
-        self._data[name] = value
+        def get(self, name):
+            return self._data[name]
 
-    def delete(self, name):
-        del self._data[name]
+        def set(self, name, value):
+            self._data[name] = value
 
-    def exists(self, name):
-        return name in self._data
+        def delete(self, name):
+            del self._data[name]
 
-    def keys(self):
-        return list(self._data)
+        def exists(self, name):
+            return name in self._data
 
-    def serve_forever(self):
-        self._serv.serve_forever()
+        def keys(self):
+            return list(self._data)
 
-# Example
-if __name__ == '__main__':
-    kvserv = KeyValueServer(('', 15000))
-    kvserv.serve_forever()
+        def serve_forever(self):
+            self._serv.serve_forever()
 
-Here is how you would access the server remotely from a client:
+    # Example
+    if __name__ == '__main__':
+        kvserv = KeyValueServer(('', 15000))
+        kvserv.serve_forever()
 
->>> from xmlrpc.client import ServerProxy
->>> s = ServerProxy('http://localhost:15000', allow_none=True)
->>> s.set('foo', 'bar')
->>> s.set('spam', [1, 2, 3])
->>> s.keys()
-['spam', 'foo']
->>> s.get('foo')
-'bar'
->>> s.get('spam')
-[1, 2, 3]
->>> s.delete('spam')
->>> s.exists('spam')
-False
->>>
+下面我们从一个客户端机器上面来访问服务器：
+
+.. code-block:: python
+
+    >>> from xmlrpc.client import ServerProxy
+    >>> s = ServerProxy('http://localhost:15000', allow_none=True)
+    >>> s.set('foo', 'bar')
+    >>> s.set('spam', [1, 2, 3])
+    >>> s.keys()
+    ['spam', 'foo']
+    >>> s.get('foo')
+    'bar'
+    >>> s.get('spam')
+    [1, 2, 3]
+    >>> s.delete('spam')
+    >>> s.exists('spam')
+    False
+    >>>
 
 |
 
 ----------
 讨论
 ----------
-XML-RPC can be an extremely easy way to set up a simple remote procedure call service.
-All you need to do is create a server instance, register functions with it using the regis
-ter_function() method, and then launch it using the serve_forever() method. This
-recipe packages it up into a class to put all of the code together, but there is no such
-requirement. For example, you could create a server by trying something like this:
+XML-RPC 可以让我们很容易的构造一个简单的远程调用服务。你所需要做的仅仅是创建一个服务器实例，
+通过它的方法 ``register_function()`` 来注册函数，然后使用方法 ``serve_forever()`` 启动它。
+在上面我们将这些步骤放在一起写到一个类中，不够这并不是必须的。比如你还可以像下面这样创建一个服务器：
 
-from xmlrpc.server import SimpleXMLRPCServer
-def add(x,y):
-    return x+y
+.. code-block:: python
 
-serv = SimpleXMLRPCServer(('', 15000))
-serv.register_function(add)
-serv.serve_forever()
+    from xmlrpc.server import SimpleXMLRPCServer
+    def add(x,y):
+        return x+y
 
-Functions exposed via XML-RPC only work with certain kinds of data such as strings,
-numbers, lists, and dictionaries. For everything else, some study is required. For in‐
-stance,  if  you  pass  an  instance  through  XML-RPC,  only  its  instance  dictionary  is
-handled:
+    serv = SimpleXMLRPCServer(('', 15000))
+    serv.register_function(add)
+    serv.serve_forever()
 
->>> class Point:
-...     def __init__(self, x, y):
-...             self.x = x
-...             self.y = y
-...
->>> p = Point(2, 3)
->>> s.set('foo', p)
->>> s.get('foo')
-{'x': 2, 'y': 3}
->>>
+XML-RPC暴露出来的函数只能适用于部分数据类型，比如字符串、整形、列表和字典。
+对于其他类型就得需要做些额外的功课了。
+例如，如果你想通过 XML-RPC 传递一个对象实例，实际上只有他的实例字典被处理：
 
-Similarly, handling of binary data is a bit different than you expect:
+.. code-block:: python
 
->>> s.set('foo', b'Hello World')
->>> s.get('foo')
-<xmlrpc.client.Binary object at 0x10131d410>
+    >>> class Point:
+    ...     def __init__(self, x, y):
+    ...             self.x = x
+    ...             self.y = y
+    ...
+    >>> p = Point(2, 3)
+    >>> s.set('foo', p)
+    >>> s.get('foo')
+    {'x': 2, 'y': 3}
+    >>>
 
->>> _.data
-b'Hello World'
->>>
+类似的，对于二进制数据的处理也跟你想象的不太一样：
 
-As a general rule, you probably shouldn’t expose an XML-RPC service to the rest of the
-world as a public API. It often works best on internal networks where you might want
-to write simple distributed programs involving a few different machines.
-A downside to XML-RPC is its performance. The SimpleXMLRPCServer implementa‐
-tion is only single threaded, and wouldn’t be appropriate for scaling a large application,
-although it can be made to run multithreaded, as shown in Recipe 11.2. Also, since
-XML-RPC  serializes  all  data  as  XML,  it’s  inherently  slower  than  other  approaches.
-However, one benefit of this encoding is that it’s understood by a variety of other pro‐
-gramming languages. By using it, clients written in languages other than Python will be
-able to access your service.
-Despite its limitations, XML-RPC is worth knowing about if you ever have the need to
-make a quick and dirty remote procedure call system. Oftentimes, the simple solution
-is good enough.
+.. code-block:: python
+
+    >>> s.set('foo', b'Hello World')
+    >>> s.get('foo')
+    <xmlrpc.client.Binary object at 0x10131d410>
+
+    >>> _.data
+    b'Hello World'
+    >>>
+
+一般来讲，你不应该将 XML-RPC 服务以公共API的方式暴露出来。
+对于这种情况，通常分布式应用程序会是一个更好的选择。
+
+XML-RPC的一个缺点是它的性能。``SimpleXMLRPCServer`` 的实现是单线程的，
+所以它不适合于大型程序，尽管我们在11.2小节中演示过它是可以通过多线程来执行的。
+另外，由于 XML-RPC 将所有数据都序列化为XML格式，所以它会比其他的方式运行的慢一些。
+但是它也有优点，这种方式的编码可以被绝大部分其他编程语言支持。
+通过使用这种方式，其他语言的客户端程序都能访问你的服务。
+
+虽然XML-RPC有很多缺点，但是如果你需要快速构建一个简单远程过程调用系统的话，它仍然值得去学习的。
+有时候，简单的方案就已经足够了。

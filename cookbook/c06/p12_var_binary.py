@@ -7,6 +7,11 @@ Desc :
 import struct
 import itertools
 
+polys = [
+          [ (1.0, 2.5), (3.5, 4.0), (2.5, 1.5) ],
+          [ (7.0, 1.2), (5.1, 3.0), (0.5, 7.5), (0.8, 9.0) ],
+          [ (3.4, 6.3), (1.2, 0.5), (4.6, 9.2) ],
+        ]
 
 def write_polys(filename, polys):
     # Determine bounding box

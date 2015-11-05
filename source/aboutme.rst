@@ -25,6 +25,12 @@
 9. slideclick (https://github.com/slideclick)
 10. Tony Yang (liuliu036@gmail.com)
 11. nivance (https://github.com/nivance)
+12. robertding (robertdingx@gmail.com)
+13. LxMit (https://github.com/LxMit)
+14. Kevin Guan (https://github.com/K-Guan)
+15. R·Shishioh (https://github.com/Lrevor)
+16. Yan Ma (furzoommn@gmail.com)
+17. Taff Gao (gaotongfei1995@gmail.com)
 
 |
 |

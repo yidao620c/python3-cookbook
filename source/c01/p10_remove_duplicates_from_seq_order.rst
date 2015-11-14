@@ -18,10 +18,10 @@
 
     def dedupe(items):
         seen = set()
-            for item in items:
-                if item not in seen:
-                    yield item
-                    seen.add(item)
+        for item in items:
+            if item not in seen:
+                yield item
+                seen.add(item)
 下面是使用上述函数的例子：
 
 .. code-block:: python

@@ -147,11 +147,15 @@ def camel_to_underline(camel_format):
     """
     return ''.join([s if s.islower() else '_' + s.lower() for s in camel_format])[1:]
 
+
 def underline_to_camel(underline_format, is_field=False):
     """
     下划线命名格式驼峰命名格式
     """
-    result = ''.join([s.capitalize() for s in underline_format.split('_')])
+    try:
+        result = ''.join([s.capitalize() for s in underline_format.split('_')])
+    except:
+        print(underline_format + "...error...")
     return result[0].lower() + result[1:] if is_field else result
 
 

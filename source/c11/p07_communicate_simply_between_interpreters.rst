@@ -5,91 +5,88 @@
 ----------
 问题
 ----------
-You are running multiple instances of the Python interpreter, possibly on different ma‐
-chines, and you would like to exchange data between interpreters using messages.
+你在不同的机器上面运行着多个Python解释器实例，并希望能够在这些解释器之间通过消息来交换数据。
 
 |
 
 ----------
 解决方案
 ----------
-It is easy to communicate between interpreters if you use the multiprocessing.con
-nection module. Here is a simple example of writing an echo server:
+通过使用 ``multiprocessing.connection`` 模块可以很容易的实现解释器之间的通信。
+下面是一个简单的应答服务器例子：
 
-from multiprocessing.connection import Listener
-import traceback
+.. code-block:: python
 
-def echo_client(conn):
-    try:
-        while True:
-            msg = conn.recv()
-            conn.send(msg)
-    except EOFError:
-        print('Connection closed')
+    from multiprocessing.connection import Listener
+    import traceback
 
-def echo_server(address, authkey):
-    serv = Listener(address, authkey=authkey)
-    while True:
+    def echo_client(conn):
         try:
-            client = serv.accept()
+            while True:
+                msg = conn.recv()
+                conn.send(msg)
+        except EOFError:
+            print('Connection closed')
 
-            echo_client(client)
-        except Exception:
-            traceback.print_exc()
+    def echo_server(address, authkey):
+        serv = Listener(address, authkey=authkey)
+        while True:
+            try:
+                client = serv.accept()
 
-echo_server(('', 25000), authkey=b'peekaboo')
+                echo_client(client)
+            except Exception:
+                traceback.print_exc()
 
-Here  is  a  simple  example  of  a  client  connecting  to  the  server  and  sending  various
-messages:
+    echo_server(('', 25000), authkey=b'peekaboo')
 
->>> from multiprocessing.connection import Client
->>> c = Client(('localhost', 25000), authkey=b'peekaboo')
->>> c.send('hello')
->>> c.recv()
-'hello'
->>> c.send(42)
->>> c.recv()
-42
->>> c.send([1, 2, 3, 4, 5])
->>> c.recv()
-[1, 2, 3, 4, 5]
->>>
+然后客户端连接服务器并发送消息的简单示例：
 
-Unlike a low-level socket, messages are kept intact (each object sent using send() is
-received in its entirety with recv()). In addition, objects are serialized using pickle.
-So, any object compatible with pickle can be sent or received over the connection.
+.. code-block:: python
+
+    >>> from multiprocessing.connection import Client
+    >>> c = Client(('localhost', 25000), authkey=b'peekaboo')
+    >>> c.send('hello')
+    >>> c.recv()
+    'hello'
+    >>> c.send(42)
+    >>> c.recv()
+    42
+    >>> c.send([1, 2, 3, 4, 5])
+    >>> c.recv()
+    [1, 2, 3, 4, 5]
+    >>>
+
+跟底层socket不同的是，每个消息会完整保存（每一个通过send()发送的对象能通过recv()来完整接受）。
+另外，所有对象会通过pickle序列化。因此，任何兼容pickle的对象都能在此连接上面被发送和接受。
 
 |
 
 ----------
 讨论
 ----------
-There are many packages and libraries related to implementing various forms of mes‐
-sage passing, such as ZeroMQ, Celery, and so forth. As an alternative, you might also
-be inclined to implement a message layer on top of low-level sockets. However, some‐
-times you just want a simple solution. The multiprocessing.connection library is just
-that—using a few simple primitives, you can easily connect interpreters together and
-have them exchange messages.
-If you know that the interpreters are going to be running on the same machine, you can
-use alternative forms of networking, such as UNIX domain sockets or Windows named
-pipes. To create a connection using a UNIX domain socket, simply change the address
-to a filename such as this:
+目前有很多用来实现各种消息传输的包和函数库，比如ZeroMQ、Celery等。
+你还有另外一种选择就是自己在底层socket基础之上来实现一个消息传输层。
+但是你想要简单一点的方案，那么这时候 ``multiprocessing.connection`` 就派上用场了。
+仅仅使用一些简单的语句即可实现多个解释器之间的消息通信。
 
-s = Listener('/tmp/myconn', authkey=b'peekaboo')
+如果你的解释器运行在同一台机器上面，那么你可以使用另外的通信机制，比如Unix域套接字或者是Windows命名管道。
+要想使用UNIX域套接字来创建一个连接，只需简单的将地址改写一个文件名即可：
 
-To create a connection using a Windows named pipe, use a filename such as this:
+.. code-block:: python
 
-s = Listener(r'\\.\pipe\myconn', authkey=b'peekaboo')
+    s = Listener('/tmp/myconn', authkey=b'peekaboo')
 
-As a general rule, you would not be using multiprocessing to implement public-facing
-services. The authkey parameter to Client() and Listener() is there to help authen‐
-ticate the end points of the connection. Connection attempts with a bad key raise an
-exception. In addition, the module is probably best suited for long-running connections
+要想使用Windows命名管道来创建连接，只需像下面这样使用一个文件名：
 
-(not a large number of short connections). For example, two interpreters might establish
-a connection at startup and keep the connection active for the entire duration of a
-problem.
-Don’t use multiprocessing if you need more low-level control over aspects of the con‐
-nection. For example, if you needed to support timeouts, nonblocking I/O, or anything
-similar, you’re probably better off using a different library or implementing such features
-on top of sockets instead.
+.. code-block:: python
+
+    s = Listener(r'\\.\pipe\myconn', authkey=b'peekaboo')
+
+一个通用准则是，你不要使用 ``multiprocessing`` 来实现一个对外的公共服务。
+``Client()`` 和 ``Listener()`` 中的 ``authkey`` 参数用来认证发起连接的终端用户。
+如果密钥不对会产生一个异常。此外，该模块最适合用来建立长连接（而不是大量的短连接），
+例如，两个解释器之间启动后就开始建立连接并在处理某个问题过程中会一直保持连接状态。
+
+如果你需要对底层连接做更多的控制，比如需要支持超时、非阻塞I/O或其他类似的特性，
+你最好使用另外的库或者是在高层socket上来实现这些特性。

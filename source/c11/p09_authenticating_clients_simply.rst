@@ -5,105 +5,97 @@
 ----------
 问题
 ----------
-You want a simple way to authenticate the clients connecting to servers in a distributed
-system, but don’t need the complexity of something like SSL.
+你想在分布式系统中实现一个简单的客户端连接认证功能，又不想像SSL那样的复杂。
 
 |
 
 ----------
 解决方案
 ----------
-Simple but effective authentication can be performed by implementing a connection
-handshake using the hmac module. Here is sample code:
+可以利用 ``hmac`` 模块实现一个连接握手，从而实现一个简单而高效的认证过程。下面是代码示例：
 
-import hmac
-import os
+.. code-block:: python
 
-def client_authenticate(connection, secret_key):
-    '''
-    Authenticate client to a remote service.
-    connection represents a network connection.
-    secret_key is a key known only to both client/server.
-    '''
-    message = connection.recv(32)
-    hash = hmac.new(secret_key, message)
-    digest = hash.digest()
-    connection.send(digest)
+    import hmac
+    import os
 
-def server_authenticate(connection, secret_key):
-    '''
-    Request client authentication.
-    '''
-    message = os.urandom(32)
-    connection.send(message)
-    hash = hmac.new(secret_key, message)
-    digest = hash.digest()
-    response = connection.recv(len(digest))
-    return hmac.compare_digest(digest,response)
+    def client_authenticate(connection, secret_key):
+        '''
+        Authenticate client to a remote service.
+        connection represents a network connection.
+        secret_key is a key known only to both client/server.
+        '''
+        message = connection.recv(32)
+        hash = hmac.new(secret_key, message)
+        digest = hash.digest()
+        connection.send(digest)
 
-The general idea is that upon connection, the server presents the client with a message
-of random bytes (returned by os.urandom(), in this case). The client and server both
-compute a cryptographic hash of the random data using hmac and a secret key known
-only to both ends. The client sends its computed digest back to the server, where it is
-compared and used to decide whether or not to accept or reject the connection.
-Comparison  of  resulting  digests  should  be  performed  using  the  hmac.compare_di
-gest() function. This function has been written in a way that avoids timing-analysis-
-based attacks and should be used instead of a normal comparison operator (==).
-To use these functions, you would incorporate them into existing networking or mes‐
-saging code. For example, with sockets, the server code might look something like this:
+    def server_authenticate(connection, secret_key):
+        '''
+        Request client authentication.
+        '''
+        message = os.urandom(32)
+        connection.send(message)
+        hash = hmac.new(secret_key, message)
+        digest = hash.digest()
+        response = connection.recv(len(digest))
+        return hmac.compare_digest(digest,response)
 
-from socket import socket, AF_INET, SOCK_STREAM
+基本原理是当连接建立后，服务器给客户端发送一个随机的字节消息（这里例子中使用了 ``os.urandom()`` 返回值）。
+客户端和服务器同时利用hmac和一个只有双方知道的密钥来计算出一个加密哈希值。然后客户端将它计算出的摘要发送给服务器，
+服务器通过比较这个值和自己计算的是否一致来决定接受或拒绝连接。摘要的比较需要使用 ``hmac.compare_digest()`` 函数。
+使用这个函数可以避免遭到时间分析攻击，不要用简单的比较操作符（==）。
+为了使用这些函数，你需要将它集成到已有的网络或消息代码中。例如，对于sockets，服务器代码应该类似下面：
 
-secret_key = b'peekaboo'
-def echo_handler(client_sock):
-    if not server_authenticate(client_sock, secret_key):
-        client_sock.close()
-        return
-    while True:
+.. code-block:: python
 
-        msg = client_sock.recv(8192)
-        if not msg:
-            break
-        client_sock.sendall(msg)
+    from socket import socket, AF_INET, SOCK_STREAM
 
-def echo_server(address):
+    secret_key = b'peekaboo'
+    def echo_handler(client_sock):
+        if not server_authenticate(client_sock, secret_key):
+            client_sock.close()
+            return
+        while True:
+
+            msg = client_sock.recv(8192)
+            if not msg:
+                break
+            client_sock.sendall(msg)
+
+    def echo_server(address):
+        s = socket(AF_INET, SOCK_STREAM)
+        s.bind(address)
+        s.listen(5)
+        while True:
+            c,a = s.accept()
+            echo_handler(c)
+
+    echo_server(('', 18000))
+
+    Within a client, you would do this:
+
+    from socket import socket, AF_INET, SOCK_STREAM
+
+    secret_key = b'peekaboo'
+
     s = socket(AF_INET, SOCK_STREAM)
-    s.bind(address)
-    s.listen(5)
-    while True:
-        c,a = s.accept()
-        echo_handler(c)
-
-echo_server(('', 18000))
-
-Within a client, you would do this:
-
-from socket import socket, AF_INET, SOCK_STREAM
-
-secret_key = b'peekaboo'
-
-s = socket(AF_INET, SOCK_STREAM)
-s.connect(('localhost', 18000))
-client_authenticate(s, secret_key)
-s.send(b'Hello World')
-resp = s.recv(1024)
-...
+    s.connect(('localhost', 18000))
+    client_authenticate(s, secret_key)
+    s.send(b'Hello World')
+    resp = s.recv(1024)
 
 |
 
 ----------
 讨论
 ----------
-A common use of hmac authentication is in internal messaging systems and interprocess
-communication. For example, if you are writing a system that involves multiple pro‐
-cesses communicating across a cluster of machines, you can use this approach to make
-sure that only allowed processes are allowed to connect to one another. In fact, HMAC-
-based authentication is used internally by the multiprocessing library when it sets up
-communication with subprocesses.
-It’s important to stress that authenticating a connection is not the same as encryption.
-Subsequent communication on an authenticated connection is sent in the clear, and
-would be visible to anyone inclined to sniff the traffic (although the secret key known
-to both sides is never transmitted).
-The authentication algorithm used by hmac is based on cryptographic hashing functions,
-such as MD5 and SHA-1, and is described in detail in IETF RFC 2104. 
+``hmac`` 认证的一个常见使用场景是内部消息通信系统和进程间通信。
+例如，如果你编写的系统涉及到一个集群中多个处理器之间的通信，
+你可以使用本节方案来确保只有被允许的进程之间才能彼此通信。
+事实上，基于 ``hmac`` 的认证被 ``multiprocessing`` 模块使用来实现子进程直接的通信。
 
+还有一点需要强调的是连接认证和加密是两码事。
+认证成功之后的通信消息是以明文形式发送的，任何人只要想监听这个连接线路都能看到消息（尽管双方的密钥不会被传输）。
+
+hmac认证算法基于哈希函数如MD5和SHA-1，关于这个在IETF RFC 2104中有详细介绍。

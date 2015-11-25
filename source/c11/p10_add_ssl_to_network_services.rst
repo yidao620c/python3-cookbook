@@ -5,284 +5,286 @@
 ----------
 问题
 ----------
-You want to implement a network service involving sockets where servers and clients
-authenticate themselves and encrypt the transmitted data using SSL.
+你想实现一个基于sockets的网络服务，客户端和服务器通过SSL协议认证并加密传输的数据。
 
 |
 
 ----------
 解决方案
 ----------
-The ssl module provides support for adding SSL to low-level socket connections. In
-particular, the ssl.wrap_socket() function takes an existing socket and wraps an SSL
-layer around it. For example, here’s an example of a simple echo server that presents a
-server certificate to connecting clients:
+``ssl`` 模块能为底层socket连接添加SSL的支持。
+``ssl.wrap_socket()`` 函数接受一个已存在的socket作为参数并使用SSL层来包装它。
+例如，下面是一个简单的应答服务器，能在服务器端为所有客户端连接做认证。
 
-from socket import socket, AF_INET, SOCK_STREAM
-import ssl
+.. code-block:: python
 
-KEYFILE = 'server_key.pem'   # Private key of the server
-CERTFILE = 'server_cert.pem' # Server certificate (given to client)
+    from socket import socket, AF_INET, SOCK_STREAM
+    import ssl
 
-def echo_client(s):
-    while True:
-        data = s.recv(8192)
-        if data == b'':
-            break
-        s.send(data)
-    s.close()
-    print('Connection closed')
+    KEYFILE = 'server_key.pem'   # Private key of the server
+    CERTFILE = 'server_cert.pem' # Server certificate (given to client)
 
-def echo_server(address):
-    s = socket(AF_INET, SOCK_STREAM)
-    s.bind(address)
-    s.listen(1)
+    def echo_client(s):
+        while True:
+            data = s.recv(8192)
+            if data == b'':
+                break
+            s.send(data)
+        s.close()
+        print('Connection closed')
 
-    # Wrap with an SSL layer requiring client certs
-    s_ssl = ssl.wrap_socket(s,
-                            keyfile=KEYFILE,
-                            certfile=CERTFILE,
-                            server_side=True
-                            )
-    # Wait for connections
-    while True:
-        try:
-            c,a = s_ssl.accept()
-            print('Got connection', c, a)
-            echo_client(c)
-        except Exception as e:
-            print('{}: {}'.format(e.__class__.__name__, e))
+    def echo_server(address):
+        s = socket(AF_INET, SOCK_STREAM)
+        s.bind(address)
+        s.listen(1)
 
-echo_server(('', 20000))
+        # Wrap with an SSL layer requiring client certs
+        s_ssl = ssl.wrap_socket(s,
+                                keyfile=KEYFILE,
+                                certfile=CERTFILE,
+                                server_side=True
+                                )
+        # Wait for connections
+        while True:
+            try:
+                c,a = s_ssl.accept()
+                print('Got connection', c, a)
+                echo_client(c)
+            except Exception as e:
+                print('{}: {}'.format(e.__class__.__name__, e))
 
-Here’s an interactive session that shows how to connect to the server as a client. The
-client requires the server to present its certificate and verifies it:
+    echo_server(('', 20000))
 
->>> from socket import socket, AF_INET, SOCK_STREAM
->>> import ssl
->>> s = socket(AF_INET, SOCK_STREAM)
->>> s_ssl = ssl.wrap_socket(s,
-...                         cert_reqs=ssl.CERT_REQUIRED,
-...                         ca_certs = 'server_cert.pem')
->>> s_ssl.connect(('localhost', 20000))
->>> s_ssl.send(b'Hello World?')
-12
->>> s_ssl.recv(8192)
-b'Hello World?'
->>>
+下面我们演示一个客户端连接服务器的交互例子。客户端会请求服务器来认证并确认连接：
 
-The problem with all of this low-level socket hacking is that it doesn’t play well with
-existing network services already implemented in the standard library. For example,
-most server code (HTTP, XML-RPC, etc.) is actually based on the socketserver library.
-Client code is also implemented at a higher level. It is possible to add SSL to existing
-services, but a slightly different approach is needed.
-First, for servers, SSL can be added through the use of a mixin class like this:
+.. code-block:: python
 
-import ssl
+    >>> from socket import socket, AF_INET, SOCK_STREAM
+    >>> import ssl
+    >>> s = socket(AF_INET, SOCK_STREAM)
+    >>> s_ssl = ssl.wrap_socket(s,
+                    cert_reqs=ssl.CERT_REQUIRED,
+                    ca_certs = 'server_cert.pem')
+    >>> s_ssl.connect(('localhost', 20000))
+    >>> s_ssl.send(b'Hello World?')
+    12
+    >>> s_ssl.recv(8192)
+    b'Hello World?'
+    >>>
 
-class SSLMixin:
-    '''
-    Mixin class that adds support for SSL to existing servers based
-    on the socketserver module.
-    '''
-    def __init__(self, *args,
-                 keyfile=None, certfile=None, ca_certs=None,
-                 cert_reqs=ssl.NONE,
-                 **kwargs):
-        self._keyfile = keyfile
-        self._certfile = certfile
-        self._ca_certs = ca_certs
-        self._cert_reqs = cert_reqs
-        super().__init__(*args, **kwargs)
+这种直接处理底层socket方式有个问题就是它不能很好的跟标准库中已存在的网络服务兼容。
+例如，绝大部分服务器代码（HTTP、XML-RPC等）实际上是基于 ``socketserver`` 库的。
+客户端代码在一个较高层上实现。我们需要另外一种稍微不同的方式来将SSL添加到已存在的服务中：
 
-    def get_request(self):
-        client, addr = super().get_request()
-        client_ssl = ssl.wrap_socket(client,
-                                     keyfile = self._keyfile,
-                                     certfile = self._certfile,
-                                     ca_certs = self._ca_certs,
-                                     cert_reqs = self._cert_reqs,
-                                     server_side = True)
-        return client_ssl, addr
+首先，对于服务器而言，可以通过像下面这样使用一个mixin类来添加SSL：
 
-To use this mixin class, you can mix it with other server classes. For example, here’s an
-example of defining an XML-RPC server that operates over SSL:
+.. code-block:: python
 
-# XML-RPC server with SSL
+        import ssl
 
-from xmlrpc.server import SimpleXMLRPCServer
+        class SSLMixin:
+        '''
+        Mixin class that adds support for SSL to existing servers based
+        on the socketserver module.
+        '''
+        def __init__(self, *args,
+                     keyfile=None, certfile=None, ca_certs=None,
+                     cert_reqs=ssl.NONE,
+                     **kwargs):
+            self._keyfile = keyfile
+            self._certfile = certfile
+            self._ca_certs = ca_certs
+            self._cert_reqs = cert_reqs
+            super().__init__(*args, **kwargs)
 
-class SSLSimpleXMLRPCServer(SSLMixin, SimpleXMLRPCServer):
-    pass
+        def get_request(self):
+            client, addr = super().get_request()
+            client_ssl = ssl.wrap_socket(client,
+                                         keyfile = self._keyfile,
+                                         certfile = self._certfile,
+                                         ca_certs = self._ca_certs,
+                                         cert_reqs = self._cert_reqs,
+                                         server_side = True)
+            return client_ssl, addr
 
-Here’s the XML-RPC server from Recipe 11.6 modified only slightly to use SSL:
+为了使用这个mixin类，你可以将它跟其他服务器类混合。例如，下面是定义一个基于SSL的XML-RPC服务器例子：
 
-import ssl
-from xmlrpc.server import SimpleXMLRPCServer
-from sslmixin import SSLMixin
+.. code-block:: python
 
-class SSLSimpleXMLRPCServer(SSLMixin, SimpleXMLRPCServer):
-    pass
+    # XML-RPC server with SSL
 
-class KeyValueServer:
-    _rpc_methods_ = ['get', 'set', 'delete', 'exists', 'keys']
-    def __init__(self, *args, **kwargs):
-        self._data = {}
-        self._serv = SSLSimpleXMLRPCServer(*args, allow_none=True, **kwargs)
-        for name in self._rpc_methods_:
-            self._serv.register_function(getattr(self, name))
+    from xmlrpc.server import SimpleXMLRPCServer
 
-    def get(self, name):
-        return self._data[name]
+    class SSLSimpleXMLRPCServer(SSLMixin, SimpleXMLRPCServer):
+        pass
 
-    def set(self, name, value):
-        self._data[name] = value
+    Here's the XML-RPC server from Recipe 11.6 modified only slightly to use SSL:
 
-    def delete(self, name):
-        del self._data[name]
+    import ssl
+    from xmlrpc.server import SimpleXMLRPCServer
+    from sslmixin import SSLMixin
 
-    def exists(self, name):
-        return name in self._data
+    class SSLSimpleXMLRPCServer(SSLMixin, SimpleXMLRPCServer):
+        pass
 
-    def keys(self):
-        return list(self._data)
+    class KeyValueServer:
+        _rpc_methods_ = ['get', 'set', 'delete', 'exists', 'keys']
+        def __init__(self, *args, **kwargs):
+            self._data = {}
+            self._serv = SSLSimpleXMLRPCServer(*args, allow_none=True, **kwargs)
+            for name in self._rpc_methods_:
+                self._serv.register_function(getattr(self, name))
 
-    def serve_forever(self):
-        self._serv.serve_forever()
+        def get(self, name):
+            return self._data[name]
 
-if __name__ == '__main__':
-    KEYFILE='server_key.pem'    # Private key of the server
-    CERTFILE='server_cert.pem'  # Server certificate
-    kvserv = KeyValueServer(('', 15000),
-                            keyfile=KEYFILE,
-                            certfile=CERTFILE),
-    kvserv.serve_forever()
+        def set(self, name, value):
+            self._data[name] = value
 
-To use this server, you can connect using the normal xmlrpc.client module. Just spec‐
-ify a https: in the URL. For example:
+        def delete(self, name):
+            del self._data[name]
 
->>> from xmlrpc.client import ServerProxy
->>> s = ServerProxy('https://localhost:15000', allow_none=True)
->>> s.set('foo','bar')
->>> s.set('spam', [1, 2, 3])
->>> s.keys()
-['spam', 'foo']
->>> s.get('foo')
-'bar'
->>> s.get('spam')
-[1, 2, 3]
->>> s.delete('spam')
->>> s.exists('spam')
-False
->>>
+        def exists(self, name):
+            return name in self._data
 
-One complicated issue with SSL clients is performing extra steps to verify the server
-certificate or to present a server with client credentials (such as a client certificate).
-Unfortunately, there seems to be no standardized way to accomplish this, so research is
-often required. However, here is an example of how to set up a secure XML-RPC con‐
-nection that verifies the server’s certificate:
+        def keys(self):
+            return list(self._data)
 
-from xmlrpc.client import SafeTransport, ServerProxy
-import ssl
+        def serve_forever(self):
+            self._serv.serve_forever()
 
-class VerifyCertSafeTransport(SafeTransport):
-    def __init__(self, cafile, certfile=None, keyfile=None):
-        SafeTransport.__init__(self)
-        self._ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        self._ssl_context.load_verify_locations(cafile)
-        if cert:
-            self._ssl_context.load_cert_chain(certfile, keyfile)
-        self._ssl_context.verify_mode = ssl.CERT_REQUIRED
+    if __name__ == '__main__':
+        KEYFILE='server_key.pem'    # Private key of the server
+        CERTFILE='server_cert.pem'  # Server certificate
+        kvserv = KeyValueServer(('', 15000),
+                                keyfile=KEYFILE,
+                                certfile=CERTFILE),
+        kvserv.serve_forever()
 
-    def make_connection(self, host):
-        # Items in the passed dictionary are passed as keyword
-        # arguments to the http.client.HTTPSConnection() constructor.
-        # The context argument allows an ssl.SSLContext instance to
-        # be passed with information about the SSL configuration
-        s = super().make_connection((host, {'context': self._ssl_context}))
+使用这个服务器时，你可以使用普通的 ``xmlrpc.client`` 模块来连接它。
+只需要在URL中指定 ``https:`` 即可，例如：
 
-        return s
+.. code-block:: python
 
-# Create the client proxy
-s = ServerProxy('https://localhost:15000',
-                transport=VerifyCertSafeTransport('server_cert.pem'),
-                allow_none=True)
+    >>> from xmlrpc.client import ServerProxy
+    >>> s = ServerProxy('https://localhost:15000', allow_none=True)
+    >>> s.set('foo','bar')
+    >>> s.set('spam', [1, 2, 3])
+    >>> s.keys()
+    ['spam', 'foo']
+    >>> s.get('foo')
+    'bar'
+    >>> s.get('spam')
+    [1, 2, 3]
+    >>> s.delete('spam')
+    >>> s.exists('spam')
+    False
+    >>>
 
-As shown, the server presents a certificate to the client and the client verifies it. This
-verification can go both directions. If the server wants to verify the client, change the
-server startup to the following:
-if __name__ == '__main__':
-    KEYFILE='server_key.pem'   # Private key of the server
-    CERTFILE='server_cert.pem' # Server certificate
-    CA_CERTS='client_cert.pem' # Certificates of accepted clients
+对于SSL客户端来讲一个比较复杂的问题是如何确认服务器证书或为服务器提供客户端认证（比如客户端证书）。
+不幸的是，暂时还没有一个标准方法来解决这个问题，需要自己去研究。
+不过，下面给出一个例子，用来建立一个安全的XML-RPC连接来确认服务器证书：
 
-    kvserv = KeyValueServer(('', 15000),
-                            keyfile=KEYFILE,
-                            certfile=CERTFILE,
-                            ca_certs=CA_CERTS,
-                            cert_reqs=ssl.CERT_REQUIRED,
-                            )
-    kvserv.serve_forever()
+.. code-block:: python
 
-To make the XML-RPC client present its certificates, change the ServerProxy initiali‐
-zation to this:
+    from xmlrpc.client import SafeTransport, ServerProxy
+    import ssl
 
-# Create the client proxy
-s = ServerProxy('https://localhost:15000',
-                transport=VerifyCertSafeTransport('server_cert.pem',
-                                                  'client_cert.pem',
-                                                  'client_key.pem'),
-                allow_none=True)
+    class VerifyCertSafeTransport(SafeTransport):
+        def __init__(self, cafile, certfile=None, keyfile=None):
+            SafeTransport.__init__(self)
+            self._ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+            self._ssl_context.load_verify_locations(cafile)
+            if cert:
+                self._ssl_context.load_cert_chain(certfile, keyfile)
+            self._ssl_context.verify_mode = ssl.CERT_REQUIRED
+
+        def make_connection(self, host):
+            # Items in the passed dictionary are passed as keyword
+            # arguments to the http.client.HTTPSConnection() constructor.
+            # The context argument allows an ssl.SSLContext instance to
+            # be passed with information about the SSL configuration
+            s = super().make_connection((host, {'context': self._ssl_context}))
+
+            return s
+
+    # Create the client proxy
+    s = ServerProxy('https://localhost:15000',
+                    transport=VerifyCertSafeTransport('server_cert.pem'),
+                    allow_none=True)
+
+服务器将证书发送给客户端，客户端来确认它的合法性。这种确认可以是相互的。
+如果服务器想要确认客户端，可以将服务器启动代码修改如下：
+
+.. code-block:: python
+
+    if __name__ == '__main__':
+        KEYFILE='server_key.pem'   # Private key of the server
+        CERTFILE='server_cert.pem' # Server certificate
+        CA_CERTS='client_cert.pem' # Certificates of accepted clients
+
+        kvserv = KeyValueServer(('', 15000),
+                                keyfile=KEYFILE,
+                                certfile=CERTFILE,
+                                ca_certs=CA_CERTS,
+                                cert_reqs=ssl.CERT_REQUIRED,
+                                )
+        kvserv.serve_forever()
+
+为了让XML-RPC客户端发送证书，修改 ``ServerProxy`` 的初始化代码如下：
+
+.. code-block:: python
+
+    # Create the client proxy
+    s = ServerProxy('https://localhost:15000',
+                    transport=VerifyCertSafeTransport('server_cert.pem',
+                                                      'client_cert.pem',
+                                                      'client_key.pem'),
+                    allow_none=True)
 
 |
 
 ----------
 讨论
 ----------
-Getting this recipe to work will test your system configuration skills and understanding
-of SSL. Perhaps the biggest challenge is simply getting the initial configuration of keys,
-certificates, and other matters in order.
-To clarify what’s required, each endpoint of an SSL connection typically has a private
-key and a signed certificate file. The certificate file contains the public key and is pre‐
-sented to the remote peer on each connection. For public servers, certificates are nor‐
-mally signed by a certificate authority such as Verisign, Equifax, or similar organization
-(something that costs money). To verify server certificates, clients maintain a file con‐
-taining the certificates of trusted certificate authorities. For example, web browsers
-maintain certificates corresponding to the major certificate authorities and use them to
-verify the integrity of certificates presented by web servers during HTTPS connections.
-For the purposes of this recipe, you can create what’s known as a self-signed certificate.
-Here’s how you do it:
+试着去运行本节的代码能测试你的系统配置能力和理解SSL。
+可能最大的挑战是如何一步步的获取初始配置key、证书和其他所需依赖。
 
-bash % openssl req -new -x509 -days 365 -nodes -out server_cert.pem \
-           -keyout server_key.pem
-Generating a 1024 bit RSA private key
-..........................................++++++
-...++++++
+我解释下到底需要啥，每一个SSL连接终端一般都会有一个私钥和一个签名证书文件。
+这个证书包含了公钥并在每一次连接的时候都会发送给对方。
+对于公共服务器，它们的证书通常是被权威证书机构比如Verisign、Equifax或其他类似机构（需要付费的）签名过的。
+为了确认服务器签名，客户端回保存一份包含了信任授权机构的证书列表文件。
+例如，web浏览器保存了主要的认证机构的证书，并使用它来为每一个HTTPS连接确认证书的合法性。
+对本小节示例而言，只是为了测试，我们可以创建自签名的证书，下面是主要步骤：
 
-writing new private key to 'server_key.pem'
- -----
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
- -----
-Country Name (2 letter code) [AU]:US
-State or Province Name (full name) [Some-State]:Illinois
-Locality Name (eg, city) []:Chicago
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:Dabeaz, LLC
-Organizational Unit Name (eg, section) []:
-Common Name (eg, YOUR name) []:localhost
-Email Address []:
-bash %
 
-When creating the certificate, the values for the various fields are often arbitrary. How‐
-ever, the “Common Name” field often contains the DNS hostname of servers. If you’re
-just testing things out on your own machine, use “localhost.” Otherwise, use the domain
-name of the machine that’s going to run the server.
-As a result of this configuration, you will have a server_key.pem file that contains the
-private key. It looks like this:
+    bash % openssl req -new -x509 -days 365 -nodes -out server_cert.pem \
+               -keyout server_key.pem
+    Generating a 1024 bit RSA private key
+    ..........................................++++++
+    ...++++++
+
+    writing new private key to 'server_key.pem'
+
+     -----
+    You are about to be asked to enter information that will be incorporated
+    into your certificate request.
+    What you are about to enter is what is called a Distinguished Name or a DN.
+    There are quite a few fields but you can leave some blank
+    For some fields there will be a default value,
+    If you enter '.', the field will be left blank.
+     -----
+    Country Name (2 letter code) [AU]:US
+    State or Province Name (full name) [Some-State]:Illinois
+    Locality Name (eg, city) []:Chicago
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Dabeaz, LLC
+    Organizational Unit Name (eg, section) []:
+    Common Name (eg, YOUR name) []:localhost
+    Email Address []:
+    bash %
+
+在创建证书的时候，各个值的设定可以是任意的，但是”Common Name“的值通常要包含服务器的DNS主机名。
+如果你只是在本机测试，那么就使用”localhost“，否则使用服务器的域名。
 
     -----BEGIN RSA PRIVATE KEY-----
     MIICXQIBAAKBgQCZrCNLoEyAKF+f9UNcFaz5Osa6jf7qkbUl8si5xQrY3ZYC7juu
@@ -300,7 +302,7 @@ private key. It looks like this:
     CHZXdJ3XQ6qUmNxNn7iJ7S/LDawo1QfWkCfD9FYoxBlg
     -----END RSA PRIVATE KEY-----
 
-The server certificate in server_cert.pem looks similar:
+服务器证书文件server_cert.pem内容类似下面这样：
 
     -----BEGIN CERTIFICATE-----
     MIIC+DCCAmGgAwIBAgIJAPMd+vi45js3MA0GCSqGSIb3DQEBBQUAMFwxCzAJBgNV
@@ -322,18 +324,16 @@ The server certificate in server_cert.pem looks similar:
     D3vvcW5lAnCCC80P6rXy7d7hTeFu5EYKtRGXNvVNd/06NALGDflrrOwxF3Y=
     -----END CERTIFICATE-----
 
-In server-related code, both the private key and certificate file will be presented to the
-various SSL-related wrapping functions. The certificate is what gets presented to clients.
-The private key should be protected and remains on the server.
-In client-related code, a special file of valid certificate authorities needs to be maintained
-to verify the server’s certificate. If you have no such file, then at the very least, you can
-put a copy of the server’s certificate on the client machine and use that as a means for
-verification. During connection, the server will present its certificate, and then you’ll
-use the stored certificate you already have to verify that it’s correct.
-Servers can also elect to verify the identity of clients. To do that, clients need to have
-their own private key and certificate key. The server would also need to maintain a file
-of trusted certificate authorities for verifying the client certificates.
-If you intend to add SSL support to a network service for real, this recipe really only
-gives a small taste of how to set it up. You will definitely want to consult the documen‐
-tation for more of the finer points. Be prepared to spend a significant amount of time
-experimenting with it to get things to work.
+在服务器端代码中，私钥和证书文件会被传给SSL相关的包装函数。证书来自于客户端，
+私钥应该在保存在服务器中，并加以安全保护。
+
+在客户端代码中，需要保存一个合法证书授权文件来确认服务器证书。
+如果你没有这个文件，你可以在客户端复制一份服务器的证书并使用它来确认。
+连接建立后，服务器会提供它的证书，然后你就能使用已经保存的证书来确认它是否正确。
+
+服务器也能选择是否要确认客户端的身份。如果要这样做的话，客户端需要有自己的私钥和认证文件。
+服务器也需要保存一个被信任证书授权文件来确认客户端证书。
+
+如果你要在真实环境中为你的网络服务加上SSL的支持，这小节只是一个入门介绍而已。
+你还应该参考其他的文档，做好花费不少时间来测试它正常工作的准备。反正，就是得慢慢折腾吧~ ^_^
+

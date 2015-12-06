@@ -5,33 +5,34 @@
 ----------
 问题
 ----------
-You want your program to terminate by printing a message to standard error and re‐
-turning a nonzero status code.
+你想向标准错误打印一条消息并返回某个非零状态码来终止程序运行
 
 |
 
 ----------
 解决方案
 ----------
-To have a program terminate in this manner, raise a SystemExit exception, but supply
-the error message as an argument. For example:
+你有一个程序像下面这样终止，抛出一个 ``SystemExit`` 异常，使用错误消息作为参数。例如：
 
-raise SystemExit('It failed!')
+.. code-block:: python
 
-This will cause the supplied message to be printed to sys.stderr and the program to
-exit with a status code of 1.
+    raise SystemExit('It failed!')
+
+它会将消息在 ``sys.stderr`` 中打印，然后程序以状态码1退出。
 
 |
 
 ----------
 讨论
 ----------
-This is a small recipe, but it solves a common problem that arises when writing scripts.
-Namely, to terminate a program, you might be inclined to write code like this:
+本节虽然很短小，但是它能解决在写脚本时的一个常见问题。
+也就是说，当你想要终止某个程序时，你可能会像下面这样写：
 
-import sys
-sys.stderr.write('It failed!\n')
-raise SystemExit(1)
+.. code-block:: python
 
-None of the extra steps involving import or writing to sys.stderr are neccessary if you
-simply supply the message to SystemExit() instead.
+    import sys
+    sys.stderr.write('It failed!\n')
+    raise SystemExit(1)
+
+如果你直接将消息作为参数传给 ``SystemExit()`` ，那么你可以省略其他步骤，
+比如import语句或将错误消息写入 ``sys.stderr``

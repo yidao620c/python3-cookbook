@@ -5,189 +5,167 @@
 ----------
 问题
 ----------
-You’re writing a multithreaded program where threads need to acquire more than one
-lock at a time while avoiding deadlock.
+你正在写一个多线程程序，其中线程需要一次获取多个锁，此时如何避免死锁问题。
 
 |
 
 ----------
 解决方案
 ----------
-In multithreaded programs, a common source of deadlock is due to threads that attempt
-to acquire multiple locks at once. For instance, if a thread acquires the first lock, but
-then blocks trying to acquire the second lock, that thread can potentially block the
-progress of other threads and make the program freeze.
-One solution to deadlock avoidance is to assign each lock in the program a unique
-number, and to enforce an ordering rule that only allows multiple locks to be acquired
-in ascending order. This is surprisingly easy to implement using a context manager as
-follows:
+在多线程程序中，死锁问题很大一部分是由于线程同时获取多个锁造成的。举个例子：一个线程获取了第一个锁，然后在获取第二个锁的
+时候发生阻塞，那么这个线程就可能阻塞其他线程的执行，从而导致整个程序假死。
+解决死锁问题的一种方案是为程序中的每一个锁分配一个唯一的id，然后只允许按照升序规则来使用多个锁，这个规则使用上下文管理器
+是非常容易实现的，示例如下：
 
-import threading
-from contextlib import contextmanager
+.. code-block:: python
+   import threading
+   from contextlib import contextmanager
 
-# Thread-local state to stored information on locks already acquired
-_local = threading.local()
+   # Thread-local state to stored information on locks already acquired
+   _local = threading.local()
 
-@contextmanager
-def acquire(*locks):
-    # Sort locks by object identifier
-    locks = sorted(locks, key=lambda x: id(x))
+   @contextmanager
+   def acquire(*locks):
+       # Sort locks by object identifier
+       locks = sorted(locks, key=lambda x: id(x))
 
-    # Make sure lock order of previously acquired locks is not violated
-    acquired = getattr(_local,'acquired',[])
-    if acquired and max(id(lock) for lock in acquired) >= id(locks[0]):
-        raise RuntimeError('Lock Order Violation')
+       # Make sure lock order of previously acquired locks is not violated
+       acquired = getattr(_local,'acquired',[])
+       if acquired and max(id(lock) for lock in acquired) >= id(locks[0]):
+           raise RuntimeError('Lock Order Violation')
 
-    # Acquire all of the locks
-    acquired.extend(locks)
-    _local.acquired = acquired
+       # Acquire all of the locks
+       acquired.extend(locks)
+       _local.acquired = acquired
 
-    try:
-        for lock in locks:
-            lock.acquire()
-        yield
-    finally:
-        # Release locks in reverse order of acquisition
-        for lock in reversed(locks):
-            lock.release()
-        del acquired[-len(locks):]
+       try:
+           for lock in locks:
+               lock.acquire()
+           yield
+       finally:
+           # Release locks in reverse order of acquisition
+           for lock in reversed(locks):
+               lock.release()
+           del acquired[-len(locks):]
 
-To use this context manager, you simply allocate lock objects in the normal way, but use
-the  acquire()  function  whenever  you  want  to  work  with  one  or  more  locks.  For
-example:
+如何使用这个上下文管理器呢？你可以按照正常途径创建一个锁对象，但不论是单个锁还是多个锁中都使用 ``acquire()`` 函数来申请锁，
+示例如下：
 
-import threading
-x_lock = threading.Lock()
-y_lock = threading.Lock()
+.. code-block:: python
+   import threading
+   x_lock = threading.Lock()
+   y_lock = threading.Lock()
 
-def thread_1():
-    while True:
-        with acquire(x_lock, y_lock):
-            print('Thread-1')
+   def thread_1():
+       while True:
+           with acquire(x_lock, y_lock):
+               print('Thread-1')
 
-def thread_2():
-    while True:
-        with acquire(y_lock, x_lock):
-            print('Thread-2')
+   def thread_2():
+       while True:
+           with acquire(y_lock, x_lock):
+               print('Thread-2')
 
-t1 = threading.Thread(target=thread_1)
-t1.daemon = True
-t1.start()
+   t1 = threading.Thread(target=thread_1)
+   t1.daemon = True
+   t1.start()
 
-t2 = threading.Thread(target=thread_2)
-t2.daemon = True
-t2.start()
+   t2 = threading.Thread(target=thread_2)
+   t2.daemon = True
+   t2.start()
 
-If you run this program, you’ll find that it happily runs forever without deadlock—even
-though the acquisition of locks is specified in a different order in each function.
-The key to this recipe lies in the first statement that sorts the locks according to object
-identifier. By sorting the locks, they always get acquired in a consistent order regardless
-of how the user might have provided them to acquire().
-The solution uses thread-local storage to solve a subtle problem with detecting potential
-deadlock if multiple acquire() operations are nested. For example, suppose you wrote
-the code like this:
+如果你执行这段代码，你会发现它即使在不同的函数中以不同的顺序获取锁也没有发生死锁。
+其关键在于，在第一段代码中，我们对这些锁进行了排序。通过排序，使得不管用户以什么样的顺序来请求锁，这些锁都会按照固定的顺序被获取。
+如果有多个 ``acquire()`` 操作被嵌套调用，可以通过线程本地存储（TLS）来检测潜在的死锁问题。
+假设你的代码是这样写的：
 
-import threading
-x_lock = threading.Lock()
-y_lock = threading.Lock()
+.. code-block:: python
+   import threading
+   x_lock = threading.Lock()
+   y_lock = threading.Lock()
 
-def thread_1():
+   def thread_1():
 
-    while True:
-        with acquire(x_lock):
-            with acquire(y_lock):
-                print('Thread-1')
+       while True:
+           with acquire(x_lock):
+               with acquire(y_lock):
+                   print('Thread-1')
 
-def thread_2():
-    while True:
-        with acquire(y_lock):
-            with acquire(x_lock):
-                print('Thread-2')
+   def thread_2():
+       while True:
+           with acquire(y_lock):
+               with acquire(x_lock):
+                   print('Thread-2')
 
-t1 = threading.Thread(target=thread_1)
-t1.daemon = True
-t1.start()
+   t1 = threading.Thread(target=thread_1)
+   t1.daemon = True
+   t1.start()
 
-t2 = threading.Thread(target=thread_2)
-t2.daemon = True
-t2.start()
+   t2 = threading.Thread(target=thread_2)
+   t2.daemon = True
+   t2.start()
 
-If you run this version of the program, one of the threads will crash with an exception
-such as this:
+如果你运行这个版本的代码，必定会有一个线程发生崩溃，异常信息可能像这样：
 
-Exception in thread Thread-1:
-Traceback (most recent call last):
-  File "/usr/local/lib/python3.3/threading.py", line 639, in _bootstrap_inner
-    self.run()
-  File "/usr/local/lib/python3.3/threading.py", line 596, in run
-    self._target(*self._args, **self._kwargs)
-  File "deadlock.py", line 49, in thread_1
-    with acquire(y_lock):
-  File "/usr/local/lib/python3.3/contextlib.py", line 48, in __enter__
-    return next(self.gen)
-  File "deadlock.py", line 15, in acquire
-    raise RuntimeError("Lock Order Violation")
-RuntimeError: Lock Order Violation
->>>
+.. code-block:: python
+   Exception in thread Thread-1:
+   Traceback (most recent call last):
+     File "/usr/local/lib/python3.3/threading.py", line 639, in _bootstrap_inner
+       self.run()
+     File "/usr/local/lib/python3.3/threading.py", line 596, in run
+       self._target(*self._args, **self._kwargs)
+     File "deadlock.py", line 49, in thread_1
+       with acquire(y_lock):
+     File "/usr/local/lib/python3.3/contextlib.py", line 48, in __enter__
+       return next(self.gen)
+     File "deadlock.py", line 15, in acquire
+       raise RuntimeError("Lock Order Violation")
+   RuntimeError: Lock Order Violation
+   >>>
 
-This crash is caused by the fact that each thread remembers the locks it has already
-acquired. The acquire() function checks the list of previously acquired locks and en‐
-forces the ordering constraint that previously acquired locks must have an object ID
-that is less than the new locks being acquired.
+发生崩溃的原因在于，每个线程都记录着自己已经获取到的锁。 ``acquire()`` 函数会检查之前已经获取的锁列表，
+由于锁是按照升序排列获取的，所以函数会认为之前已获取的锁的id必定小于新申请到的锁，这时就会触发异常。
 
 |
 
 ----------
 讨论
 ----------
-The issue of deadlock is a well-known problem with programs involving threads (as
-well as a common subject in textbooks on operating systems). As a rule of thumb, as
-long as you can ensure that threads can hold only one lock at a time, your program will
-be deadlock free. However, once multiple locks are being acquired at the same time, all
-bets are off.
+死锁是每一个多线程程序都会面临的一个问题（就像它是每一本操作系统课本的共同话题一样）。根据经验来讲，尽可能保证每一个
+线程只能同时保持一个锁，这样程序就不会被死锁问题所困扰。一旦有线程同时申请多个锁，一切就不可预料了。
 
-Detecting and recovering from deadlock is an extremely tricky problem with few elegant
-solutions. For example, a common deadlock detection and recovery scheme involves
-the use of a watchdog timer. As threads run, they periodically reset the timer, and as
-long as everything is running smoothly, all is well. However, if the program deadlocks,
-the watchdog timer will eventually expire. At that point, the program “recovers” by
-killing and then restarting itself.
-Deadlock avoidance is a different strategy where locking operations are carried out in
-a manner that simply does not allow the program to enter a deadlocked state. The
-solution in which locks are always acquired in strict order of ascending object ID can
-be mathematically proven to avoid deadlock, although the proof is left as an exercise to
-the reader (the gist of it is that by acquiring locks in a purely increasing order, you can’t
-get cyclic locking dependencies, which are a necessary condition for deadlock to occur).
-As a final example, a classic thread deadlock problem is the so-called “dining philoso‐
-pher’s problem.” In this problem, five philosophers sit around a table on which there
-are five bowls of rice and five chopsticks. Each philosopher represents an independent
-thread and each chopstick represents a lock. In the problem, philosophers either sit and
-think or they eat rice. However, in order to eat rice, a philosopher needs two chopsticks.
-Unfortunately, if all of the philosophers reach over and grab the chopstick to their left,
-they’ll all just sit there with one stick and eventually starve to death. It’s a gruesome
-scene.
-Using the solution, here is a simple deadlock free implementation of the dining philos‐
-opher’s problem:
+死锁的检测与恢复是一个几乎没有优雅的解决方案的扩展话题。一个比较常用的死锁检测与恢复的方案是引入看门狗计数器。当线程正常
+运行的时候会每隔一段时间重置计数器，在没有发生死锁的情况下，一切都正常进行。一旦发生死锁，由于无法重置计数器导致定时器
+超时，这时程序会通过重启自身恢复到正常状态。
 
-import threading
+避免死锁是另外一种解决死锁问题的方式，在进程获取锁的时候会严格按照对象id升序排列获取，经过数学证明，这样保证程序不会进入
+死锁状态。证明就留给读者作为练习了。避免死锁的主要思想是，单纯地按照对象id递增的顺序加锁不会产生循环依赖，而循环依赖是
+死锁的一个必要条件，从而避免程序进入死锁状态。
 
-# The philosopher thread
-def philosopher(left, right):
-    while True:
-        with acquire(left,right):
-             print(threading.currentThread(), 'eating')
+下面以一个关于线程死锁的经典问题：“哲学家就餐问题”，作为本节最后一个例子。题目是这样的：五位哲学家围坐在一张桌子前，每个人
+面前有一碗饭和一只筷子。在这里每个哲学家可以看做是一个独立的线程，而每只筷子可以看做是一个锁。每个哲学家可以处在静坐、
+思考、吃饭三种状态中的一个。需要注意的是，每个哲学家吃饭是需要两只筷子的，这样问题就来了：如果每个哲学家都拿起自己左边的筷子，
+那么他们五个都只能拿着一只筷子坐在那儿，直到饿死。此时他们就进入了死锁状态。
+下面是一个简单的使用死锁避免机制解决“哲学家就餐问题”的实现：
 
-# The chopsticks (represented by locks)
-NSTICKS = 5
-chopsticks = [threading.Lock() for n in range(NSTICKS)]
+.. code-block:: python
+   import threading
 
-# Create all of the philosophers
-for n in range(NSTICKS):
-    t = threading.Thread(target=philosopher,
-                         args=(chopsticks[n],chopsticks[(n+1) % NSTICKS]))
-    t.start()
+   # The philosopher thread
+   def philosopher(left, right):
+       while True:
+           with acquire(left,right):
+                print(threading.currentThread(), 'eating')
 
-Last, but not least, it should be noted that in order to avoid deadlock, all locking oper‐
-ations must be carried out using our acquire() function. If some fragment of code
-decided to acquire a lock directly, then the deadlock avoidance algorithm wouldn’t work.
+   # The chopsticks (represented by locks)
+   NSTICKS = 5
+   chopsticks = [threading.Lock() for n in range(NSTICKS)]
 
+   # Create all of the philosophers
+   for n in range(NSTICKS):
+       t = threading.Thread(target=philosopher,
+                            args=(chopsticks[n],chopsticks[(n+1) % NSTICKS]))
+       t.start()
+
+最后，要特别注意到，为了避免死锁，所有的加锁操作必须使用 ``acquire()`` 函数。如果代码中的某部分绕过acquire
+函数直接申请锁，那么整个死锁避免机制就不起作用了。

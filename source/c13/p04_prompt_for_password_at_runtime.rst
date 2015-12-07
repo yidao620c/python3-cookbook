@@ -5,48 +5,44 @@
 ----------
 问题
 ----------
-You’ve written a script that requires a password, but since the script is meant for inter‐
-active use, you’d like to prompt the user for a password rather than hardcode it into the
-script.
+你写了个脚本，运行时需要一个密码。此脚本是交互式的，因此不能将密码在脚本中硬编码，
+而是需要弹出一个密码输入提示，让用户自己输入。
 
 |
 
 ----------
 解决方案
 ----------
-Python’s getpass module is precisely what you need in this situation. It will allow you
-to very easily prompt for a password without having the keyed-in password displayed
-on the user’s terminal. Here’s how it’s done:
+这时候Python的 ``getpass`` 模块正是你所需要的。你可以让你很轻松的弹出密码输入提示，
+并且不会在用户终端回显密码。下面是具体代码：
 
-import getpass
+.. code-block:: python
 
-user = getpass.getuser()
-passwd = getpass.getpass()
+    import getpass
 
-if svc_login(user, passwd):    # You must write svc_login()
-   print('Yay!')
-else:
-   print('Boo!')
+    user = getpass.getuser()
+    passwd = getpass.getpass()
 
-In this code, the svc_login() function is code that you must write to further process
-the password entry. Obviously, the exact handling is application-specific.
+    if svc_login(user, passwd):    # You must write svc_login()
+       print('Yay!')
+    else:
+       print('Boo!')
+
+在此代码中，``svc_login()`` 是你要实现的处理密码的函数，具体的处理过程你自己决定。
 
 |
 
 ----------
 讨论
 ----------
-Note in the preceding code that getpass.getuser() doesn’t prompt the user for their
-username. Instead, it uses the current user’s login name, according to the user’s shell
-environment, or as a last resort, according to the local system’s password database (on
-platforms that support the pwd module).
+注意在前面代码中 ``getpass.getuser()`` 不会弹出用户名的输入提示。
+它会根据该用户的shell环境或者会依据本地系统的密码库（支持 `pwd` 模块的平台）来使用当前用户的登录名，
 
-If you want to explicitly prompt the user for their username, which can be more reliable,
-use the built-in input function:
+如果你想显示的弹出用户名输入提示，使用内置的 ``input`` 函数：
 
-user = input('Enter your username: ')
+.. code-block:: python
 
-It’s also important to remember that some systems may not support the hiding of the
-typed password input to the getpass() method. In this case, Python does all it can to
-forewarn you of problems (i.e., it alerts you that passwords will be shown in cleartext)
-before moving on.
+    user = input('Enter your username: ')
+
+还有一点很重要，有些系统可能不支持 ``getpass()`` 方法隐藏输入密码。
+这种情况下，Python会提前警告你这些问题（例如它会警告你说密码会以明文形式显示）

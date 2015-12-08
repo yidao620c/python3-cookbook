@@ -51,6 +51,8 @@ example:
 
 运行这个程序后，在文件 ``app.log`` 中的内容应该是下面这样：
 
+::
+
     CRITICAL:root:Host www.python.org unknown
     ERROR:root:Could not find 'spam'
 
@@ -66,6 +68,8 @@ the basicConfig() call. For example:
          format='%(levelname)s:%(asctime)s:%(message)s')
 
 最后输出变成如下：
+
+::
 
     CRITICAL:2012-11-20 12:27:13,595:Host www.python.org unknown
     ERROR:2012-11-20 12:27:13,595:Could not find 'spam'
@@ -85,6 +89,8 @@ the basicConfig() call. For example:
         ...
 
 创建一个下面这样的文件，名字叫 ``logconfig.ini`` ：
+
+::
 
     [loggers]
     keys=root

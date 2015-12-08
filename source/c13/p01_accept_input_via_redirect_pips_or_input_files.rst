@@ -27,7 +27,7 @@ Python内置的 ``fileinput`` 模块让这个变得简单。如果你有一个�
 那么你就能以前面提到的所有方式来为此脚本提供输入。假设你将此脚本保存为 ``filein.py`` 并将其变为可执行文件，
 那么你可以像下面这样调用它，得到期望的输出：
 
-.. code-block:: python
+.. code-block:: bash
 
     $ ls | ./filein.py          # Prints a directory listing to stdout.
     $ ./filein.py /etc/passwd   # Reads /etc/passwd to stdout.

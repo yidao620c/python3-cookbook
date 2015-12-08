@@ -5,7 +5,7 @@
 ----------
 问题
 ----------
-You want scripts and simple programs to write diagnostic information to log files.
+你希望在脚本和程序中将诊断信息写入日志文件。
 
 |
 
@@ -14,69 +14,77 @@ You want scripts and simple programs to write diagnostic information to log file
 ----------
 The easiest way to add logging to simple programs is to use the logging module. For
 example:
+打印日志最简单方式是使用 ``logging`` 模块。例如：
 
-import logging
+.. code-block:: python
 
-def main():
-    # Configure the logging system
-    logging.basicConfig(
-        filename='app.log',
-        level=logging.ERROR
-    )
+    import logging
 
-    # Variables (to make the calls that follow work)
-    hostname = 'www.python.org'
-    item = 'spam'
-    filename = 'data.csv'
-    mode = 'r'
+    def main():
+        # Configure the logging system
+        logging.basicConfig(
+            filename='app.log',
+            level=logging.ERROR
+        )
 
-    # Example logging calls (insert into your program)
-    logging.critical('Host %s unknown', hostname)
-    logging.error("Couldn't find %r", item)
-    logging.warning('Feature is deprecated')
-    logging.info('Opening file %r, mode=%r', filename, mode)
-    logging.debug('Got here')
+        # Variables (to make the calls that follow work)
+        hostname = 'www.python.org'
+        item = 'spam'
+        filename = 'data.csv'
+        mode = 'r'
 
-if __name__ == '__main__':
-    main()
+        # Example logging calls (insert into your program)
+        logging.critical('Host %s unknown', hostname)
+        logging.error("Couldn't find %r", item)
+        logging.warning('Feature is deprecated')
+        logging.info('Opening file %r, mode=%r', filename, mode)
+        logging.debug('Got here')
 
-The five logging calls (critical(), error(), warning(), info(), debug()) represent
-different severity levels in decreasing order. The level argument to basicConfig() is
-a filter. All messages issued at a level lower than this setting will be ignored.
-The argument to each logging operation is a message string followed by zero or more
-arguments. When making the final log message, the % operator is used to format the
-message string using the supplied arguments.
-If you run this program, the contents of the file app.log will be as follows:
+    if __name__ == '__main__':
+        main()
+
+上面五个日志调用（critical(), error(), warning(), info(), debug()）以降序方式表示不同的严重级别。
+``basicConfig()`` 的 ``level`` 参数是一个过滤器。
+所有级别低于此级别的日志消息都会被忽略掉。
+每个logging操作的参数是一个消息字符串，后面再跟一个或多个参数。
+构造最终的日志消息的时候我们使用了%操作符来格式化消息字符串。
+
+运行这个程序后，在文件 ``app.log`` 中的内容应该是下面这样：
 
     CRITICAL:root:Host www.python.org unknown
     ERROR:root:Could not find 'spam'
 
 If you want to change the output or level of output, you can change the parameters to
 the basicConfig() call. For example:
+如果你想改变输出等级，你可以修改 ``basicConfig()`` 调用中的参数。例如：
 
-logging.basicConfig(
-     filename='app.log',
-     level=logging.WARNING,
-     format='%(levelname)s:%(asctime)s:%(message)s')
+.. code-block:: python
 
-As a result, the output changes to the following:
+    logging.basicConfig(
+         filename='app.log',
+         level=logging.WARNING,
+         format='%(levelname)s:%(asctime)s:%(message)s')
+
+最后输出变成如下：
 
     CRITICAL:2012-11-20 12:27:13,595:Host www.python.org unknown
     ERROR:2012-11-20 12:27:13,595:Could not find 'spam'
     WARNING:2012-11-20 12:27:13,595:Feature is deprecated
 
-As shown, the logging configuration is hardcoded directly into the program. If you want
-to configure it from a configuration file, change the basicConfig() call to the following:
+上面的日志配置都是硬编码到程序中的。如果你想使用配置文件，
+可以像下面这样修改 ``basicConfig()`` 调用：
 
-import logging
-import logging.config
+.. code-block:: python
 
-def main():
-    # Configure the logging system
-    logging.config.fileConfig('logconfig.ini')
-    ...
+    import logging
+    import logging.config
 
-Now make a configuration file logconfig.ini that looks like this:
+    def main():
+        # Configure the logging system
+        logging.config.fileConfig('logconfig.ini')
+        ...
+
+创建一个下面这样的文件，名字叫 ``logconfig.ini`` ：
 
     [loggers]
     keys=root
@@ -100,30 +108,30 @@ Now make a configuration file logconfig.ini that looks like this:
     [formatter_defaultFormatter]
     format=%(levelname)s:%(name)s:%(message)s
 
-If you want to make changes to the configuration, you can simply edit the logcon‐
-fig.ini file as appropriate.
+如果你想修改配置，可以直接编辑文件logconfig.ini即可。
 
 |
 
 ----------
 讨论
 ----------
-Ignoring for the moment that there are about a million advanced configuration options
-for the logging module, this solution is quite sufficient for simple programs and scripts.
-Simply make sure that you execute the basicConfig() call prior to making any logging
-calls, and your program will generate logging output.
-If you want the logging messages to route to standard error instead of a file, don’t supply
-any filename information to basicConfig(). For example, simply do this:
+尽管对于 ``logging`` 模块而已有很多更高级的配置选项，
+不过这里的方案对于简单的程序和脚本已经足够了。
+只想在调用日志操作前先执行下basicConfig()函数方法，你的程序就能产生日志输出了。
 
-logging.basicConfig(level=logging.INFO)
+如果你想要你的日志消息写到标准错误中，而不是日志文件中，调用 ``basicConfig()`` 时不传文件名参数即可。例如：
 
-One subtle aspect of basicConfig() is that it can only be called once in your program.
-If you later need to change the configuration of the logging module, you need to obtain
-the root logger and make changes to it directly. For example:
+.. code-block:: python
 
-logging.getLogger().level = logging.DEBUG
+    logging.basicConfig(level=logging.INFO)
 
-It must be emphasized that this recipe only shows a basic use of the logging module.
-There are significantly more advanced customizations that can be made. An excellent
-resource for such customization is the “Logging Cookbook”.
+``basicConfig()`` 在程序中只能被执行一次。如果你稍后想改变日志配置，
+就需要先获取 ``root logger`` ，然后直接修改它。例如：
 
+.. code-block:: python
+
+    logging.getLogger().level = logging.DEBUG
+
+需要强调的是本节只是演示了 ``logging`` 模块的一些基本用法。
+它可以做更多更高级的定制。
+关于日志定制化一个很好的资源是 `Logging Cookbook <https://docs.python.org/3/howto/logging-cookbook.html>`_

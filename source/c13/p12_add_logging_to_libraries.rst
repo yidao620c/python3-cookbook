@@ -1,87 +1,87 @@
 ==============================
-13.12 给内库增加日志功能
+13.12 给函数库增加日志功能
 ==============================
 
 ----------
 问题
 ----------
-You would like to add a logging capability to a library, but don’t want it to interfere with
-programs that don’t use logging.
+你想给某个函数库增加日志功能，但是又不能影响到那些不使用日志功能的程序。
 
 |
 
 ----------
 解决方案
 ----------
-For libraries that want to perform logging, you should create a dedicated logger object,
-and initially configure it as follows:
+对于想要执行日志操作的函数库而已，你应该创建一个专属的 ``logger`` 对象，并且像下面这样初始化配置：
 
-# somelib.py
+.. code-block:: python
 
-import logging
-log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
+    # somelib.py
 
-# Example function (for testing)
-def func():
-    log.critical('A Critical Error!')
-    log.debug('A debug message')
+    import logging
+    log = logging.getLogger(__name__)
+    log.addHandler(logging.NullHandler())
 
-With this configuration, no logging will occur by default. For example:
+    # Example function (for testing)
+    def func():
+        log.critical('A Critical Error!')
+        log.debug('A debug message')
 
->>> import somelib
->>> somelib.func()
->>>
+使用这个配置，默认情况下不会打印日志。例如：
 
-However, if the logging system gets configured, log messages will start to appear. For
-example:
+.. code-block:: python
 
->>> import logging
->>> logging.basicConfig()
->>> somelib.func()
-CRITICAL:somelib:A Critical Error!
->>>
+    >>> import somelib
+    >>> somelib.func()
+    >>>
+
+不过，如果配置过日志系统，那么日志消息打印就开始生效，例如：
+
+::
+
+    >>> import logging
+    >>> logging.basicConfig()
+    >>> somelib.func()
+    CRITICAL:somelib:A Critical Error!
+    >>>
 
 |
 
 ----------
 讨论
 ----------
-Libraries present a special problem for logging, since information about the environ‐
-ment in which they are used isn’t known. As a general rule, you should never write
-library code that tries to configure the logging system on its own or which makes as‐
-sumptions about an already existing logging configuration. Thus, you need to take great
-care to provide isolation.
-The call to getLogger(__name__) creates a logger module that has the same name as
-the calling module. Since all modules are unique, this creates a dedicated logger that is
-likely to be separate from other loggers.
+通常来讲，你不应该在函数库代码中自己配置日志系统，或者是已经假定有个已经存在的日志配置了。
 
-The log.addHandler(logging.NullHandler()) operation attaches a null handler to
-the just created logger object. A null handler ignores all logging messages by default.
-Thus, if the library is used and logging is never configured, no messages or warnings
-will appear.
-One subtle feature of this recipe is that the logging of individual libraries can be inde‐
-pendently configured, regardless of other logging settings. For example, consider the
-following code:
+调用 ``getLogger(__name__)`` 创建一个和调用模块同名的logger模块。
+由于模块都是唯一的，因此创建的logger也将是唯一的。
 
->>> import logging
->>> logging.basicConfig(level=logging.ERROR)
->>> import somelib
->>> somelib.func()
-CRITICAL:somelib:A Critical Error!
+``log.addHandler(logging.NullHandler())`` 操作将一个空处理器绑定到刚刚已经创建好的logger对象上。
+一个空处理器默认会忽略调用所有的日志消息。
+因此，如果使用该函数库的时候还没有配置日志，那么将不会有消息或警告出现。
 
->>> # Change the logging level for 'somelib' only
->>> logging.getLogger('somelib').level=logging.DEBUG
->>> somelib.func()
-CRITICAL:somelib:A Critical Error!
-DEBUG:somelib:A debug message
->>>
+还有一点就是对于各个函数库的日志配置可以是相互独立的，不影响其他库的日志配置。
+例如，对于如下的代码：
 
-Here, the root logger has been configured to only output messages at the ERROR level or
-higher. However, the level of the logger for somelib has been separately configured to
-output debugging messages. That setting takes precedence over the global setting.
-The ability to change the logging settings for a single module like this can be a useful
-debugging tool, since you don’t have to change any of the global logging settings—simply
-change the level for the one module where you want more output.
-The “Logging HOWTO” has more information about configuring the logging module
-and other useful tips.
+.. code-block:: python
+
+    >>> import logging
+    >>> logging.basicConfig(level=logging.ERROR)
+
+    >>> import somelib
+    >>> somelib.func()
+    CRITICAL:somelib:A Critical Error!
+
+    >>> # Change the logging level for 'somelib' only
+    >>> logging.getLogger('somelib').level=logging.DEBUG
+    >>> somelib.func()
+    CRITICAL:somelib:A Critical Error!
+    DEBUG:somelib:A debug message
+    >>>
+
+在这里，根日志被配置成仅仅输出ERROR或更高级别的消息。
+不过 ，``somelib`` 的日志级别被单独配置成可以输出debug级别的消息，它的优先级比全局配置高。
+像这样更改单独模块的日志配置对于调试来讲是很方便的，
+因为你无需去更改任何的全局日志配置——只需要修改你想要更多输出的模块的日志等级。
+
+`Logging HOWTO <https://docs.python.org/3/howto/logging.html>`_
+详细介绍了如何配置日志模块和其他有用技巧，可以参阅下。

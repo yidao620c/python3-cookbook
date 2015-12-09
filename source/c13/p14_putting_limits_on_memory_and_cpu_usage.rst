@@ -5,63 +5,62 @@
 ----------
 问题
 ----------
-You want to place some limits on the memory or CPU use of a program running on
-Unix system.
+你想对在Unix系统上面运行的程序设置内存或CPU的使用限制。
 
 |
 
 ----------
 解决方案
 ----------
-The resource module can be used to perform both tasks. For example, to restrict CPU
-time, do the following:
+``resource`` 模块能同时执行这两个任务。例如，要限制CPU时间，可以像下面这样做：
 
-import signal
-import resource
-import os
+.. code-block:: python
 
-def time_exceeded(signo, frame):
-    print("Time's up!")
-    raise SystemExit(1)
+    import signal
+    import resource
+    import os
 
-def set_max_runtime(seconds):
-    # Install the signal handler and set a resource limit
-    soft, hard = resource.getrlimit(resource.RLIMIT_CPU)
-    resource.setrlimit(resource.RLIMIT_CPU, (seconds, hard))
-    signal.signal(signal.SIGXCPU, time_exceeded)
+    def time_exceeded(signo, frame):
+        print("Time's up!")
+        raise SystemExit(1)
 
-if __name__ == '__main__':
-    set_max_runtime(15)
-    while True:
-        pass
+    def set_max_runtime(seconds):
+        # Install the signal handler and set a resource limit
+        soft, hard = resource.getrlimit(resource.RLIMIT_CPU)
+        resource.setrlimit(resource.RLIMIT_CPU, (seconds, hard))
+        signal.signal(signal.SIGXCPU, time_exceeded)
 
-When this runs, the SIGXCPU signal is generated when the time expires. The program
-can then clean up and exit.
-To restrict memory use, put a limit on the total address space in use. For example:
+    if __name__ == '__main__':
+        set_max_runtime(15)
+        while True:
+            pass
 
-import resource
+程序运行时，``SIGXCPU`` 信号在时间过期时被生成，然后执行清理并退出。
 
-def limit_memory(maxsize):
-    soft, hard = resource.getrlimit(resource.RLIMIT_AS)
-    resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
+要限制内存使用，设置可使用的总内存值即可，如下：
 
-With a memory limit in place, programs will start generating MemoryError exceptions
-when no more memory is available.
+.. code-block:: python
+
+    import resource
+
+    def limit_memory(maxsize):
+        soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+        resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
+
+像这样设置了内存限制后，程序运行到没有多余内存时会抛出 ``MemoryError`` 异常。
 
 |
 
 ----------
 讨论
 ----------
-In this recipe, the setrlimit() function is used to set a soft and hard limit on a particular
-resource. The soft limit is a value upon which the operating system will typically restrict
-or notify the process via a signal. The hard limit represents an upper bound on the values
-that may be used for the soft limit. Typically, this is controlled by a system-wide pa‐
-rameter set by the system administrator. Although the hard limit can be lowered, it can
-never be raised by user processes (even if the process lowered itself).
-The setrlimit() function can additionally be used to set limits on things such as the
-number of child processes, number of open files, and similar system resources. Consult
-the documentation for the resource module for further details.
-Be aware that this recipe only works on Unix systems, and that it might not work on all
-of them. For example, when tested, it works on Linux but not on OS X.
+在本节例子中，``setrlimit()`` 函数被用来设置特定资源上面的软限制和硬限制。
+软限制是一个值，当超过这个值的时候操作系统通常会发送一个信号来限制或通知该进程。
+硬限制是用来指定软限制能设定的最大值。通常来讲，这个由系统管理员通过设置系统级参数来决定。
+尽管硬限制可以改小一点，但是最好不要使用用户进程去修改。
 
+``setrlimit()`` 函数还能被用来设置子进程数量、打开文件数以及类似系统资源的限制。
+更多详情请参考 ``resource`` 模块的文档。
+
+需要注意的是本节内容只能适用于Unix系统，并且不保证所有系统都能如期工作。
+比如我们在测试的时候，它能在Linux上面正常运行，但是在OS X上却不能。

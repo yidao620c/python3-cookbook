@@ -5,57 +5,58 @@
 ----------
 问题
 ----------
-You want to launch a browser from a script and have it point to some URL that you
-specify.
+你想通过脚本启动浏览器并打开指定的URL网页
 
 |
 
 ----------
 解决方案
 ----------
-The webbrowser module can be used to launch a browser in a platform-independent
-manner. For example:
+``webbrowser`` 模块能被用来启动一个浏览器，并且与平台无关。例如：
 
->>> import webbrowser
->>> webbrowser.open('http://www.python.org')
-True
->>>
+.. code-block:: python
 
-This opens the requested page using the default browser. If you want a bit more control
-over how the page gets opened, you can use one of the following functions:
+    >>> import webbrowser
+    >>> webbrowser.open('http://www.python.org')
+    True
+    >>>
 
->>> # Open the page in a new browser window
->>> webbrowser.open_new('http://www.python.org')
-True
->>>
+它会使用默认浏览器打开指定网页。如果你还想对网页打开方式做更多控制，还可以使用下面这些函数：
 
->>> # Open the page in a new browser tab
->>> webbrowser.open_new_tab('http://www.python.org')
-True
->>>
+.. code-block:: python
 
-These will try to open the page in a new browser window or tab, if possible and supported
-by the browser.
-If you want to open a page in a specific browser, you can use the webbrowser.get()
-function to specify a particular browser. For example:
+    >>> # Open the page in a new browser window
+    >>> webbrowser.open_new('http://www.python.org')
+    True
+    >>>
 
->>> c = webbrowser.get('firefox')
->>> c.open('http://www.python.org')
-True
->>> c.open_new_tab('http://docs.python.org')
-True
->>>
+    >>> # Open the page in a new browser tab
+    >>> webbrowser.open_new_tab('http://www.python.org')
+    True
+    >>>
 
-A full list of supported browser names can be found in the Python documentation.
+这样就可以打开一个新的浏览器窗口或者标签，只要浏览器支持就行。
+
+如果你想指定浏览器类型，可以使用 ``webbrowser.get()`` 函数来指定某个特定浏览器。例如：
+
+.. code-block:: python
+
+    >>> c = webbrowser.get('firefox')
+    >>> c.open('http://www.python.org')
+    True
+    >>> c.open_new_tab('http://docs.python.org')
+    True
+    >>>
+
+对于支持的浏览器名称列表可查阅`Python文档 <http://docs.python.org/3/library/webbrowser.html>`_
 
 |
 
 ----------
 讨论
 ----------
-Being able to easily launch a browser can be a useful operation in many scripts. For
-example, maybe a script performs some kind of deployment to a server and you’d like
-to have it quickly launch a browser so you can verify that it’s working. Or maybe a
-program writes data out in the form of HTML pages and you’d just like to fire up a
-browser to see the result. Either way, the webbrowser module is a simple solution.
+在脚本中打开浏览器有时候会很有用。例如，某个脚本执行某个服务器发布任务，
+你想快速打开一个浏览器来确保它已经正常运行了。
+或者是某个程序以HTML网页格式输出数据，你想打开浏览器查看结果。
+不管是上面哪种情况，使用 ``webbrowser`` 模块都是一个简单实用的解决方案。
 

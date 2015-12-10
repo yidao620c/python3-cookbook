@@ -5,65 +5,62 @@
 ----------
 问题
 ----------
-You want the results of running unit tests written to a file instead of printed to standard
-output.
+你希望将单元测试的输出写到到某个文件中去，而不是打印到标准输出。
 
 |
 
 ----------
 解决方案
 ----------
-A very common technique for running unit tests is to include a small code fragment
-like this at the bottom of your testing file:
+运行单元测试一个常见技术就是在测试文件底部加入下面这段代码片段：
 
-import unittest
+.. code-block:: python
 
-class MyTest(unittest.TestCase):
-    ...
+    import unittest
 
-if __name__ == '__main__':
-    unittest.main()
+    class MyTest(unittest.TestCase):
+        pass
 
-This makes the test file executable, and prints the results of running tests to standard
-output. If you would like to redirect this output, you need to unwind the main() call a
-bit and write your own main() function like this:
+    if __name__ == '__main__':
+        unittest.main()
 
-import sys
-def main(out=sys.stderr, verbosity=2):
-    loader = unittest.TestLoader()
-    suite = loader.loadTestsFromModule(sys.modules[__name__])
-    unittest.TextTestRunner(out,verbosity=verbosity).run(suite)
+这样的话测试文件就是可执行的，并且会将运行测试的结果打印到标准输出上。
+如果你想重定向输出，就需要像下面这样修改 ``main()`` 函数：
 
-if __name__ == '__main__':
-    with open('testing.out', 'w') as f:
-        main(f)
+.. code-block:: python
+
+    import sys
+
+    def main(out=sys.stderr, verbosity=2):
+        loader = unittest.TestLoader()
+        suite = loader.loadTestsFromModule(sys.modules[__name__])
+        unittest.TextTestRunner(out,verbosity=verbosity).run(suite)
+
+    if __name__ == '__main__':
+        with open('testing.out', 'w') as f:
+            main(f)
 
 |
 
 ----------
 讨论
 ----------
-The interesting thing about this recipe is not so much the task of getting test results
-redirected to a file, but the fact that doing so exposes some notable inner workings of
-the unittest module.
-At a basic level, the unittest module works by first assembling a test suite. This test
-suite consists of the different testing methods you defined. Once the suite has been
-assembled, the tests it contains are executed.
+本节感兴趣的部分并不是将测试结果重定向到一个文件中，
+而是通过这样做向你展示了 ``unittest`` 模块中一些值得关注的内部工作原理。
 
-These two parts of unit testing are separate from each other. The unittest.TestLoad
-er instance created in the solution is used to assemble a test suite. The loadTestsFrom
-Module() is one of several methods it defines to gather tests. In this case, it scans a
-module for TestCase classes and extracts test methods from them. If you want some‐
-thing more fine-grained, the loadTestsFromTestCase() method (not shown) can be
-used to pull test methods from an individual class that inherits from TestCase.
-The TextTestRunner class is an example of a test runner class. The main purpose of
-this class is to execute the tests contained in a test suite. This class is the same test runner
-that sits behind the unittest.main() function. However, here we’re giving it a bit of
-low-level configuration, including an output file and an elevated verbosity level.
-Although this recipe only consists of a few lines of code, it gives a hint as to how you
-might further customize the  unittest framework. To customize how test suites are
-assembled, you would perform various operations using the TestLoader class. To cus‐
-tomize how tests execute, you could make custom test runner classes that emulate the
-functionality of TextTestRunner. Both topics are beyond the scope of what can be cov‐
-ered here. However, documentation for the unittest module has extensive coverage
-of the underlying protocols. 
+``unittest`` 模块首先会组装一个测试套件。
+这个测试套件包含了你定义的各种方法。一旦套件组装完成，它所包含的测试就可以被执行了。
+
+这两步是分开的，``unittest.TestLoader`` 实例被用来组装测试套件。
+``loadTestsFromModule()`` 是它定义的方法之一，用来收集测试用例。
+它会为 ``TestCase`` 类扫描某个模块并将其中的测试方法提取出来。
+如果你想进行细粒度的控制，
+可以使用 ``loadTestsFromTestCase()`` 方法来从某个继承TestCase的类中提取测试方法。
+``TextTestRunner`` 类是一个测试运行类的例子，
+这个类的主要用途是执行某个测试套件中包含的测试方法。
+这个类跟执行 ``unittest.main()`` 函数所使用的测试运行器是一样的。
+不过，我们在这里对它进行了一些列底层配置，包括输出文件和提升级别。
+尽管本节例子代码很少，但是能指导你如何对 ``unittest`` 框架进行更进一步的自定义。
+要想自定义测试套件的装配方式，你可以对 ``TestLoader`` 类执行更多的操作。
+为了自定义测试运行，你可以构造一个自己的测试运行类来模拟 ``TextTestRunner`` 的功能。
+而这些已经超出了本节的范围。``unittest`` 模块的文档对底层实现原理有更深入的讲解，可以去看看。

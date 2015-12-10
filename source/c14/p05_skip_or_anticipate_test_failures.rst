@@ -1,48 +1,51 @@
 ==============================
-14.5 忽略或者期望测试失败
+14.5 忽略或期望测试失败
 ==============================
 
 ----------
 问题
 ----------
-You want to skip or mark selected tests as an anticipated failure in your unit tests.
+你想在单元测试中忽略或标记某些测试会按照预期运行失败。
 
 |
 
 ----------
 解决方案
 ----------
-The unittest module has decorators that can be applied to selected test methods to
-control their handling. For example:
+``unittest`` 模块有装饰器可用来控制对指定测试方法的处理，例如：
 
-import unittest
-import os
-import platform
+.. code-block:: python
 
-class Tests(unittest.TestCase):
-    def test_0(self):
-        self.assertTrue(True)
+    import unittest
+    import os
+    import platform
 
-    @unittest.skip('skipped test')
-    def test_1(self):
-        self.fail('should have failed!')
+    class Tests(unittest.TestCase):
+        def test_0(self):
+            self.assertTrue(True)
 
-    @unittest.skipIf(os.name=='posix', 'Not supported on Unix')
-    def test_2(self):
-        import winreg
+        @unittest.skip('skipped test')
+        def test_1(self):
+            self.fail('should have failed!')
 
-    @unittest.skipUnless(platform.system() == 'Darwin', 'Mac specific test')
-    def test_3(self):
-        self.assertTrue(True)
+        @unittest.skipIf(os.name=='posix', 'Not supported on Unix')
+        def test_2(self):
+            import winreg
 
-    @unittest.expectedFailure
-    def test_4(self):
-        self.assertEqual(2+2, 5)
+        @unittest.skipUnless(platform.system() == 'Darwin', 'Mac specific test')
+        def test_3(self):
+            self.assertTrue(True)
 
-if __name__ == '__main__':
-    unittest.main()
+        @unittest.expectedFailure
+        def test_4(self):
+            self.assertEqual(2+2, 5)
 
-If you run this code on a Mac, you’ll get this output:
+    if __name__ == '__main__':
+        unittest.main()
+
+如果你在Mac上运行这段代码，你会得到如下输出：
+
+::
 
     bash % python3 testsample.py -v
     test_0 (__main__.Tests) ... ok
@@ -61,15 +64,16 @@ If you run this code on a Mac, you’ll get this output:
 ----------
 讨论
 ----------
-The skip() decorator can be used to skip over a test that you don’t want to run at all.
-skipIf() and skipUnless() can be a useful way to write tests that only apply to certain
-platforms or Python versions, or which have other dependencies. Use the @expected
-Failure decorator to mark tests that are known failures, but for which you don’t want
-the test framework to report more information.
-The decorators for skipping methods can also be applied to entire testing classes. For
-example:
+``skip()`` 装饰器能被用来忽略某个你不想运行的测试。
+``skipIf()`` 和 ``skipUnless()``
+对于你只想在某个特定平台或Python版本或其他依赖成立时才运行测试的时候非常有用。
+使用 ``@expected`` 的失败装饰器来标记那些确定会失败的测试，并且对这些测试你不想让测试框架打印更多信息。
 
-@unittest.skipUnless(platform.system() == 'Darwin', 'Mac specific tests')
-class DarwinTests(unittest.TestCase):
-    ...
+忽略方法的装饰器还可以被用来装饰整个测试类，比如：
+
+.. code-block:: python
+
+    @unittest.skipUnless(platform.system() == 'Darwin', 'Mac specific tests')
+    class DarwinTests(unittest.TestCase):
+        pass
 

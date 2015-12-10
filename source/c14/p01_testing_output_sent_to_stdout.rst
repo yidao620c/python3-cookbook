@@ -1,72 +1,68 @@
 ==============================
-14.1 测试输出到标准输出上
+14.1 测试stdout输出
 ==============================
 
 ----------
 问题
 ----------
-You  have  a  program  that  has  a  method  whose  output  goes  to  standard  Output
-(sys.stdout). This almost always means that it emits text to the screen. You’d like to
-write a test for your code to prove that, given the proper input, the proper output is
-displayed.
+你的程序中有个方法会输出到标准输出中（sys.stdout）。也就是说它会将文本打印到屏幕上面。
+你想写个测试来证明它，给定一个输入，相应的输出能正常显示出来。
 
 |
 
 ----------
 解决方案
 ----------
-Using the unittest.mock module’s patch() function, it’s pretty simple to mock out
-sys.stdout for just a single test, and put it back again, without messy temporary vari‐
-ables or leaking mocked-out state between test cases.
-Consider, as an example, the following function in a module mymodule:
+使用 ``unittest.mock`` 模块中的 ``patch()`` 函数，
+使用起来非常简单，可以为单个测试模拟 ``sys.stdout`` 然后回滚，
+并且不产生大量的临时变量或在测试用例直接暴露状态变量。
 
-# mymodule.py
+作为一个例子，我们在 ``mymodule`` 模块中定义如下一个函数：
 
-def urlprint(protocol, host, domain):
-    url = '{}://{}.{}'.format(protocol, host, domain)
-    print(url)
+.. code-block:: python
 
-The built-in print function, by default, sends output to sys.stdout. In order to test
-that output is actually getting there, you can mock it out using a stand-in object, and
-then make assertions about what happened. Using the unittest.mock module’s patch()
-method makes it convenient to replace objects only within the context of a running test,
-returning things to their original state immediately after the test is complete. Here’s the
-test code for mymodule:
+    # mymodule.py
 
-from io import StringIO
-from unittest import TestCase
-from unittest.mock import patch
-import mymodule
+    def urlprint(protocol, host, domain):
+        url = '{}://{}.{}'.format(protocol, host, domain)
+        print(url)
 
-class TestURLPrint(TestCase):
-    def test_url_gets_to_stdout(self):
-        protocol = 'http'
-        host = 'www'
-        domain = 'example.com'
-        expected_url = '{}://{}.{}\n'.format(protocol, host, domain)
+默认情况下内置的 ``print`` 函数会将输出发送到 ``sys.stdout`` 。
+为了测试输出真的在那里，你可以使用一个替身对象来模拟它，然后使用断言来确认结果。
+使用 ``unittest.mock`` 模块的 ``patch()`` 方法可以很方便的在测试运行的上下文中替换对象，
+并且当测试完成时候自动返回它们的原有状态。下面是对 ``mymodule`` 模块的测试代码：
 
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            mymodule.urlprint(protocol, host, domain)
-            self.assertEqual(fake_out.getvalue(), expected_url)
+.. code-block:: python
+
+    from io import StringIO
+    from unittest import TestCase
+    from unittest.mock import patch
+    import mymodule
+
+    class TestURLPrint(TestCase):
+        def test_url_gets_to_stdout(self):
+            protocol = 'http'
+            host = 'www'
+            domain = 'example.com'
+            expected_url = '{}://{}.{}\n'.format(protocol, host, domain)
+
+            with patch('sys.stdout', new=StringIO()) as fake_out:
+                mymodule.urlprint(protocol, host, domain)
+                self.assertEqual(fake_out.getvalue(), expected_url)
 
 |
 
 ----------
 讨论
 ----------
-The urlprint() function takes three arguments, and the test starts by setting up dummy
-arguments for each one. The expected_url variable is set to a string containing the
-expected output.
-To run the test, the unittest.mock.patch() function is used as a context manager to
-replace the value of sys.stdout with a StringIO object as a substitute. The fake_out
-variable is the mock object that’s created in this process. This can be used inside the
-body of the with statement to perform various checks. When the with statement com‐
-pletes, patch conveniently puts everything back the way it was before the test ever ran.
-It’s worth noting that certain C extensions to Python may write directly to standard
-output, bypassing the setting of sys.stdout. This recipe won’t help with that scenario,
-but it should work fine with pure Python code (if you need to capture I/O from such C
-extensions, you can do it by opening a temporary file and performing various tricks
-involving file descriptors to have standard output temporarily redirected to that file).
-More information about capturing IO in a string and StringIO objects can be found in
-Recipe 5.6. 
+``urlprint()`` 函数接受三个参数，测试方法开始会先设置每一个参数的值。
+``expected_url`` 变量被设置成包含期望的输出的字符串。
+
+``unittest.mock.patch()`` 函数被用作一个上下文管理器，使用 ``StringIO`` 对象来代替 ``sys.stdout`` .
+``fake_out`` 变量是在该进程中被创建的模拟对象。
+在with语句中使用它可以执行各种检查。当with语句结束时，``patch`` 会将所有东西恢复到测试开始前的状态。
+有一点需要注意的是某些对Python的C扩展可能会忽略掉 ``sys.stdout`` 的配置二直接写入到标准输出中。
+限于篇幅，本节不会涉及到这方面的讲解，它适用于纯Python代码。
+如果你真的需要在C扩展中捕获I/O，你可以先打开一个临时文件，然后将标准输出重定向到该文件中。
+更多关于捕获以字符串形式捕获I/O和 ``StringIO`` 对象请参阅5.6小节。
 

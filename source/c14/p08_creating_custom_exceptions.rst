@@ -5,105 +5,107 @@
 ----------
 问题
 ----------
-You’re building an application and would like to wrap lower-level exceptions with cus‐
-tom ones that have more meaning in the context of your application.
+在你构建的应用程序中，你想将底层异常包装成自定义的异常。
 
 |
 
 ----------
 解决方案
 ----------
-Creating new exceptions is easy—just define them as classes that inherit from Excep
-tion (or one of the other existing exception types if it makes more sense). For example,
-if you are writing code related to network programming, you might define some custom
-exceptions like this:
+创建新的异常很简单——定义新的类，让它继承自 ``Exception`` （或者是任何一个已存在的异常类型）。
+例如，如果你编写网络相关的程序，你可能会定义一些类似如下的异常：
 
-class NetworkError(Exception):
-    pass
+.. code-block:: python
 
-class HostnameError(NetworkError):
-    pass
+    class NetworkError(Exception):
+        pass
 
-class TimeoutError(NetworkError):
-    pass
+    class HostnameError(NetworkError):
+        pass
 
-class ProtocolError(NetworkError):
-    pass
+    class TimeoutError(NetworkError):
+        pass
 
-Users could then use these exceptions in the normal way. For example:
+    class ProtocolError(NetworkError):
+        pass
 
-try:
-    msg = s.recv()
-except TimeoutError as e:
-    ...
-except ProtocolError as e:
-    ...
+然后用户就可以像通常那样使用这些异常了，例如：
+
+.. code-block:: python
+
+    try:
+        msg = s.recv()
+    except TimeoutError as e:
+        ...
+    except ProtocolError as e:
+        ...
 
 |
 
 ----------
 讨论
 ----------
-Custom exception classes should almost always inherit from the built-in Exception
-class, or inherit from some locally defined base exception that itself inherits from Ex
-ception. Although all exceptions also derive from BaseException, you should not use
-this as a base class for new exceptions. BaseException is reserved for system-exiting
-exceptions,  such  as  KeyboardInterrupt  or  SystemExit,  and  other  exceptions  that
-should signal the application to exit. Therefore, catching these exceptions is not the
+自定义异常类应该总是继承自内置的 ``Exception`` 类，
+或者是继承自那些本身就是从 ``Exception`` 继承而来的类。
+尽管所有类同时也继承自 ``BaseException`` ，但你不应该使用这个基类来定义新的异常。
+``BaseException`` 是为系统退出异常而保留的，比如 ``KeyboardInterrupt`` 或 ``SystemExit``
+以及其他那些会给应用发送信号而退出的异常。
+因此，捕获这些异常本身没什么意义。
+这样的话，假如你继承 ``BaseException``
+可能会导致你的自定义异常不会被捕获而直接发送信号退出程序运行。
 
-intended use case. Assuming you follow this convention, it follows that inheriting from
-BaseException causes your custom exceptions to not be caught and to signal an im‐
-minent application shutdown! 
-Having custom exceptions in your application and using them as shown makes your
-application code tell a more coherent story to whoever may need to read the code. One
-design consideration involves the grouping of custom exceptions via inheritance. In
-complicated applications, it may make sense to introduce further base classes that group
-different classes of exceptions together. This gives the user a choice of catching a nar‐
-rowly specified error, such as this:
+在程序中引入自定义异常可以使得你的代码更具可读性，能清晰显示谁应该阅读这个代码。
+还有一种设计是将自定义异常通过继承组合起来。在复杂应用程序中，
+使用基类来分组各种异常类也是很有用的。它可以让用户捕获一个范围很窄的特定异常，比如下面这样的：
 
-try:
-    s.send(msg)
-except ProtocolError:
+.. code-block:: python
+
+    try:
+        s.send(msg)
+    except ProtocolError:
+        ...
+
+你还能捕获更大范围的异常，就像下面这样：
+
+.. code-block:: python
+
+    try:
+        s.send(msg)
+    except NetworkError:
+        ...
+
+如果你想定义的新异常重写了 ``__init__()`` 方法，
+确保你使用所有参数调用 ``Exception.__init__()`` ，例如：
+
+.. code-block:: python
+
+    class CustomError(Exception):
+        def __init__(self, message, status):
+            super().__init__(message, status)
+            self.message = message
+            self.status = status
+
+看上去有点奇怪，不过Exception的默认行为是接受所有传递的参数并将它们以元组形式存储在 ``.args`` 属性中.
+很多其他函数库和部分Python库默认所有异常都必须有 ``.args`` 属性，
+因此如果你忽略了这一步，你会发现有些时候你定义的新异常不会按照期望运行。
+为了演示 ``.args`` 的使用，考虑下下面这个使用内置的 `RuntimeError`` 异常的交互会话，
+注意看raise语句中使用的参数个数是怎样的：
+
+::
+
+    >>> try:
+    ...     raise RuntimeError('It failed')
+    ... except RuntimeError as e:
+    ...     print(e.args)
     ...
+    ('It failed',)
+    >>> try:
+    ...     raise RuntimeError('It failed', 42, 'spam')
+    ... except RuntimeError as e:
 
-It also gives the ability to catch a broad range of errors, such as the following:
-
-try:
-    s.send(msg)
-except NetworkError:
+    ...     print(e.args)
     ...
+    ('It failed', 42, 'spam')
+    >>>
 
-If you are going to define a new exception that overrides the __init__() method of
-Exception, make sure you always call Exception.__init__() with all of the passed
-arguments. For example:
-
-class CustomError(Exception):
-    def __init__(self, message, status):
-        super().__init__(message, status)
-        self.message = message
-        self.status = status
-
-This might look a little weird, but the default behavior of Exception is to accept all
-arguments passed and to store them in the .args attribute as a tuple. Various other
-libraries and parts of Python expect all exceptions to have the .args attribute, so if you
-skip this step, you might find that your new exception doesn’t behave quite right in
-certain contexts. To illustrate the use of .args, consider this interactive session with the
-built-in RuntimeError exception, and notice how any number of arguments can be used
-with the raise statement:
-
->>> try:
-...     raise RuntimeError('It failed')
-... except RuntimeError as e:
-...     print(e.args)
-...
-('It failed',)
->>> try:
-...     raise RuntimeError('It failed', 42, 'spam')
-... except RuntimeError as e:
-
-...     print(e.args)
-...
-('It failed', 42, 'spam')
->>>
-
-For more information on creating your own exceptions, see the Python documentation.
+关于创建自定义异常的更多信息，请参考`Python官方文档 <https://docs.python.org/3/tutorial/errors.html>`_

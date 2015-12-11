@@ -5,69 +5,74 @@
 ----------
 问题
 ----------
-You want to write code that catches all exceptions.
+怎样捕获代码中的所有异常？
 
 |
 
 ----------
 解决方案
 ----------
-To catch all exceptions, write an exception handler for Exception, as shown here:
+想要捕获所有的异常，可以直接捕获 ``Exception`` 即可：
 
-try:
-   ...
-except Exception as e:
-   ...
-   log('Reason:', e)       # Important!
+.. code-block:: python
 
-This will catch all exceptions save SystemExit, KeyboardInterrupt, and GeneratorEx
-it. If you also want to catch those exceptions, change Exception to BaseException.
+    try:
+       ...
+    except Exception as e:
+       ...
+       log('Reason:', e)       # Important!
+
+这个将会捕获除了 ``SystemExit`` 、 ``KeyboardInterrupt`` 和 ``GeneratorExit`` 之外的所有异常。
+如果你还想捕获这三个异常，将 ``Exception`` 改成 ``BaseException`` 即可。
 
 |
 
 ----------
 讨论
 ----------
-Catching all exceptions is sometimes used as a crutch by programmers who can’t re‐
-member all of the possible exceptions that might occur in complicated operations. As
-such, it is also a very good way to write undebuggable code if you are not careful.
-Because of this, if you choose to catch all exceptions, it is absolutely critical to log or
-report the actual reason for the exception somewhere (e.g., log file, error message print‐
-ed to screen, etc.). If you don’t do this, your head will likely explode at some point.
-Consider this example:
+捕获所有异常通常是由于程序员在某些复杂操作中并不能记住所有可能的异常。
+如果你不是很细心的人，这也是编写不易调试代码的一个简单方法。
 
-def parse_int(s):
-    try:
-        n = int(v)
-    except Exception:
-        print("Couldn't parse")
+正因如此，如果你选择捕获所有异常，那么在某个地方（比如日志文件、打印异常到屏幕）打印确切原因就比较重要了。
+如果你没有这样做，有时候你看到异常打印时可能摸不着头脑，就像下面这样：
 
-If you try this function, it behaves like this:
+.. code-block:: python
 
->>> parse_int('n/a')
-Couldn't parse
->>> parse_int('42')
-Couldn't parse
->>>
+    def parse_int(s):
+        try:
+            n = int(v)
+        except Exception:
+            print("Couldn't parse")
 
-At this point, you might be left scratching your head as to why it doesn’t work. Now
-suppose the function had been written like this:
+试着运行这个函数，结果如下：
 
-def parse_int(s):
-    try:
-        n = int(v)
-    except Exception as e:
-        print("Couldn't parse")
-        print('Reason:', e)
+::
 
-In this case, you get the following output, which indicates that a programming mistake
-has been made:
+    >>> parse_int('n/a')
+    Couldn't parse
+    >>> parse_int('42')
+    Couldn't parse
+    >>>
 
->>> parse_int('42')
-Couldn't parse
-Reason: global name 'v' is not defined
->>>
+这时候你就会挠头想：“这咋回事啊？” 假如你像下面这样重写这个函数：
 
-All things being equal, it’s probably better to be as precise as possible in your exception
-handling. However, if you must catch all exceptions, just make sure you give good di‐
-agnostic information or propagate the exception so that cause doesn’t get lost.
+.. code-block:: python
+
+    def parse_int(s):
+        try:
+            n = int(v)
+        except Exception as e:
+            print("Couldn't parse")
+            print('Reason:', e)
+
+这时候你能获取如下输出，指明了有个编程错误：
+
+::
+
+    >>> parse_int('42')
+    Couldn't parse
+    Reason: global name 'v' is not defined
+    >>>
+
+很明显，你应该尽可能将异常处理器定义的精准一些。
+不过，要是你必须捕获所有异常，确保打印正确的诊断信息或将异常传播出去，这样不会丢失掉异常。

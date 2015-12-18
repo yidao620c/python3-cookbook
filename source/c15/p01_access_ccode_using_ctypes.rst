@@ -5,154 +5,155 @@
 ----------
 问题
 ----------
-You have a small number of C functions that have been compiled into a shared library
-or DLL. You would like to call these functions purely from Python without having to
-write additional C code or using a third-party extension tool.
+你有一些C函数已经被编译到共享库或DLL中。你希望可以使用纯Python代码调用这些函数，
+而不用编写额外的C代码或使用第三方扩展工具。
 
 |
 
 ----------
 解决方案
 ----------
-For small problems involving C code, it is often easy enough to use the ctypes module
-that is part of Python’s standard library. In order to use ctypes, you must first make
-sure the C code you want to access has been compiled into a shared library that is
-compatible with the Python interpreter (e.g., same architecture, word size, compiler,
-etc.). For the purposes of this recipe, assume that a shared library, libsample.so, has
-been created and that it contains nothing more than the code shown in the chapter
-introduction. Further assume that the libsample.so file has been placed in the same
-directory as the sample.py file shown next.
-To access the resulting library, you make a Python module that wraps around it, such
-as the following:
-# sample.py
-import ctypes
-import os
+对于需要调用C代码的一些小的问题，通常使用Python标准库中的 ``ctypes`` 模块就足够了。
+要使用 ``ctypes`` ，你首先要确保你要访问的C代码已经被编译到和Python解释器兼容
+（同样的架构、字大小、编译器等）的某个共享库中了。
+为了进行本节的演示，假设你有一个共享库名字叫 ``libsample.so`` ，里面的内容就是15章介绍部分那样。
+另外还假设这个 ``libsample.so`` 文件被放置到位于 ``sample.py`` 文件相同的目录中了。
 
-# Try to locate the .so file in the same directory as this file
-_file = 'libsample.so'
-_path = os.path.join(*(os.path.split(__file__)[:-1] + (_file,)))
-_mod = ctypes.cdll.LoadLibrary(_path)
+要访问这个函数库，你要先构建一个包装它的Python模块，如下这样：
 
-# int gcd(int, int)
-gcd = _mod.gcd
-gcd.argtypes = (ctypes.c_int, ctypes.c_int)
-gcd.restype = ctypes.c_int
+.. code-block:: python
 
-# int in_mandel(double, double, int)
-in_mandel = _mod.in_mandel
-in_mandel.argtypes = (ctypes.c_double, ctypes.c_double, ctypes.c_int)
-in_mandel.restype = ctypes.c_int
+    # sample.py
+    import ctypes
+    import os
 
-# int divide(int, int, int *)
-_divide = _mod.divide
-_divide.argtypes = (ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int))
-_divide.restype = ctypes.c_int
+    # Try to locate the .so file in the same directory as this file
+    _file = 'libsample.so'
+    _path = os.path.join(*(os.path.split(__file__)[:-1] + (_file,)))
+    _mod = ctypes.cdll.LoadLibrary(_path)
 
-def divide(x, y):
-    rem = ctypes.c_int()
-    quot = _divide(x, y, rem)
+    # int gcd(int, int)
+    gcd = _mod.gcd
+    gcd.argtypes = (ctypes.c_int, ctypes.c_int)
+    gcd.restype = ctypes.c_int
 
-    return quot,rem.value
+    # int in_mandel(double, double, int)
+    in_mandel = _mod.in_mandel
+    in_mandel.argtypes = (ctypes.c_double, ctypes.c_double, ctypes.c_int)
+    in_mandel.restype = ctypes.c_int
 
-# void avg(double *, int n)
-# Define a special type for the 'double *' argument
-class DoubleArrayType:
-    def from_param(self, param):
-        typename = type(param).__name__
-        if hasattr(self, 'from_' + typename):
-            return getattr(self, 'from_' + typename)(param)
-        elif isinstance(param, ctypes.Array):
-            return param
-        else:
-            raise TypeError("Can't convert %s" % typename)
+    # int divide(int, int, int *)
+    _divide = _mod.divide
+    _divide.argtypes = (ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int))
+    _divide.restype = ctypes.c_int
 
-    # Cast from array.array objects
-    def from_array(self, param):
-        if param.typecode != 'd':
-            raise TypeError('must be an array of doubles')
-        ptr, _ = param.buffer_info()
-        return ctypes.cast(ptr, ctypes.POINTER(ctypes.c_double))
+    def divide(x, y):
+        rem = ctypes.c_int()
+        quot = _divide(x, y, rem)
 
-    # Cast from lists/tuples
-    def from_list(self, param):
-        val = ((ctypes.c_double)*len(param))(*param)
-        return val
+        return quot,rem.value
 
-    from_tuple = from_list
+    # void avg(double *, int n)
+    # Define a special type for the 'double *' argument
+    class DoubleArrayType:
+        def from_param(self, param):
+            typename = type(param).__name__
+            if hasattr(self, 'from_' + typename):
+                return getattr(self, 'from_' + typename)(param)
+            elif isinstance(param, ctypes.Array):
+                return param
+            else:
+                raise TypeError("Can't convert %s" % typename)
 
-    # Cast from a numpy array
-    def from_ndarray(self, param):
-        return param.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        # Cast from array.array objects
+        def from_array(self, param):
+            if param.typecode != 'd':
+                raise TypeError('must be an array of doubles')
+            ptr, _ = param.buffer_info()
+            return ctypes.cast(ptr, ctypes.POINTER(ctypes.c_double))
 
-DoubleArray = DoubleArrayType()
-_avg = _mod.avg
-_avg.argtypes = (DoubleArray, ctypes.c_int)
-_avg.restype = ctypes.c_double
+        # Cast from lists/tuples
+        def from_list(self, param):
+            val = ((ctypes.c_double)*len(param))(*param)
+            return val
 
-def avg(values):
-    return _avg(values, len(values))
+        from_tuple = from_list
 
-# struct Point { }
-class Point(ctypes.Structure):
-    _fields_ = [('x', ctypes.c_double),
-                ('y', ctypes.c_double)]
+        # Cast from a numpy array
+        def from_ndarray(self, param):
+            return param.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 
-# double distance(Point *, Point *)
-distance = _mod.distance
-distance.argtypes = (ctypes.POINTER(Point), ctypes.POINTER(Point))
-distance.restype = ctypes.c_double
+    DoubleArray = DoubleArrayType()
+    _avg = _mod.avg
+    _avg.argtypes = (DoubleArray, ctypes.c_int)
+    _avg.restype = ctypes.c_double
+
+    def avg(values):
+        return _avg(values, len(values))
+
+    # struct Point { }
+    class Point(ctypes.Structure):
+        _fields_ = [('x', ctypes.c_double),
+                    ('y', ctypes.c_double)]
+
+    # double distance(Point *, Point *)
+    distance = _mod.distance
+    distance.argtypes = (ctypes.POINTER(Point), ctypes.POINTER(Point))
+    distance.restype = ctypes.c_double
 
 If all goes well, you should be able to load the module and use the resulting C functions.
 For example:
+如果一切正常，你就可以加载并使用里面定义的C函数了。例如：
 
->>> import sample
->>> sample.gcd(35,42)
-7
->>> sample.in_mandel(0,0,500)
-1
->>> sample.in_mandel(2.0,1.0,500)
-0
->>> sample.divide(42,8)
-(5, 2)
->>> sample.avg([1,2,3])
-2.0
->>> p1 = sample.Point(1,2)
->>> p2 = sample.Point(4,5)
->>> sample.distance(p1,p2)
-4.242640687119285
->>>
+::
+
+    >>> import sample
+    >>> sample.gcd(35,42)
+    7
+    >>> sample.in_mandel(0,0,500)
+    1
+    >>> sample.in_mandel(2.0,1.0,500)
+    0
+    >>> sample.divide(42,8)
+    (5, 2)
+    >>> sample.avg([1,2,3])
+    2.0
+    >>> p1 = sample.Point(1,2)
+    >>> p2 = sample.Point(4,5)
+    >>> sample.distance(p1,p2)
+    4.242640687119285
+    >>>
 
 |
 
 ----------
 讨论
 ----------
-There are several aspects of this recipe that warrant some discussion. The first issue
-concerns the overall packaging of C and Python code together. If you are using ctypes
-to access C code that you have compiled yourself, you will need to make sure that the
-shared library gets placed in a location where the sample.py module can find it. One
-possibility is to put the resulting .so file in the same directory as the supporting Python
-code. This is what’s shown at the first part of this recipe—sample.py looks at the __file__
-variable to see where it has been installed, and then constructs a path that points to a
-libsample.so file in the same directory.
-If the C library is going to be installed elsewhere, then you’ll have to adjust the path
-accordingly. If the C library is installed as a standard library on your machine, you might
-be able to use the ctypes.util.find_library() function. For example:
+本小节有很多值得我们详细讨论的地方。
+首先是对于C和Python代码一起打包的问题，如果你在使用 ``ctypes`` 来访问编译后的C代码，
+那么需要确保这个共享库放在 ``sample.py`` 模块同一个地方。
+一种可能是将生成的 ``.so`` 文件放置在要使用它的Python代码同一个目录下。
+我们在 ``recipe—sample.py`` 中使用 ``__file__`` 变量来查看它被安装的位置，
+然后构造一个指向同一个目录中的 ``libsample.so`` 文件的路径。
 
->>> from ctypes.util import find_library
->>> find_library('m')
-'/usr/lib/libm.dylib'
->>> find_library('pthread')
-'/usr/lib/libpthread.dylib'
->>> find_library('sample')
-'/usr/local/lib/libsample.so'
->>>
+如果C函数库被安装到其他地方，那么你就要修改相应的路径。
+如果C函数库在你机器上被安装为一个标准库了，
+那么可以使用 ``ctypes.util.find_library()`` 函数来查找：
 
-Again, ctypes won’t work at all if it can’t locate the library with the C code. Thus, you’ll
-need to spend a few minutes thinking about how you want to install things.
-Once you know where the C library is located, you use ctypes.cdll.LoadLibrary()
-to load it. The following statement in the solution does this where  _path is the full
-pathname to the shared library:
+::
+
+    >>> from ctypes.util import find_library
+    >>> find_library('m')
+    '/usr/lib/libm.dylib'
+    >>> find_library('pthread')
+    '/usr/lib/libpthread.dylib'
+    >>> find_library('sample')
+    '/usr/local/lib/libsample.so'
+    >>>
+
+一旦你知道了C函数库的位置，那么就可以像下面这样使用 ``ctypes.cdll.LoadLibrary()`` 来加载它，
+其中 ``_path`` 是标准库的全路径：
+
 
 _mod = ctypes.cdll.LoadLibrary(_path)
 

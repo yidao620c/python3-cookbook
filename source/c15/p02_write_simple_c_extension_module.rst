@@ -5,201 +5,207 @@
 ----------
 问题
 ----------
-You want to write a simple C extension module directly using Python’s extension API
-and no other tools.
+你想不依靠其他工具，直接使用Python的扩展API来编写一些简单的C扩展模块。
 
 |
 
 ----------
 解决方案
 ----------
-For simple C code, it is straightforward to make a handcrafted extension module. As a
-preliminary step, you probably want to make sure your C code has a proper header file.
-For example,
+对于简单的C代码，构建一个自定义扩展模块是很容易的。
+作为第一步，你需要确保你的C代码有一个正确的头文件。例如：
 
-/* sample.h */
+::
 
-#include <math.h>
+    /* sample.h */
 
-extern int gcd(int, int);
-extern int in_mandel(double x0, double y0, int n);
-extern int divide(int a, int b, int *remainder);
-extern double avg(double *a, int n);
+    #include <math.h>
 
-typedef struct Point {
-    double x,y;
-} Point;
+    extern int gcd(int, int);
+    extern int in_mandel(double x0, double y0, int n);
+    extern int divide(int a, int b, int *remainder);
+    extern double avg(double *a, int n);
 
-extern double distance(Point *p1, Point *p2);
+    typedef struct Point {
+        double x,y;
+    } Point;
 
-Typically, this header would correspond to a library that has been compiled separately.
-With that assumption, here is a sample extension module that illustrates the basics of
-writing extension functions:
+    extern double distance(Point *p1, Point *p2);
 
-#include "Python.h"
-#include "sample.h"
+通常来讲，这个头文件要对应一个已经被单独编译过的库。
+有了这些，下面我们演示下编写扩展函数的一个简单例子：
 
-/* int gcd(int, int) */
-static PyObject *py_gcd(PyObject *self, PyObject *args) {
-  int x, y, result;
+::
 
-  if (!PyArg_ParseTuple(args,"ii", &x, &y)) {
-    return NULL;
-  }
-  result = gcd(x,y);
-  return Py_BuildValue("i", result);
-}
+    #include "Python.h"
+    #include "sample.h"
 
-/* int in_mandel(double, double, int) */
-static PyObject *py_in_mandel(PyObject *self, PyObject *args) {
-  double x0, y0;
-  int n;
-  int result;
+    /* int gcd(int, int) */
+    static PyObject *py_gcd(PyObject *self, PyObject *args) {
+      int x, y, result;
 
-  if (!PyArg_ParseTuple(args, "ddi", &x0, &y0, &n)) {
-    return NULL;
-  }
-  result = in_mandel(x0,y0,n);
-  return Py_BuildValue("i", result);
-}
+      if (!PyArg_ParseTuple(args,"ii", &x, &y)) {
+        return NULL;
+      }
+      result = gcd(x,y);
+      return Py_BuildValue("i", result);
+    }
 
-/* int divide(int, int, int *) */
-static PyObject *py_divide(PyObject *self, PyObject *args) {
-  int a, b, quotient, remainder;
-  if (!PyArg_ParseTuple(args, "ii", &a, &b)) {
-    return NULL;
-  }
-  quotient = divide(a,b, &remainder);
-  return Py_BuildValue("(ii)", quotient, remainder);
-}
+    /* int in_mandel(double, double, int) */
+    static PyObject *py_in_mandel(PyObject *self, PyObject *args) {
+      double x0, y0;
+      int n;
+      int result;
 
-/* Module method table */
-static PyMethodDef SampleMethods[] = {
-  {"gcd",  py_gcd, METH_VARARGS, "Greatest common divisor"},
-  {"in_mandel", py_in_mandel, METH_VARARGS, "Mandelbrot test"},
-  {"divide", py_divide, METH_VARARGS, "Integer division"},
-  { NULL, NULL, 0, NULL}
-};
+      if (!PyArg_ParseTuple(args, "ddi", &x0, &y0, &n)) {
+        return NULL;
+      }
+      result = in_mandel(x0,y0,n);
+      return Py_BuildValue("i", result);
+    }
 
-/* Module structure */
-static struct PyModuleDef samplemodule = {
-  PyModuleDef_HEAD_INIT,
+    /* int divide(int, int, int *) */
+    static PyObject *py_divide(PyObject *self, PyObject *args) {
+      int a, b, quotient, remainder;
+      if (!PyArg_ParseTuple(args, "ii", &a, &b)) {
+        return NULL;
+      }
+      quotient = divide(a,b, &remainder);
+      return Py_BuildValue("(ii)", quotient, remainder);
+    }
 
-  "sample",           /* name of module */
-  "A sample module",  /* Doc string (may be NULL) */
-  -1,                 /* Size of per-interpreter state or -1 */
-  SampleMethods       /* Method table */
-};
+    /* Module method table */
+    static PyMethodDef SampleMethods[] = {
+      {"gcd",  py_gcd, METH_VARARGS, "Greatest common divisor"},
+      {"in_mandel", py_in_mandel, METH_VARARGS, "Mandelbrot test"},
+      {"divide", py_divide, METH_VARARGS, "Integer division"},
+      { NULL, NULL, 0, NULL}
+    };
 
-/* Module initialization function */
-PyMODINIT_FUNC
-PyInit_sample(void) {
-  return PyModule_Create(&samplemodule);
-}
+    /* Module structure */
+    static struct PyModuleDef samplemodule = {
+      PyModuleDef_HEAD_INIT,
 
-For building the extension module, create a setup.py file that looks like this:
+      "sample",           /* name of module */
+      "A sample module",  /* Doc string (may be NULL) */
+      -1,                 /* Size of per-interpreter state or -1 */
+      SampleMethods       /* Method table */
+    };
 
-# setup.py
-from distutils.core import setup, Extension
+    /* Module initialization function */
+    PyMODINIT_FUNC
+    PyInit_sample(void) {
+      return PyModule_Create(&samplemodule);
+    }
 
-setup(name='sample',
-      ext_modules=[
-        Extension('sample',
-                  ['pysample.c'],
-                  include_dirs = ['/some/dir'],
-                  define_macros = [('FOO','1')],
-                  undef_macros = ['BAR'],
-                  library_dirs = ['/usr/local/lib'],
-                  libraries = ['sample']
-                  )
-        ]
-)
+要绑定这个扩展模块，像下面这样创建一个 ``setup.py`` 文件：
 
-Now, to build the resulting library, simply use python3 buildlib.py build_ext --
-inplace. For example:
+.. code-block:: python
 
-bash % python3 setup.py build_ext --inplace
-running build_ext
-building 'sample' extension
-gcc -fno-strict-aliasing -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes
- -I/usr/local/include/python3.3m -c pysample.c
- -o build/temp.macosx-10.6-x86_64-3.3/pysample.o
-gcc -bundle -undefined dynamic_lookup
-build/temp.macosx-10.6-x86_64-3.3/pysample.o \
- -L/usr/local/lib -lsample -o sample.so
-bash %
+    # setup.py
+    from distutils.core import setup, Extension
 
-As shown, this creates a shared library called sample.so. When compiled, you should
-be able to start importing it as a module:
+    setup(name='sample',
+          ext_modules=[
+            Extension('sample',
+                      ['pysample.c'],
+                      include_dirs = ['/some/dir'],
+                      define_macros = [('FOO','1')],
+                      undef_macros = ['BAR'],
+                      library_dirs = ['/usr/local/lib'],
+                      libraries = ['sample']
+                      )
+            ]
+    )
 
->>> import sample
->>> sample.gcd(35, 42)
-7
->>> sample.in_mandel(0, 0, 500)
-1
->>> sample.in_mandel(2.0, 1.0, 500)
+为了构建最终的函数库，只需简单的使用 ``python3 buildlib.py build_ext --inplace`` 命令即可：
 
-0
->>> sample.divide(42, 8)
-(5, 2)
->>>
+::
 
-If you are attempting these steps on Windows, you may need to spend some time fiddling
-with your environment and the build environment to get extension modules to build
-correctly.  Binary  distributions  of  Python  are  typically  built  using  Microsoft  Visual
-Studio. To get extensions to work, you may have to compile them using the same or
-compatible tools. See the Python documentation.
+    bash % python3 setup.py build_ext --inplace
+    running build_ext
+    building 'sample' extension
+    gcc -fno-strict-aliasing -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes
+     -I/usr/local/include/python3.3m -c pysample.c
+     -o build/temp.macosx-10.6-x86_64-3.3/pysample.o
+    gcc -bundle -undefined dynamic_lookup
+    build/temp.macosx-10.6-x86_64-3.3/pysample.o \
+     -L/usr/local/lib -lsample -o sample.so
+    bash %
+
+如上所示，它会创建一个名字叫 ``sample.so`` 的共享库。当被编译后，你就能将它作为一个模块导入进来了：
+
+::
+
+    >>> import sample
+    >>> sample.gcd(35, 42)
+    7
+    >>> sample.in_mandel(0, 0, 500)
+    1
+    >>> sample.in_mandel(2.0, 1.0, 500)
+
+    0
+    >>> sample.divide(42, 8)
+    (5, 2)
+    >>>
+
+如果你是在Windows机器上面尝试这些步骤，可能会遇到各种环境和编译问题，你需要花更多点时间去配置。
+Python的二进制分发通常使用了Microsoft  Visual Studio来构建。
+为了让这些扩展能正常工作，你需要使用同样或兼容的工具来编译它。
+参考相应的 `Python文档 <https://docs.python.org/3/extending/windows.html>`_
 
 |
 
 ----------
 讨论
 ----------
-Before attempting any kind of handwritten extension, it is absolutely critical that you
-consult Python’s documentation on “Extending and Embedding the Python Interpret‐
-er”. Python’s C extension API is large, and repeating all of it here is simply not practical.
-However, the most important parts can be easily discussed.
-First, in extension modules, functions that you write are all typically written with a
-common prototype such as this:
+在尝试任何手写扩展之前，最好能先参考下Python文档中的
+`扩展和嵌入Python解释器 <https://docs.python.org/3/extending/index.html>`_ .
+Python的C扩展API很大，在这里整个去讲述它没什么实际意义。
+不过对于最核心的部分还是可以讨论下的。
 
-static PyObject *py_func(PyObject *self, PyObject *args) {
-  ...
-}
+首先，在扩展模块中，你写的函数都是像下面这样的一个普通原型：
 
-PyObject is the C data type that represents any Python object. At a very high level, an
-extension function is a C function that receives a tuple of Python objects (in PyObject
-*args) and returns a new Python object as a result. The self argument to the function
-is unused for simple extension functions, but comes into play should you want to define
-new classes or object types in C (e.g., if the extension function were a method of a class,
-then self would hold the instance).
-The PyArg_ParseTuple() function is used to convert values from Python to a C rep‐
-resentation. As input, it takes a format string that indicates the required values, such as
-“i” for integer and “d” for double, as well as the addresses of C variables in which to place
-the converted results. PyArg_ParseTuple() performs a variety of checks on the number
-and type of arguments. If there is any mismatch with the format string, an exception is
-raised and NULL is returned. By checking for this and simply returning NULL, an ap‐
-propriate exception will have been raised in the calling code.
-The Py_BuildValue() function is used to create Python objects from C data types. It
-also accepts a format code to indicate the desired type. In the extension functions, it is
-used to return results back to Python. One feature of Py_BuildValue() is that it can
-build more complicated kinds of objects, such as tuples and dictionaries. In the code
-for py_divide(), an example showing the return of a tuple is shown. However, here are
-a few more examples:
+::
 
-return Py_BuildValue("i", 34);      // Return an integer
-return Py_BuildValue("d", 3.4);     // Return a double
-return Py_BuildValue("s", "Hello"); // Null-terminated UTF-8 string
-return Py_BuildValue("(ii)", 3, 4); // Tuple (3, 4)
+    static PyObject *py_func(PyObject *self, PyObject *args) {
+      ...
+    }
 
-Near the bottom of any extension module, you will find a function table such as the
-SampleMethods table shown in this recipe. This table lists C functions, the names to use
-in Python, as well as doc strings. All modules are required to specify such a table, as it
-gets used in the initialization of the module.
-The final function PyInit_sample() is the module initialization function that executes
-when the module is first imported. The primary job of this function is to register the
-module object with the interpreter.
-As a final note, it must be stressed that there is considerably more to extending Python
-with C functions than what is shown here (in fact, the C API contains well over 500
-functions in it). You should view this recipe simply as a stepping stone for getting started.
-To do more, start with the documentation on the PyArg_ParseTuple() and Py_Build
-Value() functions, and expand from there.
+``PyObject`` 是一个能表示任何Python对象的C数据类型。
+在一个高级层面，一个扩展函数就是一个接受一个Python对象
+（在 PyObject *args中）元组并返回一个新Python对象的C函数。
+函数的 ``self`` 参数对于简单的扩展函数没有被使用到，
+不过如果你想定义新的类或者是C中的对象类型的话就能派上用场了。比如如果扩展函数是一个类的一个方法，
+那么 ``self`` 就能引用那个实例了。
+
+``PyArg_ParseTuple()`` 函数被用来将Python中的值转换成C中对应表示。
+它接受一个指定输入格式的格式化字符串作为输入，比如“i”代表整数，“d”代表双精度浮点数，
+同样还有存放转换后结果的C变量的地址。
+如果输入的值不匹配这个格式化字符串，就会抛出一个异常并返回一个NULL值。
+通过检查并返回NULL，一个合适的异常会在调用代码中被抛出。
+
+``Py_BuildValue()`` 函数被用来根据C数据类型创建Python对象。
+它同样接受一个格式化字符串来指定期望类型。
+在扩展函数中，它被用来返回结果给Python。
+``Py_BuildValue()`` 的一个特性是它能构建更加复杂的对象类型，比如元组和字典。
+在 ``py_divide()`` 代码中，一个例子演示了怎样返回一个元组。不过，下面还有一些实例：
+
+::
+
+    return Py_BuildValue("i", 34);      // Return an integer
+    return Py_BuildValue("d", 3.4);     // Return a double
+    return Py_BuildValue("s", "Hello"); // Null-terminated UTF-8 string
+    return Py_BuildValue("(ii)", 3, 4); // Tuple (3, 4)
+
+在扩展模块底部，你会发现一个函数表，比如本节中的 ``SampleMethods`` 表。
+这个表可以列出C函数、Python中使用的名字、文档字符串。
+所有模块都需要指定这个表，因为它在模块初始化时要被使用到。
+
+最后的函数 ``PyInit_sample()`` 是模块初始化函数，但该模块第一次被导入时执行。
+这个函数的主要工作是在解释器中注册模块对象。
+
+最后一个要点需要提出来，使用C函数来扩展Python要考虑的事情还有很多，本节只是一小部分。
+（实际上，C API包含了超过500个函数）。你应该将本节当做是一个入门篇。
+更多高级内容，可以看看 ``PyArg_ParseTuple()`` 和 ``Py_BuildValue()`` 函数的文档，
+然后进一步扩展开。

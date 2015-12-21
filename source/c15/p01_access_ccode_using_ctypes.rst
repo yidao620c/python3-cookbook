@@ -101,8 +101,6 @@
     distance.argtypes = (ctypes.POINTER(Point), ctypes.POINTER(Point))
     distance.restype = ctypes.c_double
 
-If all goes well, you should be able to load the module and use the resulting C functions.
-For example:
 如果一切正常，你就可以加载并使用里面定义的C函数了。例如：
 
 ::
@@ -154,163 +152,175 @@ For example:
 一旦你知道了C函数库的位置，那么就可以像下面这样使用 ``ctypes.cdll.LoadLibrary()`` 来加载它，
 其中 ``_path`` 是标准库的全路径：
 
+.. code-block:: python
 
-_mod = ctypes.cdll.LoadLibrary(_path)
+    _mod = ctypes.cdll.LoadLibrary(_path)
 
-Once a library has been loaded, you need to write statements that extract specific sym‐
-bols and put type signatures on them. This is what’s happening in code fragments such
-as this:
+函数库被加载后，你需要编写几个语句来提取特定的符号并指定它们的类型。
+就像下面这个代码片段一样：
 
-# int in_mandel(double, double, int)
-in_mandel = _mod.in_mandel
-in_mandel.argtypes = (ctypes.c_double, ctypes.c_double, ctypes.c_int)
-in_mandel.restype = ctypes.c_int
+.. code-block:: python
 
-In this code, the .argtypes attribute is a tuple containing the input arguments to a
-function, and .restype is the return type. ctypes defines a variety of type objects (e.g.,
-c_double, c_int, c_short, c_float, etc.) that represent common C data types. Attach‐
-ing the type signatures is critical if you want to make Python pass the right kinds of
-arguments and convert data correctly (if you don’t do this, not only will the code not
-work, but you might cause the entire interpreter process to crash).
-A somewhat tricky part of using ctypes is that the original C code may use idioms that
-don’t map cleanly to Python. The divide() function is a good example because it returns
-a value through one of its arguments. Although that’s a common C technique, it’s often
-not clear how it’s supposed to work in Python. For example, you can’t do anything
-straightforward like this:
+    # int in_mandel(double, double, int)
+    in_mandel = _mod.in_mandel
+    in_mandel.argtypes = (ctypes.c_double, ctypes.c_double, ctypes.c_int)
+    in_mandel.restype = ctypes.c_int
 
->>> divide = _mod.divide
->>> divide.argtypes = (ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int))
->>> x = 0
->>> divide(10, 3, x)
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-ctypes.ArgumentError: argument 3: <class 'TypeError'>: expected LP_c_int
-instance instead of int
->>>
+在这段代码中，``.argtypes`` 属性是一个元组，包含了某个函数的输入按时，
+而 ``.restype`` 就是相应的返回类型。
+``ctypes`` 定义了大量的类型对象（比如c_double, c_int, c_short, c_float等），
+代表了对应的C数据类型。如果你想让Python能够传递正确的参数类型并且正确的转换数据的话，
+那么这些类型签名的绑定是很重要的一步。如果你没有这么做，不但代码不能正常运行，
+还可能会导致整个解释器进程挂掉。
+使用ctypes有一个麻烦点的地方是原生的C代码使用的术语可能跟Python不能明确的对应上来。
+``divide()`` 函数是一个很好的例子，它通过一个参数除以另一个参数返回一个结果值。
+尽管这是一个很常见的C技术，但是在Python中却不知道怎样清晰的表达出来。
+例如，你不能像下面这样简单的做：
 
-Even if this did work, it would violate Python’s immutability of integers and probably
-cause the entire interpreter to be sucked into a black hole. For arguments involving
-pointers, you usually have to construct a compatible ctypes object and pass it in like
-this:
+::
 
->>> x = ctypes.c_int()
->>> divide(10, 3, x)
-3
->>> x.value
-1
->>>
+    >>> divide = _mod.divide
+    >>> divide.argtypes = (ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int))
+    >>> x = 0
+    >>> divide(10, 3, x)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    ctypes.ArgumentError: argument 3: <class 'TypeError'>: expected LP_c_int
+    instance instead of int
+    >>>
 
-Here an instance of a ctypes.c_int is created and passed in as the pointer object. Unlike
-a normal Python integer, a c_int object can be mutated. The .value attribute can be
-used to either retrieve or change the value as desired.
+就算这个能正确的工作，它会违反Python对于整数的不可更改原则，并且可能会导致整个解释器陷入一个黑洞中。
+对于涉及到指针的参数，你通常需要先构建一个相应的ctypes对象并像下面这样传进去：
 
-For cases where the C calling convention is “un-Pythonic,” it is common to write a small
-wrapper function. In the solution, this code makes the divide() function return the
-two results using a tuple instead:
-# int divide(int, int, int *)
-_divide = _mod.divide
-_divide.argtypes = (ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int))
-_divide.restype = ctypes.c_int
+::
 
-def divide(x, y):
-    rem = ctypes.c_int()
-    quot = _divide(x,y,rem)
-    return quot, rem.value
+    >>> x = ctypes.c_int()
+    >>> divide(10, 3, x)
+    3
+    >>> x.value
+    1
+    >>>
 
-The avg() function presents a new kind of challenge. The underlying C code expects
-to receive a pointer and a length representing an array. However, from the Python side,
-we must consider the following questions: What is an array? Is it a list? A tuple? An
-array from the array module? A numpy array? Is it all of these? In practice, a Python
-“array” could take many different forms, and maybe you would like to support multiple
-possibilities.
-The DoubleArrayType class shows how to handle this situation. In this class, a single
-method from_param() is defined. The role of this method is to take a single parameter
-and narrow it down to a compatible ctypes object (a pointer to a ctypes.c_double, in
-the example). Within from_param(), you are free to do anything that you wish. In the
-solution, the typename of the parameter is extracted and used to dispatch to a more
-specialized method. For example, if a list is passed, the typename is list and a method
-from_list() is invoked.
-For lists and tuples, the from_list() method performs a conversion to a ctypes array
-object. This looks a little weird, but here is an interactive example of converting a list to
-a ctypes array:
+在这里，一个 ``ctypes.c_int`` 实例被创建并作为一个指针被传进去。
+跟普通Python整形不同的是，一个 ``c_int`` 对象是可以被修改的。
+``.value`` 属性可被用来获取或更改这个值。
 
->>> nums = [1, 2, 3]
->>> a = (ctypes.c_double * len(nums))(*nums)
->>> a
-<__main__.c_double_Array_3 object at 0x10069cd40>
->>> a[0]
-1.0
->>> a[1]
-2.0
->>> a[2]
-3.0
->>>
+对于那些不像Python的C调用，通常可以写一个小的包装函数。
+这里，我们让 ``divide()`` 函数通过元组来返回两个结果：
 
-For array objects, the from_array() method extracts the underlying memory pointer
-and casts it to a ctypes pointer object. For example:
+.. code-block:: python
 
->>> import array
->>> a = array.array('d',[1,2,3])
->>> a
-array('d', [1.0, 2.0, 3.0])
->>> ptr_ = a.buffer_info()
->>> ptr
-4298687200
->>> ctypes.cast(ptr, ctypes.POINTER(ctypes.c_double))
-<__main__.LP_c_double object at 0x10069cd40>
->>>
+    # int divide(int, int, int *)
+    _divide = _mod.divide
+    _divide.argtypes = (ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_int))
+    _divide.restype = ctypes.c_int
 
-The from_ndarray() shows comparable conversion code for numpy arrays.
-By defining the DoubleArrayType class and using it in the type signature of avg(), as
-shown, the function can accept a variety of different array-like inputs:
+    def divide(x, y):
+        rem = ctypes.c_int()
+        quot = _divide(x,y,rem)
+        return quot, rem.value
 
->>> import sample
->>> sample.avg([1,2,3])
-2.0
->>> sample.avg((1,2,3))
-2.0
->>> import array
->>> sample.avg(array.array('d',[1,2,3]))
-2.0
->>> import numpy
->>> sample.avg(numpy.array([1.0,2.0,3.0]))
-2.0
->>>
+``avg()`` 函数又是一个新的挑战。C代码期望接受到一个指针和一个数组的长度值。
+但是，在Python中，我们必须考虑这个问题：数组是啥？它是一个列表？一个元组？
+还是 ``array`` 模块中的一个数组？还是一个 ``numpy`` 数组？还是说所有都是？
+实际上，一个Python“数组”有多种形式，你可能想要支持多种可能性。
 
-The last part of this recipe shows how to work with a simple C structure. For structures,
-you simply define a class that contains the appropriate fields and types like this:
+``DoubleArrayType`` 演示了怎样处理这种情况。
+在这个类中定义了一个单个方法 ``from_param()`` 。
+这个方法的角色是接受一个单个参数然后将其向下转换为一个合适的ctypes对象
+（本例中是一个 ``ctypes.c_double`` 的指针）。
+在 ``from_param()`` 中，你可以做任何你想做的事。
+参数的类型名被提取出来并被用于分发到一个更具体的方法中去。
+例如，如果一个列表被传递过来，那么 ``typename`` 就是 ``list`` ，
+然后 ``from_list`` 方法被调用。
 
-class Point(ctypes.Structure):
-    _fields_ = [('x', ctypes.c_double),
-                ('y', ctypes.c_double)]
+对于列表和元组，``from_list`` 方法将其转换为一个 ``ctypes`` 的数组对象。
+这个看上去有点奇怪，下面我们使用一个交互式例子来将一个列表转换为一个 ``ctypes`` 数组：
 
-Once defined, you can use the class in type signatures as well as in code that needs to
-instantiate and work with the structures. For example:
+::
 
->>> p1 = sample.Point(1,2)
->>> p2 = sample.Point(4,5)
->>> p1.x
-1.0
->>> p1.y
-2.0
->>> sample.distance(p1,p2)
-4.242640687119285
->>>
+    >>> nums = [1, 2, 3]
+    >>> a = (ctypes.c_double * len(nums))(*nums)
+    >>> a
+    <__main__.c_double_Array_3 object at 0x10069cd40>
+    >>> a[0]
+    1.0
+    >>> a[1]
+    2.0
+    >>> a[2]
+    3.0
+    >>>
 
-A few final comments: ctypes is a useful library to know about if all you’re doing is
-accessing a few C functions from Python. However, if you’re trying to access a large
-library, you might want to look at alternative approaches, such as Swig (described in
-Recipe 15.9) or Cython (described in Recipe 15.10).
+对于数组对象，``from_array()`` 提取底层的内存指针并将其转换为一个 ``ctypes`` 指针对象。例如：
 
-The main problem with a large library is that since ctypes isn’t entirely automatic, you’ll
-have to spend a fair bit of time writing out all of the type signatures, as shown in the
-example. Depending on the complexity of the library, you might also have to write a
-large number of small wrapper functions and supporting classes. Also, unless you fully
-understand all of the low-level details of the C interface, including memory management
-and error handling, it is often quite easy to make Python catastrophically crash with a
-segmentation fault, access violation, or some similar error.
-As an alternative to ctypes, you might also look at CFFI. CFFI provides much of the
-same functionality, but uses C syntax and supports more advanced kinds of C code. As
-of this writing, CFFI is still a relatively new project, but its use has been growing rapidly.
-There has even been some discussion of including it in the Python standard library in
-some future release. Thus, it’s definitely something to keep an eye on.
+::
+
+    >>> import array
+    >>> a = array.array('d',[1,2,3])
+    >>> a
+    array('d', [1.0, 2.0, 3.0])
+    >>> ptr_ = a.buffer_info()
+    >>> ptr
+    4298687200
+    >>> ctypes.cast(ptr, ctypes.POINTER(ctypes.c_double))
+    <__main__.LP_c_double object at 0x10069cd40>
+    >>>
+
+``from_ndarray()`` 演示了对于 ``numpy`` 数组的转换操作。
+通过定义 ``DoubleArrayType`` 类并在 ``avg()`` 类型签名中使用它，
+那么这个函数就能接受多个不同的类数组输入了：
+
+::
+
+    >>> import sample
+    >>> sample.avg([1,2,3])
+    2.0
+    >>> sample.avg((1,2,3))
+    2.0
+    >>> import array
+    >>> sample.avg(array.array('d',[1,2,3]))
+    2.0
+    >>> import numpy
+    >>> sample.avg(numpy.array([1.0,2.0,3.0]))
+    2.0
+    >>>
+
+本节最后一部分向你演示了怎样处理一个简单的C结构。
+对于结构体，你只需要像下面这样简单的定义一个类，包含相应的字段和类型即可：
+
+.. code-block:: python
+
+    class Point(ctypes.Structure):
+        _fields_ = [('x', ctypes.c_double),
+                    ('y', ctypes.c_double)]
+
+一旦类被定义后，你就可以在类型签名中或者是需要实例化结构体的代码中使用它。例如：
+
+::
+
+    >>> p1 = sample.Point(1,2)
+    >>> p2 = sample.Point(4,5)
+    >>> p1.x
+    1.0
+    >>> p1.y
+    2.0
+    >>> sample.distance(p1,p2)
+    4.242640687119285
+    >>>
+
+最后一些小的提示：如果你想在Python中访问一些小的C函数，那么 ``ctypes`` 是一个很有用的函数库。
+尽管如此，如果你想要去访问一个很大的库，那么可能就需要其他的方法了，比如 ``Swig`` (15.9节会讲到) 或
+Cython（15.10节）。
+
+对于大型库的访问有个主要问题，由于ctypes并不是完全自动化，
+那么你就必须花费大量时间来编写所有的类型签名，就像例子中那样。
+如果函数库够复杂，你还得去编写很多小的包装函数和支持类。
+另外，除非你已经完全精通了所有底层的C接口细节，包括内存分配和错误处理机制，
+通常一个很小的代码缺陷、访问越界或其他类似错误就能让Python程序奔溃。
+
+作为 ``ctypes`` 的一个替代，你还可以考虑下CFFI。CFFI提供了很多类似的功能，
+但是使用C语法并支持更多高级的C代码类型。
+到写这本书为止，CFFI还是一个相对较新的工程，
+但是它的流行度正在快速上升。
+甚至还有在讨论在Python将来的版本中将它包含进去。因此，这个真的值得一看。
+

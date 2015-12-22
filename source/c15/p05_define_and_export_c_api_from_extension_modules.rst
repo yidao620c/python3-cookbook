@@ -5,72 +5,72 @@
 ----------
 问题
 ----------
-You have a C extension module that internally defines a variety of useful functions that
-you would like to export as a public C API for use elsewhere. You would like to use these
-functions inside other extension modules, but don’t know how to link them together,
-and doing it with the C compiler/linker seems excessively complicated (or impossible).
+你有一个C扩展模块，在内部定义了很多有用的函数，你想将它们导出为一个公共的C API供其他地方使用。
+你想在其他扩展模块中使用这些函数，但是不知道怎样将它们链接起来，
+并且通过C编译器/链接器来做看上去特别复杂（或者不可能做到）。
 
 |
 
 ----------
 解决方案
 ----------
-This recipe focuses on the code written to handle Point objects, which were presented
-in Recipe 15.4. If you recall, that C code included some utility functions like this:
+本节聚焦在处理Point对象（在15.4小节已经讲过）。仔细回一下，在C代码中包含了如下这些工具函数：
 
-/* Destructor function for points */
-static void del_Point(PyObject *obj) {
+::
 
-  free(PyCapsule_GetPointer(obj,"Point"));
-}
+    /* Destructor function for points */
+    static void del_Point(PyObject *obj) {
 
-/* Utility functions */
-static Point *PyPoint_AsPoint(PyObject *obj) {
-  return (Point *) PyCapsule_GetPointer(obj, "Point");
-}
+      free(PyCapsule_GetPointer(obj,"Point"));
+    }
 
-static PyObject *PyPoint_FromPoint(Point *p, int must_free) {
-  return PyCapsule_New(p, "Point", must_free ? del_Point : NULL);
-}
+    /* Utility functions */
+    static Point *PyPoint_AsPoint(PyObject *obj) {
+      return (Point *) PyCapsule_GetPointer(obj, "Point");
+    }
 
-The  problem  now  addressed  is  how  to  export  the  PyPoint_AsPoint()  and  Py
-Point_FromPoint() functions as an API that other extension modules could use and
-link to (e.g., if you have other extensions that also want to use the wrapped  Point
-objects).
-To solve this problem, start by introducing a new header file for the “sample” extension
-called pysample.h. Put the following code in it:
+    static PyObject *PyPoint_FromPoint(Point *p, int must_free) {
+      return PyCapsule_New(p, "Point", must_free ? del_Point : NULL);
+    }
 
-/* pysample.h */
-#include "Python.h"
-#include "sample.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
+现在的问题是怎样将 ``PyPoint_AsPoint()`` 和 ``Point_FromPoint()`` 函数作为API导出，
+这样其他扩展模块能使用并链接它们，比如如果你有其他扩展也想使用包装的Point对象。
 
-/* Public API Table */
-typedef struct {
-  Point *(*aspoint)(PyObject *);
-  PyObject *(*frompoint)(Point *, int);
-} _PointAPIMethods;
+要解决这个问题，首先要为 ``sample`` 扩展写个新的头文件名叫 ``pysample.h`` ，如下：
 
-#ifndef PYSAMPLE_MODULE
-/* Method table in external module */
-static _PointAPIMethods *_point_api = 0;
+::
 
-/* Import the API table from sample */
-static int import_sample(void) {
-  _point_api = (_PointAPIMethods *) PyCapsule_Import("sample._point_api",0);
-  return (_point_api != NULL) ? 1 : 0;
-}
+    /* pysample.h */
+    #include "Python.h"
+    #include "sample.h"
+    #ifdef __cplusplus
+    extern "C" {
+    #endif
 
-/* Macros to implement the programming interface */
-#define PyPoint_AsPoint(obj) (_point_api->aspoint)(obj)
-#define PyPoint_FromPoint(obj) (_point_api->frompoint)(obj)
-#endif
+    /* Public API Table */
+    typedef struct {
+      Point *(*aspoint)(PyObject *);
+      PyObject *(*frompoint)(Point *, int);
+    } _PointAPIMethods;
 
-#ifdef __cplusplus
-}
-#endif
+    #ifndef PYSAMPLE_MODULE
+    /* Method table in external module */
+    static _PointAPIMethods *_point_api = 0;
+
+    /* Import the API table from sample */
+    static int import_sample(void) {
+      _point_api = (_PointAPIMethods *) PyCapsule_Import("sample._point_api",0);
+      return (_point_api != NULL) ? 1 : 0;
+    }
+
+    /* Macros to implement the programming interface */
+    #define PyPoint_AsPoint(obj) (_point_api->aspoint)(obj)
+    #define PyPoint_FromPoint(obj) (_point_api->frompoint)(obj)
+    #endif
+
+    #ifdef __cplusplus
+    }
+    #endif
 
 The most important feature here is the _PointAPIMethods table of function pointers. It
 will be initialized in the exporting module and found by importing modules.

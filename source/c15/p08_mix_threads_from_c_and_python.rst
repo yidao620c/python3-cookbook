@@ -5,31 +5,31 @@
 ----------
 问题
 ----------
-You have a program that involves a mix of C, Python, and threads, but some of the
-threads are created from C outside the control of the Python interpreter. Moreover,
-certain threads utilize functions in the Python C API.
+你有一个程序需要混合使用C、Python和线程，
+有些线程是在C中创建的，超出了Python解释器的控制范围。
+并且一些线程还使用了Python C API中的函数。
 
 |
 
 ----------
 解决方案
 ----------
-If you’re going to mix C, Python, and threads together, you need to make sure you
-properly initialize and manage Python’s global interpreter lock (GIL). To do this, include
-the following code somewhere in your C code and make sure it’s called prior to creation
-of any threads:
+如果你想将C、Python和线程混合在一起，你需要确保正确的初始化和管理Python的全局解释器锁（GIL）。
+要想这样做，可以将下列代码放到你的C代码中并确保它在任何线程被创建之前被调用。
 
-#include <Python.h>
+::
 
-  ...
-  if (!PyEval_ThreadsInitialized()) {
-    PyEval_InitThreads();
-  }
-  ...
+    #include <Python.h>
+      ...
+      if (!PyEval_ThreadsInitialized()) {
+        PyEval_InitThreads();
+      }
+      ...
 
-For any C code that involves Python objects or the Python C API, make sure you prop‐
-erly acquire and release the GIL first. This is done using PyGILState_Ensure() and
-PyGILState_Release(), as shown in the following:
+对于任何调用Python对象或Python C API的C代码，确保你首先已经正确地获取和释放了GIL。
+这可以用 ``PyGILState_Ensure()`` 和 ``PyGILState_Release()`` 来做到，如下所示：
+
+::
 
   ...
   /* Make sure we own the GIL */
@@ -41,22 +41,18 @@ PyGILState_Release(), as shown in the following:
   PyGILState_Release(state);
   ...
 
-Every  call  to  PyGILState_Ensure()  must  have  a  matching  call  to  PyGILState_Re
-lease().
+每次调用 ``PyGILState_Ensure()`` 都要相应的调用 ``PyGILState_Release()`` .
 
 |
 
 ----------
 讨论
 ----------
-In advanced applications involving C and Python, it is not uncommon to have many
-things going on at once—possibly involving a mix of a C code, Python code, C threads,
-and Python threads. As long as you diligently make sure the interpreter is properly
-initialized and that C code involving the interpreter has the proper GIL management
-calls, it all should work.
-Be aware that the PyGILState_Ensure() call does not immediately preempt or interrupt
-the interpreter. If other code is currently executing, this function will block until that
-code decides to release the GIL. Internally, the interpreter performs periodic thread
-switching, so even if another thread is executing, the caller will eventually get to run
-(although it may have to wait for a while first).
+在涉及到C和Python的高级程序中，很多事情一起做是很常见的——
+可能是对C、Python、C线程、Python线程的混合使用。
+只要你确保解释器被正确的初始化，并且涉及到解释器的C代码执行了正确的GIL管理，应该没什么问题。
 
+要注意的是调用 ``PyGILState_Ensure()`` 并不会立刻抢占或中断解释器。
+如果有其他代码正在执行，这个函数被中断知道那个执行代码释放掉GIL。
+在内部，解释器会执行周期性的线程切换，因此如果其他线程在执行，
+调用者最终还是可以运行的（尽管可能要先等一会）。

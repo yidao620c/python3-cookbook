@@ -14,7 +14,7 @@
 ----------
 解决方案
 ----------
-本节聚焦在处理Point对象（在15.4小节已经讲过）。仔细回一下，在C代码中包含了如下这些工具函数：
+本节主要问题是如何处理15.4小节中提到的Point对象。仔细回一下，在C代码中包含了如下这些工具函数：
 
 ::
 
@@ -72,172 +72,171 @@
     }
     #endif
 
-The most important feature here is the _PointAPIMethods table of function pointers. It
-will be initialized in the exporting module and found by importing modules.
-Change the original extension module to populate the table and export it as follows:
+这里最重要的部分是函数指针表 ``_PointAPIMethods`` .
+它会在导出模块时被初始化，然后导入模块时被查找到。
+修改原始的扩展模块来填充表格并将它像下面这样导出：
 
-/* pysample.c */
 
-#include "Python.h"
-#define PYSAMPLE_MODULE
-#include "pysample.h"
+::
 
-...
-/* Destructor function for points */
-static void del_Point(PyObject *obj) {
-  printf("Deleting point\n");
-  free(PyCapsule_GetPointer(obj,"Point"));
-}
+    /* pysample.c */
 
-/* Utility functions */
-static Point *PyPoint_AsPoint(PyObject *obj) {
-  return (Point *) PyCapsule_GetPointer(obj, "Point");
-}
+    #include "Python.h"
+    #define PYSAMPLE_MODULE
+    #include "pysample.h"
 
-static PyObject *PyPoint_FromPoint(Point *p, int free) {
-  return PyCapsule_New(p, "Point", free ? del_Point : NULL);
-}
+    ...
+    /* Destructor function for points */
+    static void del_Point(PyObject *obj) {
+      printf("Deleting point\n");
+      free(PyCapsule_GetPointer(obj,"Point"));
+    }
 
-static _PointAPIMethods _point_api = {
-  PyPoint_AsPoint,
-  PyPoint_FromPoint
-};
-...
+    /* Utility functions */
+    static Point *PyPoint_AsPoint(PyObject *obj) {
+      return (Point *) PyCapsule_GetPointer(obj, "Point");
+    }
 
-/* Module initialization function */
-PyMODINIT_FUNC
-PyInit_sample(void) {
-  PyObject *m;
-  PyObject *py_point_api;
+    static PyObject *PyPoint_FromPoint(Point *p, int free) {
+      return PyCapsule_New(p, "Point", free ? del_Point : NULL);
+    }
 
-  m = PyModule_Create(&samplemodule);
-  if (m == NULL)
-    return NULL;
+    static _PointAPIMethods _point_api = {
+      PyPoint_AsPoint,
+      PyPoint_FromPoint
+    };
+    ...
 
-  /* Add the Point C API functions */
-  py_point_api = PyCapsule_New((void *) &_point_api, "sample._point_api", NULL);
-  if (py_point_api) {
-    PyModule_AddObject(m, "_point_api", py_point_api);
-  }
-  return m;
-}
+    /* Module initialization function */
+    PyMODINIT_FUNC
+    PyInit_sample(void) {
+      PyObject *m;
+      PyObject *py_point_api;
 
-Finally, here is an example of a new extension module that loads and uses these API
-functions:
+      m = PyModule_Create(&samplemodule);
+      if (m == NULL)
+        return NULL;
 
-/* ptexample.c */
+      /* Add the Point C API functions */
+      py_point_api = PyCapsule_New((void *) &_point_api, "sample._point_api", NULL);
+      if (py_point_api) {
+        PyModule_AddObject(m, "_point_api", py_point_api);
+      }
+      return m;
+    }
 
-/* Include the header associated with the other module */
-#include "pysample.h"
+最后，下面是一个新的扩展模块例子，用来加载并使用这些API函数：
 
-/* An extension function that uses the exported API */
-static PyObject *print_point(PyObject *self, PyObject *args) {
-  PyObject *obj;
-  Point *p;
-  if (!PyArg_ParseTuple(args,"O", &obj)) {
-    return NULL;
-  }
+::
 
-  /* Note: This is defined in a different module */
-  p = PyPoint_AsPoint(obj);
-  if (!p) {
-    return NULL;
-  }
-  printf("%f %f\n", p->x, p->y);
-  return Py_BuildValue("");
-}
+    /* ptexample.c */
 
-static PyMethodDef PtExampleMethods[] = {
-  {"print_point", print_point, METH_VARARGS, "output a point"},
-  { NULL, NULL, 0, NULL}
-};
+    /* Include the header associated with the other module */
+    #include "pysample.h"
 
-static struct PyModuleDef ptexamplemodule = {
-  PyModuleDef_HEAD_INIT,
-  "ptexample",           /* name of module */
-  "A module that imports an API",  /* Doc string (may be NULL) */
-  -1,                 /* Size of per-interpreter state or -1 */
-  PtExampleMethods       /* Method table */
-};
+    /* An extension function that uses the exported API */
+    static PyObject *print_point(PyObject *self, PyObject *args) {
+      PyObject *obj;
+      Point *p;
+      if (!PyArg_ParseTuple(args,"O", &obj)) {
+        return NULL;
+      }
 
-/* Module initialization function */
-PyMODINIT_FUNC
-PyInit_ptexample(void) {
-  PyObject *m;
+      /* Note: This is defined in a different module */
+      p = PyPoint_AsPoint(obj);
+      if (!p) {
+        return NULL;
+      }
+      printf("%f %f\n", p->x, p->y);
+      return Py_BuildValue("");
+    }
 
-  m = PyModule_Create(&ptexamplemodule);
-  if (m == NULL)
-    return NULL;
+    static PyMethodDef PtExampleMethods[] = {
+      {"print_point", print_point, METH_VARARGS, "output a point"},
+      { NULL, NULL, 0, NULL}
+    };
 
-  /* Import sample, loading its API functions */
-  if (!import_sample()) {
-    return NULL;
-  }
+    static struct PyModuleDef ptexamplemodule = {
+      PyModuleDef_HEAD_INIT,
+      "ptexample",           /* name of module */
+      "A module that imports an API",  /* Doc string (may be NULL) */
+      -1,                 /* Size of per-interpreter state or -1 */
+      PtExampleMethods       /* Method table */
+    };
 
-  return m;
-}
+    /* Module initialization function */
+    PyMODINIT_FUNC
+    PyInit_ptexample(void) {
+      PyObject *m;
 
-When compiling this new module, you don’t even need to bother to link against any of
-the libraries or code from the other module. For example, you can just make a simple
-setup.py file like this:
+      m = PyModule_Create(&ptexamplemodule);
+      if (m == NULL)
+        return NULL;
 
-# setup.py
-from distutils.core import setup, Extension
+      /* Import sample, loading its API functions */
+      if (!import_sample()) {
+        return NULL;
+      }
 
-setup(name='ptexample',
-      ext_modules=[
-        Extension('ptexample',
-                  ['ptexample.c'],
-                  include_dirs = [],  # May need pysample.h directory
-                  )
-        ]
-)
+      return m;
+    }
 
-If it all works, you’ll find that your new extension function works perfectly with the C
-API functions defined in the other module:
+编译这个新模块时，你甚至不需要去考虑怎样将函数库或代码跟其他模块链接起来。
+例如，你可以像下面这样创建一个简单的 ``setup.py`` 文件：
 
->>> import sample
->>> p1 = sample.Point(2,3)
->>> p1
-<capsule object "Point *" at 0x1004ea330>
->>> import ptexample
->>> ptexample.print_point(p1)
-2.000000 3.000000
->>>
+::
+
+    # setup.py
+    from distutils.core import setup, Extension
+
+    setup(name='ptexample',
+          ext_modules=[
+            Extension('ptexample',
+                      ['ptexample.c'],
+                      include_dirs = [],  # May need pysample.h directory
+                      )
+            ]
+    )
+
+如果一切正常，你会发现你的新扩展函数能和定义在其他模块中的C API函数一起运行的很好。
+
+::
+
+    >>> import sample
+    >>> p1 = sample.Point(2,3)
+    >>> p1
+    <capsule object "Point *" at 0x1004ea330>
+    >>> import ptexample
+    >>> ptexample.print_point(p1)
+    2.000000 3.000000
+    >>>
 
 |
 
 ----------
 讨论
 ----------
-This recipe relies on the fact that capsule objects can hold a pointer to anything you
-wish. In this case, the defining module populates a structure of function pointers, creates
-a capsule that points to it, and saves the capsule in a module-level attribute (e.g., sam
-ple._point_api).
-Other modules can be programmed to pick up this attribute when imported and extract
-the underlying pointer. In fact, Python provides the PyCapsule_Import() utility func‐
-tion, which takes care of all the steps for you. You simply give it the name of the attribute
-(e.g., sample._point_api), and it will find the capsule and extract the pointer all in one
-step.
-There are some C programming tricks involved in making exported functions look
-normal in other modules. In the pysample.h file, a pointer _point_api is used to point
-to the method table that was initialized in the exporting module. A related function
-import_sample() is used to perform the required capsule import and initialize this
-pointer. This function must be called before any functions are used. Normally, it would
+本节基于一个前提就是，胶囊对象能获取任何你想要的对象的指针。
+这样的话，定义模块会填充一个函数指针的结构体，创建一个指向它的胶囊，并在一个模块级属性中保存这个胶囊，
+例如 ``sample._point_api`` .
 
-be called in during module initialization. Finally, a set of C preprocessor macros have
-been defined to transparently dispatch the API functions through the method table.
-The user just uses the original function names, but doesn’t know about the extra indi‐
-rection through these macros.
-Finally, there is another important reason why you might use this technique to link
-modules together—it’s actually easier and it keeps modules more cleanly decoupled. If
-you didn’t want to use this recipe as shown, you might be able to cross-link modules
-using advanced features of shared libraries and the dynamic loader. For example, putting
-common API functions into a shared library and making sure that all extension modules
-link against that shared library. Yes, this works, but it can be tremendously messy in
-large systems. Essentially, this recipe cuts out all of that magic and allows modules to
-link to one another through Python’s normal import mechanism and just a tiny number
-of capsule calls. For compilation of modules, you only need to worry about header files,
-not the hairy details of shared libraries.
-Further information about providing C APIs for extension modules can be found in the
-Python documentation.
+其他模块能够在导入时获取到这个属性并提取底层的指针。
+事实上，Python提供了 ``PyCapsule_Import()`` 工具函数，为了完成所有的步骤。
+你只需提供属性的名字即可（比如sample._point_api），然后他就会一次性找到胶囊对象并提取出指针来。
+
+在将被导出函数变为其他模块中普通函数时，有一些C编程陷阱需要指出来。
+在 ``pysample.h`` 文件中，一个 ``_point_api`` 指针被用来指向在导出模块中被初始化的方法表。
+一个相关的函数 ``import_sample()`` 被用来指向胶囊导入并初始化这个指针。
+这个函数必须在任何函数被使用之前被调用。通常来讲，它会在模块初始化时被调用到。
+最后，C的预处理宏被定义，被用来通过方法表去分发这些API函数。
+用户只需要使用这些原始函数名称即可，不需要通过宏去了解其他信息。
+
+最后，还有一个重要的原因让你去使用这个技术来链接模块——它非常简单并且可以使得各个模块很清晰的解耦。
+如果你不想使用本机的技术，那你就必须使用共享库的高级特性和动态加载器来链接模块。
+例如，将一个普通的API函数放入一个共享库并确保所有扩展模块链接到那个共享库。
+这种方法确实可行，但是它相对繁琐，特别是在大型系统中。
+本节演示了如何通过Python的普通导入机制和仅仅几个胶囊调用来将多个模块链接起来的魔法。
+对于模块的编译，你只需要定义头文件，而不需要考虑函数库的内部细节。
+
+更多关于利用C API来构造扩展模块的信息可以参考
+`Python的文档 <http://docs.python.org/3/extending/extending.html>`_

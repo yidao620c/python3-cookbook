@@ -5,205 +5,217 @@
 ----------
 问题
 ----------
-You are writing an extension module that needs to pass a NULL-terminated string to a
-C library. However, you’re not entirely sure how to do it with Python’s Unicode string
-implementation.
+你要写一个扩展模块，需要传递一个NULL结尾的字符串给C函数库。
+不过，你不是很确定怎样使用Python的Unicode字符串去实现它。
 
 |
 
 ----------
 解决方案
 ----------
-Many C libraries include functions that operate on NULL-terminated strings declared
-as type char *. Consider the following C function that we will use for the purposes of
-illustration and testing:
+许多C函数库包含一些操作NULL结尾的字符串，被声明类型为 ``char *`` .
+考虑如下的C函数，我们用来做演示和测试用的：
 
-void print_chars(char *s) {
-    while (*s) {
-        printf("%2x ", (unsigned char) *s);
+::
 
-        s++;
+    void print_chars(char *s) {
+        while (*s) {
+            printf("%2x ", (unsigned char) *s);
+
+            s++;
+        }
+        printf("\n");
     }
-    printf("\n");
-}
 
-This function simply prints out the hex representation of individual characters so that
-the passed strings can be easily debugged. For example:
-print_chars("Hello");   // Outputs: 48 65 6c 6c 6f
+此函数会打印被传进来字符串的每个字符的十六进制表示，这样的话可以很容易的进行调试了。例如：
 
-For calling such a C function from Python, you have a few choices. First, you could
-restrict it to only operate on bytes using "y" conversion code to PyArg_ParseTuple()
-like this:
+::
 
-static PyObject *py_print_chars(PyObject *self, PyObject *args) {
-  char *s;
+    print_chars("Hello");   // Outputs: 48 65 6c 6c 6f
 
-  if (!PyArg_ParseTuple(args, "y", &s)) {
-    return NULL;
-  }
-  print_chars(s);
-  Py_RETURN_NONE;
-}
+对于在Python中调用这样的C函数，你有几种选择。
+首先，你可以通过调用 ``PyArg_ParseTuple()`` 并指定”y“转换码来限制它只能操作字节，如下：
 
-The resulting function operates as follows. Carefully observe how bytes with embedded
-NULL bytes and Unicode strings are rejected:
+::
 
->>> print_chars(b'Hello World')
-48 65 6c 6c 6f 20 57 6f 72 6c 64
->>> print_chars(b'Hello\x00World')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-TypeError: must be bytes without null bytes, not bytes
->>> print_chars('Hello World')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-TypeError: 'str' does not support the buffer interface
->>>
+    static PyObject *py_print_chars(PyObject *self, PyObject *args) {
+      char *s;
 
-If you want to pass Unicode strings instead, use the "s" format code to PyArg_Parse
-Tuple() such as this:
+      if (!PyArg_ParseTuple(args, "y", &s)) {
+        return NULL;
+      }
+      print_chars(s);
+      Py_RETURN_NONE;
+    }
 
-static PyObject *py_print_chars(PyObject *self, PyObject *args) {
-  char *s;
+结果函数的使用方法如下。仔细观察嵌入了NULL字节的字符串以及Unicode支持是怎样被拒绝的：
 
-  if (!PyArg_ParseTuple(args, "s", &s)) {
-    return NULL;
-  }
-  print_chars(s);
-  Py_RETURN_NONE;
-}
+::
 
-When used, this will automatically convert all strings to a NULL-terminated UTF-8
-encoding. For example:
+    >>> print_chars(b'Hello World')
+    48 65 6c 6c 6f 20 57 6f 72 6c 64
+    >>> print_chars(b'Hello\x00World')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: must be bytes without null bytes, not bytes
+    >>> print_chars('Hello World')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: 'str' does not support the buffer interface
+    >>>
 
->>> print_chars('Hello World')
-48 65 6c 6c 6f 20 57 6f 72 6c 64
->>> print_chars('Spicy Jalape\u00f1o')  # Note: UTF-8 encoding
-53 70 69 63 79 20 4a 61 6c 61 70 65 c3 b1 6f
->>> print_chars('Hello\x00World')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-TypeError: must be str without null characters, not str
->>> print_chars(b'Hello World')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-TypeError: must be str, not bytes
->>>
+如果你想传递Unicode字符串，在 ``PyArg_ParseTuple()`` 中使用”s“格式码，如下：
 
-If for some reason, you are working directly with a PyObject * and can’t use PyArg_Par
-seTuple(), the following code samples show how you can check and extract a suitable
-char * reference, from both a bytes and string object:
+::
 
-/* Some Python Object (obtained somehow) */
-PyObject *obj;
+    static PyObject *py_print_chars(PyObject *self, PyObject *args) {
+      char *s;
 
-/* Conversion from bytes */
-{
-   char *s;
-   s = PyBytes_AsString(o);
-   if (!s) {
-      return NULL;   /* TypeError already raised */
-   }
-   print_chars(s);
-}
+      if (!PyArg_ParseTuple(args, "s", &s)) {
+        return NULL;
+      }
+      print_chars(s);
+      Py_RETURN_NONE;
+    }
 
-/* Conversion to UTF-8 bytes from a string */
-{
-   PyObject *bytes;
-   char *s;
-   if (!PyUnicode_Check(obj)) {
-       PyErr_SetString(PyExc_TypeError, "Expected string");
-       return NULL;
-   }
-   bytes = PyUnicode_AsUTF8String(obj);
-   s = PyBytes_AsString(bytes);
-   print_chars(s);
-   Py_DECREF(bytes);
-}
+当被使用的时候，它会自动将所有字符串转换为以NULL结尾的UTF-8编码。例如：
 
-Both of the preceding conversions guarantee NULL-terminated data, but they do not
-check for embedded NULL bytes elsewhere inside the string. Thus, that’s something
-that you would need to check yourself if it’s important.
+::
+
+    >>> print_chars('Hello World')
+    48 65 6c 6c 6f 20 57 6f 72 6c 64
+    >>> print_chars('Spicy Jalape\u00f1o')  # Note: UTF-8 encoding
+    53 70 69 63 79 20 4a 61 6c 61 70 65 c3 b1 6f
+    >>> print_chars('Hello\x00World')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: must be str without null characters, not str
+    >>> print_chars(b'Hello World')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: must be str, not bytes
+    >>>
+
+如果因为某些原因，你要直接使用 ``PyObject *`` 而不能使用 ``PyArg_ParseTuple()`` ，
+下面的例子向你展示了怎样从字节和字符串对象中检查和提取一个合适的 ``char *`` 引用：
+
+::
+
+    /* Some Python Object (obtained somehow) */
+    PyObject *obj;
+
+    /* Conversion from bytes */
+    {
+       char *s;
+       s = PyBytes_AsString(o);
+       if (!s) {
+          return NULL;   /* TypeError already raised */
+       }
+       print_chars(s);
+    }
+
+    /* Conversion to UTF-8 bytes from a string */
+    {
+       PyObject *bytes;
+       char *s;
+       if (!PyUnicode_Check(obj)) {
+           PyErr_SetString(PyExc_TypeError, "Expected string");
+           return NULL;
+       }
+       bytes = PyUnicode_AsUTF8String(obj);
+       s = PyBytes_AsString(bytes);
+       print_chars(s);
+       Py_DECREF(bytes);
+    }
+
+前面两种转换都可以确保是NULL结尾的数据，
+但是它们并不检查字符串中间是否嵌入了NULL字节。
+因此，如果这个很重要的话，那你需要自己去做检查了。
 
 |
 
 ----------
 讨论
 ----------
-If it all possible, you should try to avoid writing code that relies on NULL-terminated
-strings since Python has no such requirement. It is almost always better to handle strings
-using the combination of a pointer and a size if possible. Nevertheless, sometimes you
-have to work with legacy C code that presents no other option.
-Although it is easy to use, there is a hidden memory overhead associated with using the
-"s" format code to PyArg_ParseTuple() that is easy to overlook. When you write code
-that uses this conversion, a UTF-8 string is created and permanently attached to the
-original string object. If the original string contains non-ASCII characters, this makes
-the size of the string increase until it is garbage collected. For example:
+如果可能的话，你应该避免去写一些依赖于NULL结尾的字符串，因为Python并没有这个需要。
+最好结合使用一个指针和长度值来处理字符串。
+不过，有时候你必须去处理C语言遗留代码时就没得选择了。
 
->>> import sys
->>> s = 'Spicy Jalape\u00f1o'
->>> sys.getsizeof(s)
-87
->>> print_chars(s)     # Passing string
-53 70 69 63 79 20 4a 61 6c 61 70 65 c3 b1 6f
->>> sys.getsizeof(s)   # Notice increased size
-103
->>>
+尽管很容易使用，但是很容易忽视的一个问题是在 ``PyArg_ParseTuple()``
+中使用“s”格式化码会有内存损耗。
+但你需要使用这种转换的时候，一个UTF-8字符串被创建并永久附加在原始字符串对象上面。
+如果原始字符串包含非ASCII字符的话，就会导致字符串的尺寸增到一直到被垃圾回收。例如：
 
-If this growth in memory use is a concern, you should rewrite your C extension code
-to use the PyUnicode_AsUTF8String() function like this:
+::
 
-static PyObject *py_print_chars(PyObject *self, PyObject *args) {
-  PyObject *o, *bytes;
-  char *s;
+    >>> import sys
+    >>> s = 'Spicy Jalape\u00f1o'
+    >>> sys.getsizeof(s)
+    87
+    >>> print_chars(s)     # Passing string
+    53 70 69 63 79 20 4a 61 6c 61 70 65 c3 b1 6f
+    >>> sys.getsizeof(s)   # Notice increased size
+    103
+    >>>
 
-  if (!PyArg_ParseTuple(args, "U", &o)) {
-    return NULL;
-  }
-  bytes = PyUnicode_AsUTF8String(o);
-  s = PyBytes_AsString(bytes);
-  print_chars(s);
-  Py_DECREF(bytes);
-  Py_RETURN_NONE;
-}
+如果你在乎这个内存的损耗，你最好重写你的C扩展代码，让它使用 ``PyUnicode_AsUTF8String()`` 函数。如下：
 
-With this modification, a UTF-8 encoded string is created if needed, but then discarded
-after use. Here is the modified behavior:
+::
 
->>> import sys
->>> s = 'Spicy Jalape\u00f1o'
->>> sys.getsizeof(s)
-87
->>> print_chars(s)
-53 70 69 63 79 20 4a 61 6c 61 70 65 c3 b1 6f
->>> sys.getsizeof(s)
-87
->>>
+    static PyObject *py_print_chars(PyObject *self, PyObject *args) {
+      PyObject *o, *bytes;
+      char *s;
 
-If you are trying to pass NULL-terminated strings to functions wrapped via ctypes, be
-aware that ctypes only allows bytes to be passed and that it does not check for embedded
-NULL bytes. For example:
+      if (!PyArg_ParseTuple(args, "U", &o)) {
+        return NULL;
+      }
+      bytes = PyUnicode_AsUTF8String(o);
+      s = PyBytes_AsString(bytes);
+      print_chars(s);
+      Py_DECREF(bytes);
+      Py_RETURN_NONE;
+    }
 
->>> import ctypes
->>> lib = ctypes.cdll.LoadLibrary("./libsample.so")
->>> print_chars = lib.print_chars
->>> print_chars.argtypes = (ctypes.c_char_p,)
->>> print_chars(b'Hello World')
-48 65 6c 6c 6f 20 57 6f 72 6c 64
->>> print_chars(b'Hello\x00World')
-48 65 6c 6c 6f
->>> print_chars('Hello World')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-ctypes.ArgumentError: argument 1: <class 'TypeError'>: wrong type
->>>
+通过这个修改，一个UTF-8编码的字符串根据需要被创建，然后在使用过后被丢弃。下面是修订后的效果：
 
-If you want to pass a string instead of bytes, you need to perform a manual UTF-8
-encoding first. For example:
+::
 
->>> print_chars('Hello World'.encode('utf-8'))
-48 65 6c 6c 6f 20 57 6f 72 6c 64
->>>
+    >>> import sys
+    >>> s = 'Spicy Jalape\u00f1o'
+    >>> sys.getsizeof(s)
+    87
+    >>> print_chars(s)
+    53 70 69 63 79 20 4a 61 6c 61 70 65 c3 b1 6f
+    >>> sys.getsizeof(s)
+    87
+    >>>
 
-For other extension tools (e.g., Swig, Cython), careful study is probably in order should
-you decide to use them to pass strings to C code.
+如果你试着传递NULL结尾字符串给ctypes包装过的函数，
+要注意的是ctypes只能允许传递字节，并且它不会检查中间嵌入的NULL字节。例如：
+
+::
+
+    >>> import ctypes
+    >>> lib = ctypes.cdll.LoadLibrary("./libsample.so")
+    >>> print_chars = lib.print_chars
+    >>> print_chars.argtypes = (ctypes.c_char_p,)
+    >>> print_chars(b'Hello World')
+    48 65 6c 6c 6f 20 57 6f 72 6c 64
+    >>> print_chars(b'Hello\x00World')
+    48 65 6c 6c 6f
+    >>> print_chars('Hello World')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    ctypes.ArgumentError: argument 1: <class 'TypeError'>: wrong type
+    >>>
+
+如果你想传递字符串而不是字节，你需要先执行手动的UTF-8编码。例如：
+
+::
+
+    >>> print_chars('Hello World'.encode('utf-8'))
+    48 65 6c 6c 6f 20 57 6f 72 6c 64
+    >>>
+
+对于其他扩展工具（比如Swig、Cython），
+在你使用它们传递字符串给C代码时要先好好学习相应的东西了。

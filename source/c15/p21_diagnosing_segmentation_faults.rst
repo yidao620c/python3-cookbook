@@ -1,32 +1,36 @@
 ==============================
-15.21 诊断分析代码错误
+15.21 诊断分段错误
 ==============================
 
 ----------
 问题
 ----------
-The interpreter violently crashes with a segmentation fault, bus error, access violation,
-or other fatal error. You would like to get a Python traceback that shows you where your
-program was running at the point of failure.
+解释器因为某个分段错误、总线错误、访问越界或其他致命错误而突然间奔溃。
+你想获得Python堆栈信息，从而找出在发生错误的时候你的程序运行点。
 
 |
 
 ----------
 解决方案
 ----------
-The  faulthandler module can be used to help you solve this problem. Include the
-following code in your program:
+``faulthandler`` 模块能被用来帮你解决这个问题。
+在你的程序中引入下列代码：
 
-import faulthandler
-faulthandler.enable()
+.. code-block:: python
 
-Alternatively, run Python with the -Xfaulthandler option such as this:
+    import faulthandler
+    faulthandler.enable()
 
-bash % python3 -Xfaulthandler program.py
+另外还可以像下面这样使用 ``-Xfaulthandler`` 来运行Python：
 
-Last, but not least, you can set the PYTHONFAULTHANDLER environment variable.
-With faulthandler enabled, fatal errors in C extensions will result in a Python trace‐
-back being printed on failures. For example:
+::
+
+    bash % python3 -Xfaulthandler program.py
+
+最后，你可以设置 ``PYTHONFAULTHANDLER`` 环境变量。
+开启faulthandler后，在C扩展中的致命错误会导致一个Python错误堆栈被打印出来。例如：
+
+::
 
     Fatal Python error: Segmentation fault
 
@@ -37,23 +41,21 @@ back being printed on failures. For example:
       File "example.py", line 19 in <module>
     Segmentation fault
 
-Although this won’t tell you where in the C code things went awry, at least it can tell you
-how it got there from Python.
+尽管这个并不能告诉你C代码中哪里出错了，但是至少能告诉你Python里面哪里有错。
 
 |
 
 ----------
 讨论
 ----------
-The faulthandler will show you the stack traceback of the Python code executing at
-the time of failure. At the very least, this will show you the top-level extension function
-that was invoked. With the aid of pdb or other Python debugger, you can investigate the
-flow of the Python code leading to the error.
-faulthandler will not tell you anything about the failure from C. For that, you will
-need to use a traditional C debugger, such as gdb. However, the information from the
-faulthandler traceback may give you a better idea of where to direct your attention.
-It should be noted that certain kinds of errors in C may not be easily recoverable. For
-example, if a C extension trashes the stack or program heap, it may render faulthan
-dler inoperable and you’ll simply get no output at all (other than a crash). Obviously,
-your mileage may vary.
+faulthandler会在Python代码执行出错的时候向你展示跟踪信息。
+至少，它会告诉你出错时被调用的最顶级扩展函数是哪个。
+在pdb和其他Python调试器的帮助下，你就能追根溯源找到错误所在的位置了。
+
+faulthandler不会告诉你任何C语言中的错误信息。
+因此，你需要使用传统的C调试器，比如gdb。
+不过，在faulthandler追踪信息可以让你去判断从哪里着手。
+还要注意的是在C中某些类型的错误可能不太容易恢复。
+例如，如果一个C扩展丢弃了程序堆栈信息，它会让faulthandler不可用，
+那么你也得不到任何输出（除了程序奔溃外）。
 

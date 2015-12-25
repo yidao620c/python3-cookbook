@@ -5,62 +5,70 @@
 ----------
 问题
 ----------
-You want to convert strings from C to Python bytes or a string object.
+怎样将C中的字符串转换为Python字节或一个字符串对象？
 
 |
 
 ----------
 解决方案
 ----------
-For C strings represented as a pair char *, int, you must decide whether or not you
-want the string presented as a raw byte string or as a Unicode string. Byte objects can
-be built using Py_BuildValue() as follows:
+C字符串使用一对 ``char *`` 和 ``int`` 来表示，
+你需要决定字符串到底是用一个原始字节字符串还是一个Unicode字符串来表示。
+字节对象可以像下面这样使用 ``Py_BuildValue()`` 来构建：
 
-char *s;     /* Pointer to C string data */
-int   len;   /* Length of data */
+::
 
-/* Make a bytes object */
-PyObject *obj = Py_BuildValue("y#", s, len);
+    char *s;     /* Pointer to C string data */
+    int   len;   /* Length of data */
 
-If you want to create a Unicode string and you know that s points to data encoded as
-UTF-8, you can use the following:
+    /* Make a bytes object */
+    PyObject *obj = Py_BuildValue("y#", s, len);
 
-PyObject *obj = Py_BuildValue("s#", s, len);
+如果你要创建一个Unicode字符串，并且你知道 ``s`` 指向了UTF-8编码的数据，可以使用下面的方式：
 
-If s is encoded in some other known encoding, you can make a string using PyUni
-code_Decode() as follows:
+::
 
-PyObject *obj = PyUnicode_Decode(s, len, "encoding", "errors");
+    PyObject *obj = Py_BuildValue("s#", s, len);
 
-/* Examples /*
-obj = PyUnicode_Decode(s, len, "latin-1", "strict");
-obj = PyUnicode_Decode(s, len, "ascii", "ignore");
+如果 ``s`` 使用其他编码方式，那么可以像下面使用 ``PyUnicode_Decode()`` 来构建一个字符串：
 
-If you happen to have a wide string represented as a wchar_t *, len pair, there are a
-few options. First, you could use Py_BuildValue() as follows:
+::
 
-wchar_t *w;    /* Wide character string */
-int len;       /* Length */
+    PyObject *obj = PyUnicode_Decode(s, len, "encoding", "errors");
 
-PyObject *obj = Py_BuildValue("u#", w, len);
+    /* Examples /*
+    obj = PyUnicode_Decode(s, len, "latin-1", "strict");
+    obj = PyUnicode_Decode(s, len, "ascii", "ignore");
 
-Alternatively, you can use PyUnicode_FromWideChar():
+如果你恰好有一个用 ``wchar_t *, len`` 对表示的宽字符串，
+有几种选择性。首先你可以使用 ``Py_BuildValue()`` ：
 
-PyObject *obj = PyUnicode_FromWideChar(w, len);
+::
 
-For wide character strings, no interpretation is made of the character data—it is assumed
-to be raw Unicode code points which are directly converted to Python.
+    wchar_t *w;    /* Wide character string */
+    int len;       /* Length */
+
+    PyObject *obj = Py_BuildValue("u#", w, len);
+
+另外，你还可以使用 ``PyUnicode_FromWideChar()`` :
+
+::
+
+    PyObject *obj = PyUnicode_FromWideChar(w, len);
+
+对于宽字符串，并没有对字符数据进行解析——它被假定是原始Unicode编码指针，可以被直接转换成Python。
 
 |
 
 ----------
 讨论
 ----------
-Conversion of strings from C to Python follow the same principles as I/O. Namely, the
-data from C must be explicitly decoded into a string according to some codec. Common
-encodings include ASCII, Latin-1, and UTF-8. If you’re not entirely sure of the encoding
-or the data is binary, you’re probably best off encoding the string as bytes instead.
-When making an object, Python always copies the string data you provide. If necessary,
-it’s up to you to release the C string afterward (if required). Also, for better reliability,
-you should try to create strings using both a pointer and a size rather than relying on
-NULL-terminated data.
+将C中的字符串转换为Python字符串遵循和I/O同样的原则。
+也就是说，来自C中的数据必须根据一些解码器被显式的解码为一个字符串。
+通常编码格式包括ASCII、Latin-1和UTF-8.
+如果你并不确定编码方式或者数据是二进制的，你最好将字符串编码成字节。
+当构造一个对象的时候，Python通常会复制你提供的字符串数据。
+如果有必要的话，你需要在后面去释放C字符串。
+同时，为了让程序更加健壮，你应该同时使用一个指针和一个大小值，
+而不是依赖NULL结尾数据来创建字符串。
+

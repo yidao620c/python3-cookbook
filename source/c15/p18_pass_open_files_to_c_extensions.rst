@@ -5,57 +5,55 @@
 ----------
 问题
 ----------
-You have an open file object in Python, but need to pass it to C extension code that will
-use the file.
+你在Python中有一个打开的文件对象，但是需要将它传给要使用这个文件的C扩展。
 
 |
 
 ----------
 解决方案
 ----------
-To convert a file to an integer file descriptor, use PyFile_FromFd(), as shown:
+要将一个文件转换为一个整型的文件描述符，使用 ``PyFile_FromFd()`` ，如下：
 
-PyObject *fobj;     /* File object (already obtained somehow) */
-int fd = PyObject_AsFileDescriptor(fobj);
-if (fd < 0) {
-   return NULL;
-}
+::
 
-The resulting file descriptor is obtained by calling the fileno() method on fobj. Thus,
-any object that exposes a descriptor in this manner should work (e.g., file, socket, etc.).
-Once you have the descriptor, it can be passed to various low-level C functions that
-expect to work with files.
-If  you  need  to  convert  an  integer  file  descriptor  back  into  a  Python  object,  use
-PyFile_FromFd() as follows:
+    PyObject *fobj;     /* File object (already obtained somehow) */
+    int fd = PyObject_AsFileDescriptor(fobj);
+    if (fd < 0) {
+       return NULL;
+    }
 
-int fd;     /* Existing file descriptor (already open) */
-PyObject *fobj = PyFile_FromFd(fd, "filename","r",-1,NULL,NULL,NULL,1);
+结果文件描述符是通过调用 ``fobj`` 中的 ``fileno()`` 方法获得的。
+因此，任何以这种方式暴露给一个描述器的对象都适用（比如文件、套接字等）。
+一旦你有了这个描述器，它就能被传递给多个低级的可处理文件的C函数。
 
-The arguments to PyFile_FromFd() mirror those of the built-in open() function. NULL
-values simply indicate that the default settings for the encoding, errors, and newline
-arguments are being used.
+如果你需要转换一个整型文件描述符为一个Python对象，适用下面的 ``PyFile_FromFd()`` :
+
+::
+
+    int fd;     /* Existing file descriptor (already open) */
+    PyObject *fobj = PyFile_FromFd(fd, "filename","r",-1,NULL,NULL,NULL,1);
+
+``PyFile_FromFd()`` 的参数对应内置的 ``open()`` 函数。
+NULL表示编码、错误和换行参数使用默认值。
 
 |
 
 ----------
 讨论
 ----------
-If you are passing file objects from Python to C, there are a few tricky issues to be
-concerned about. First, Python performs its own I/O buffering through the io module.
-Prior to passing any kind of file descriptor to C, you should first flush the I/O buffers
-on the associated file objects. Otherwise, you could get data appearing out of order on
-the file stream.
-Second, you need to pay careful attention to file ownership and the responsibility of
-closing the file in particular. If a file descriptor is passed to C, but still used in Python,
-you need to make sure C doesn’t accidentally close the file. Likewise, if a file descriptor
-is being turned into a Python file object, you need to be clear about who is responsible
-for closing it. The last argument to PyFile_FromFd() is set to 1 to indicate that Python
-should close the file.
-If you need to make a different kind of file object such as a FILE * object from the C
-standard I/O library using a function such as fdopen(), you’ll need to be especially
-careful. Doing so would introduce two completely different I/O buffering layers into
-the I/O stack (one from Python’s io module and one from C stdio). Operations such
-as fclose() in C could also inadvertently close the file for further use in Python. If given
-a choice, you should probably make extension code work with the low-level integer file
-descriptors as opposed to using a higher-level abstraction such as that provided by
-<stdio.h>.
+如果将Python中的文件对象传给C，有一些注意事项。
+首先，Python通过 ``io`` 模块执行自己的I/O缓冲。
+在传递任何类型的文件描述符给C之前，你都要首先在相应文件对象上刷新I/O缓冲。
+不然的话，你会打乱文件系统上面的数据。
+
+其次，你需要特别注意文件的归属者以及关闭文件的职责。
+如果一个文件描述符被传给C，但是在Python中还在被使用着，你需要确保C没有意外的关闭它。
+类似的，如果一个文件描述符被转换为一个Python文件对象，你需要清楚谁应该去关闭它。
+``PyFile_FromFd()`` 的最后一个参数被设置成1，用来指出Python应该关闭这个文件。
+
+如果你需要从C标准I/O库中使用如　``fdopen()`` 函数来创建不同类型的文件对象比如 ``FILE *`` 对象，
+你需要特别小心了。这样做会在I/O堆栈中产生两个完全不同的I/O缓冲层
+（一个是来自Python的 ``io`` 模块，另一个来自C的 ``stdio`` ）。
+像C中的 ``fclose()`` 会关闭Python要使用的文件。
+如果让你选的话，你应该会选择去构建一个扩展代码来处理底层的整型文件描述符，
+而不是使用来自<stdio.h>的高层抽象功能。

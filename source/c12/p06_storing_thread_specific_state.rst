@@ -5,90 +5,90 @@
 ----------
 问题
 ----------
-You need to store state that’s specific to the currently executing thread and not visible
-to other threads.
+你需要保存正在运行线程的状态，这个状态对于其他的线程是不可见的。
 
 |
 
 ----------
 解决方案
 ----------
-Sometimes in multithreaded programs, you need to store data that is only specific to
-the currently executing thread. To do this, create a thread-local storage object using
-threading.local(). Attributes stored and read on this object are only visible to the
-executing thread and no others.
-As an interesting practical example of using thread-local storage, consider the LazyCon
-nection context-manager class that was first defined in Recipe 8.3. Here is a slightly
-modified version that safely works with multiple threads:
+有时在多线程编程中，你需要只保存当前运行线程的状态。
+要这么做，可使用 ``thread.local()`` 创建一个本地线程存储对象。
+对这个对象的属性的保存和读取操作都只会对执行线程可见，而其他线程并不可见。
 
-from socket import socket, AF_INET, SOCK_STREAM
-import threading
+作为使用本地存储的一个有趣的实际例子，
+考虑在8.3小节定义过的 ``LazyConnection`` 上下文管理器类。
+下面我们对它进行一些小的修改使得它可以适用于多线程：
 
-class LazyConnection:
-    def __init__(self, address, family=AF_INET, type=SOCK_STREAM):
-        self.address = address
-        self.family = AF_INET
-        self.type = SOCK_STREAM
-        self.local = threading.local()
+.. code-block:: python
 
-    def __enter__(self):
-        if hasattr(self.local, 'sock'):
-            raise RuntimeError('Already connected')
-        self.local.sock = socket(self.family, self.type)
-        self.local.sock.connect(self.address)
-        return self.local.sock
+    from socket import socket, AF_INET, SOCK_STREAM
+    import threading
 
-    def __exit__(self, exc_ty, exc_val, tb):
-        self.local.sock.close()
-        del self.local.sock
+    class LazyConnection:
+        def __init__(self, address, family=AF_INET, type=SOCK_STREAM):
+            self.address = address
+            self.family = AF_INET
+            self.type = SOCK_STREAM
+            self.local = threading.local()
 
-In this code, carefully observe the use of the self.local attribute. It is initialized as an
-instance of  threading.local(). The other methods then manipulate a socket that’s
-stored as self.local.sock. This is enough to make it possible to safely use an instance
-of LazyConnection in multiple threads. For example:
+        def __enter__(self):
+            if hasattr(self.local, 'sock'):
+                raise RuntimeError('Already connected')
+            self.local.sock = socket(self.family, self.type)
+            self.local.sock.connect(self.address)
+            return self.local.sock
 
-from functools import partial
-def test(conn):
-    with conn as s:
-        s.send(b'GET /index.html HTTP/1.0\r\n')
-        s.send(b'Host: www.python.org\r\n')
+        def __exit__(self, exc_ty, exc_val, tb):
+            self.local.sock.close()
+            del self.local.sock
 
-        s.send(b'\r\n')
-        resp = b''.join(iter(partial(s.recv, 8192), b''))
+代码中，自己观察对于 ``self.local`` 属性的使用。
+它被初始化尾一个 ``threading.local()`` 实例。
+其他方法操作被存储为 ``self.local.sock`` 的套接字对象。
+有了这些就可以在多线程中安全的使用 ``LazyConnection`` 实例了。例如：
 
-    print('Got {} bytes'.format(len(resp)))
+::
 
-if __name__ == '__main__':
-    conn = LazyConnection(('www.python.org', 80))
+    from functools import partial
+    def test(conn):
+        with conn as s:
+            s.send(b'GET /index.html HTTP/1.0\r\n')
+            s.send(b'Host: www.python.org\r\n')
 
-    t1 = threading.Thread(target=test, args=(conn,))
-    t2 = threading.Thread(target=test, args=(conn,))
-    t1.start()
-    t2.start()
-    t1.join()
-    t2.join()
+            s.send(b'\r\n')
+            resp = b''.join(iter(partial(s.recv, 8192), b''))
 
-The reason it works is that each thread actually creates its own dedicated socket con‐
-nection (stored as self.local.sock). Thus, when the different threads perform socket
-operations, they don’t interfere with one another as they are being performed on dif‐
-ferent sockets.
+        print('Got {} bytes'.format(len(resp)))
+
+    if __name__ == '__main__':
+        conn = LazyConnection(('www.python.org', 80))
+
+        t1 = threading.Thread(target=test, args=(conn,))
+        t2 = threading.Thread(target=test, args=(conn,))
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+它之所以行得通的原因是每个线程会创建一个自己专属的套接字连接（存储为self.local.sock）。
+因此，当不同的线程执行套接字操作时，由于操作的是不同的套接字，因此它们不会相互影响。
 
 |
 
 ----------
 讨论
 ----------
-Creating and manipulating thread-specific state is not a problem that often arises in
-most programs. However, when it does, it commonly involves situations where an object
-being used by multiple threads needs to manipulate some kind of dedicated system
-resource, such as a socket or file. You can’t just have a single socket object shared by
-everyone because chaos would ensue if multiple threads ever started reading and writing
-on it at the same time. Thread-local storage fixes this by making such resources only
-visible in the thread where they’re being used.
-In this recipe, the use of threading.local() makes the LazyConnection class support
-one connection per thread, as opposed to one connection for the entire process. It’s a
-subtle but interesting distinction.
-Under the covers, an instance of  threading.local() maintains a separate instance
-dictionary for each thread. All of the usual instance operations of getting, setting, and
-deleting values just manipulate the per-thread dictionary. The fact that each thread uses
-a separate dictionary is what provides the isolation of data.
+在大部分程序中创建和操作线程特定状态并不会有什么问题。
+不过，当出了问题的时候，通常是因为某个对象被多个线程使用到，用来操作一些专用的系统资源，
+比如一个套接字或文件。你不能让所有线程贡献一个单独对象，
+因为多个线程同时读和写的时候会产生混乱。
+本地线程存储通过让这些资源只能在被使用的线程中可见来解决这个问题。
+
+本节中，使用 ``thread.local()`` 可以让 ``LazyConnection`` 类支持一个线程一个连接，
+而不是对于所有的进程都只有一个连接。
+
+其原理是，每个 ``threading.local()`` 实例为每个线程维护着一个单独的实例字典。
+所有普通实例操作比如获取、修改和删除值仅仅操作这个字典。
+每个线程使用一个独立的字典就可以保证数据的隔离了。
+

@@ -5,216 +5,212 @@
 ----------
 问题
 ----------
-You have a program that performs a lot of CPU-intensive work, and you want to make
-it run faster by having it take advantage of multiple CPUs.
+你有个程序要执行CPU密集型工作，你想让他利用多核CPU的优势来运行的快一点。
 
 |
 
 ----------
 解决方案
 ----------
-The concurrent.futures library provides a ProcessPoolExecutor class that can be
-used to execute computationally intensive functions in a separately running instance of
-the Python interpreter. However, in order to use it, you first need to have some com‐
-putationally intensive work. Let’s illustrate with a simple yet practical example.
-Suppose you have an entire directory of gzip-compressed Apache web server logs:
+``concurrent.futures`` 库提供了一个 ``ProcessPoolExecutor`` 类，
+可被用来在一个单独的Python解释器中执行计算密集型函数。
+不过，要使用它，你首先要有一些计算密集型的任务。
+我们通过一个简单而实际的例子来演示它。假定你有个Apache web服务器日志目录的gzip压缩包：
 
-logs/
-   20120701.log.gz
-   20120702.log.gz
-   20120703.log.gz
-   20120704.log.gz
-   20120705.log.gz
-   20120706.log.gz
-   ...
+::
 
-Further suppose each log file contains lines like this:
+    logs/
+       20120701.log.gz
+       20120702.log.gz
+       20120703.log.gz
+       20120704.log.gz
+       20120705.log.gz
+       20120706.log.gz
+       ...
 
-124.115.6.12 - - [10/Jul/2012:00:18:50 -0500] "GET /robots.txt ..." 200 71
-210.212.209.67 - - [10/Jul/2012:00:18:51 -0500] "GET /ply/ ..." 200 11875
-210.212.209.67 - - [10/Jul/2012:00:18:51 -0500] "GET /favicon.ico ..." 404 369
-61.135.216.105 - - [10/Jul/2012:00:20:04 -0500] "GET /blog/atom.xml ..." 304 -
-...
 
-Here is a simple script that takes this data and identifies all hosts that have accessed the
-robots.txt file:
+进一步假设每个日志文件内容类似下面这样：
 
-# findrobots.py
+::
 
-import gzip
-import io
-import glob
+    124.115.6.12 - - [10/Jul/2012:00:18:50 -0500] "GET /robots.txt ..." 200 71
+    210.212.209.67 - - [10/Jul/2012:00:18:51 -0500] "GET /ply/ ..." 200 11875
+    210.212.209.67 - - [10/Jul/2012:00:18:51 -0500] "GET /favicon.ico ..." 404 369
+    61.135.216.105 - - [10/Jul/2012:00:20:04 -0500] "GET /blog/atom.xml ..." 304 -
+    ...
 
-def find_robots(filename):
-    '''
-    Find all of the hosts that access robots.txt in a single log file
-    '''
-    robots = set()
-    with gzip.open(filename) as f:
-        for line in io.TextIOWrapper(f,encoding='ascii'):
-            fields = line.split()
-            if fields[6] == '/robots.txt':
-                robots.add(fields[0])
-    return robots
+下面是一个脚本，在这些日志文件中查找出所有访问过robots.txt文件的主机：
 
-def find_all_robots(logdir):
-    '''
-    Find all hosts across and entire sequence of files
-    '''
-    files = glob.glob(logdir+'/*.log.gz')
-    all_robots = set()
-    for robots in map(find_robots, files):
-        all_robots.update(robots)
-    return all_robots
+.. code-block:: python
 
-if __name__ == '__main__':
-    robots = find_all_robots('logs')
-    for ipaddr in robots:
-        print(ipaddr)
+    # findrobots.py
 
-The preceding program is written in the commonly used map-reduce style. The function
-find_robots() is mapped across a collection of filenames and the results are combined
-into a single result (the all_robots set in the find_all_robots() function).
-Now, suppose you want to modify this program to use multiple CPUs. It turns out to
-be easy—simply replace the map() operation with a similar operation carried out on a
-process pool from the concurrent.futures library. Here is a slightly modified version
-of the code:
+    import gzip
+    import io
+    import glob
 
-# findrobots.py
+    def find_robots(filename):
+        '''
+        Find all of the hosts that access robots.txt in a single log file
+        '''
+        robots = set()
+        with gzip.open(filename) as f:
+            for line in io.TextIOWrapper(f,encoding='ascii'):
+                fields = line.split()
+                if fields[6] == '/robots.txt':
+                    robots.add(fields[0])
+        return robots
 
-import gzip
-import io
-import glob
-from concurrent import futures
-
-def find_robots(filename):
-    '''
-    Find all of the hosts that access robots.txt in a single log file
-
-    '''
-    robots = set()
-    with gzip.open(filename) as f:
-        for line in io.TextIOWrapper(f,encoding='ascii'):
-            fields = line.split()
-            if fields[6] == '/robots.txt':
-                robots.add(fields[0])
-    return robots
-
-def find_all_robots(logdir):
-    '''
-    Find all hosts across and entire sequence of files
-    '''
-    files = glob.glob(logdir+'/*.log.gz')
-    all_robots = set()
-    with futures.ProcessPoolExecutor() as pool:
-        for robots in pool.map(find_robots, files):
+    def find_all_robots(logdir):
+        '''
+        Find all hosts across and entire sequence of files
+        '''
+        files = glob.glob(logdir+'/*.log.gz')
+        all_robots = set()
+        for robots in map(find_robots, files):
             all_robots.update(robots)
-    return all_robots
+        return all_robots
 
-if __name__ == '__main__':
-    robots = find_all_robots('logs')
-    for ipaddr in robots:
-        print(ipaddr)
+    if __name__ == '__main__':
+        robots = find_all_robots('logs')
+        for ipaddr in robots:
+            print(ipaddr)
 
-With this modification, the script produces the same result but runs about 3.5 times
-faster on our quad-core machine. The actual performance will vary according to the
-number of CPUs available on your machine.
+前面的程序使用了通常的map-reduce风格来编写。
+函数 ``find_robots()`` 在一个文件名集合上做map操作，并将结果汇总为一个单独的结果，
+也就是 ``find_all_robots()`` 函数中的 ``all_robots`` 集合。
+现在，假设你想要修改这个程序让它使用多核CPU。
+很简单——只需要将map()操作替换为一个 ``concurrent.futures`` 库中生成的类似操作即可。
+下面是一个简单修改版本：
+
+.. code-block:: python
+
+    # findrobots.py
+
+    import gzip
+    import io
+    import glob
+    from concurrent import futures
+
+    def find_robots(filename):
+        '''
+        Find all of the hosts that access robots.txt in a single log file
+
+        '''
+        robots = set()
+        with gzip.open(filename) as f:
+            for line in io.TextIOWrapper(f,encoding='ascii'):
+                fields = line.split()
+                if fields[6] == '/robots.txt':
+                    robots.add(fields[0])
+        return robots
+
+    def find_all_robots(logdir):
+        '''
+        Find all hosts across and entire sequence of files
+        '''
+        files = glob.glob(logdir+'/*.log.gz')
+        all_robots = set()
+        with futures.ProcessPoolExecutor() as pool:
+            for robots in pool.map(find_robots, files):
+                all_robots.update(robots)
+        return all_robots
+
+    if __name__ == '__main__':
+        robots = find_all_robots('logs')
+        for ipaddr in robots:
+            print(ipaddr)
+
+通过这个修改后，运行这个脚本产生同样的结果，但是在四核机器上面比之前快了3.5倍。
+实际的性能优化效果根据你的机器CPU数量的不同而不同。
 
 |
 
 ----------
 讨论
 ----------
-Typical usage of a ProcessPoolExecutor is as follows:
-from concurrent.futures import ProcessPoolExecutor
+``ProcessPoolExecutor`` 的典型用法如下：
 
-with ProcessPoolExecutor() as pool:
-    ...
-    do work in parallel using pool
-    ...
+.. code-block:: python
 
-Under the covers, a ProcessPoolExecutor creates N independent running Python in‐
-terpreters where N is the number of available CPUs detected on the system. You can
-change the number of processes created by supplying an optional argument to Proces
-sPoolExecutor(N). The pool runs until the last statement in the with block is executed,
-at which point the process pool is shut down. However, the program will wait until all
-submitted work has been processed.
-Work to be submitted to a pool must be defined in a function. There are two methods
-for submission. If you are are trying to parallelize a list comprehension or a  map()
-operation, you use pool.map():
+    from concurrent.futures import ProcessPoolExecutor
 
-# A function that performs a lot of work
-def work(x):
-    ...
-    return result
+    with ProcessPoolExecutor() as pool:
+        ...
+        do work in parallel using pool
+        ...
 
-# Nonparallel code
-results = map(work, data)
+其原理是，一个 ``ProcessPoolExecutor`` 创建N个独立的Python解释器，
+N是系统上面可用CPU的个数。你可以通过提供可选参数给 ``ProcessPoolExecutor(N)`` 来修改
+处理器数量。这个处理池会一直运行到with块中最后一个语句执行完成，
+然后处理池被关闭。不过，程序会一直等待直到所有提交的工作被处理完成。
 
-# Parallel implementation
-with ProcessPoolExecutor() as pool:
-    results = pool.map(work, data)
+被提交到池中的工作必须被定义为一个函数。有两种方法去提交。
+如果你想让一个列表推导或一个 ``map()`` 操作并行执行的话，可使用 ``pool.map()`` :
 
-Alternatively, you can manually submit single tasks using the pool.submit() method:
+.. code-block:: python
 
-# Some function
-def work(x):
-    ...
-    return result
+    # A function that performs a lot of work
+    def work(x):
+        ...
+        return result
 
-with ProcessPoolExecutor() as pool:
-    ...
-    # Example of submitting work to the pool
-    future_result = pool.submit(work, arg)
+    # Nonparallel code
+    results = map(work, data)
 
-    # Obtaining the result (blocks until done)
-    r = future_result.result()
-    ...
+    # Parallel implementation
+    with ProcessPoolExecutor() as pool:
+        results = pool.map(work, data)
 
-If you manually submit a job, the result is an instance of Future. To obtain the actual
-result, you call its result() method. This blocks until the result is computed and re‐
-turned by the pool.
-Instead of blocking, you can also arrange to have a callback function triggered upon
-completion instead. For example:
+另外，你可以使用 ``pool.submit()`` 来手动的提交单个任务：
 
-def when_done(r):
-    print('Got:', r.result())
+.. code-block:: python
 
-with ProcessPoolExecutor() as pool:
-     future_result = pool.submit(work, arg)
-     future_result.add_done_callback(when_done)
+    # Some function
+    def work(x):
+        ...
+        return result
 
-The user-supplied callback function receives an instance of Future that must be used
-to obtain the actual result (i.e., by calling its result() method).
-Although process pools can be easy to use, there are a number of important consider‐
-ations to be made in designing larger programs. In no particular order:
+    with ProcessPoolExecutor() as pool:
+        ...
+        # Example of submitting work to the pool
+        future_result = pool.submit(work, arg)
 
-• This technique for parallelization only works well for problems that can be trivially
+        # Obtaining the result (blocks until done)
+        r = future_result.result()
+        ...
 
-decomposed into independent parts.
+如果你手动提交一个任务，结果是一个 ``Future`` 实例。
+要获取最终结果，你需要调用它的 ``result()`` 方法。
+它会阻塞进程直到结果被返回来。
 
-• Work must be submitted in the form of simple functions. Parallel execution of
+如果不想阻塞，你还可以使用一个回调函数，例如：
 
-instance methods, closures, or other kinds of constructs are not supported.
+.. code-block:: python
 
-• Function arguments and return values must be compatible with pickle. Work is
-carried out in a separate interpreter using interprocess communication. Thus, data
-exchanged between interpreters has to be serialized.
+    def when_done(r):
+        print('Got:', r.result())
 
-• Functions submitted for work should not maintain persistent state or have side
-effects. With the exception of simple things such as logging, you don’t really have
-any control over the behavior of child processes once started. Thus, to preserve your
-sanity, it is probably best to keep things simple and carry out work in pure-functions
-that don’t alter their environment.
+    with ProcessPoolExecutor() as pool:
+         future_result = pool.submit(work, arg)
+         future_result.add_done_callback(when_done)
 
-• Process pools are created by calling the fork() system call on Unix. This makes a
-clone of the Python interpreter, including all of the program state at the time of the
-fork. On Windows, an independent copy of the interpreter that does not clone state
-is launched. The actual forking process does not occur until the first pool.map()
-or pool.submit() method is called.
+回调函数接受一个 ``Future`` 实例，被用来获取最终的结果（比如通过调用它的result()方法）。
+尽管处理池很容易使用，在设计大程序的时候还是有很多需要注意的地方，如下几点：
 
-• Great care should be made when combining process pools and programs that use
-threads. In particular, you should probably create and launch process pools prior
-to the creation of any threads (e.g., create the pool in the main thread at program
-startup).
+• 这种并行处理技术只适用于那些可以被分解为互相独立部分的问题。
 
+• 被提交的任务必须是简单函数形式。对于方法、闭包和其他类型的并行执行还不支持。
+
+• 函数参数和返回值必须兼容pickle，因为要使用到进程间的通信，所有解释器之间的交换数据必须被序列化
+
+• 被提交的任务函数不应保留状态或有副作用。除了打印日志之类简单的事情，
+一旦启动你不能控制子进程的任何行为，因此最好保持简单和纯洁——函数不要去修改环境。
+
+• 在Unix上进程池通过调用 ``fork()`` 系统调用被创建，
+它会克隆Python解释器，包括fork时的所有程序状态。
+而在Windows上，克隆解释器时不会克隆状态。
+实际的fork操作会在第一次调用 ``pool.map()`` 或 ``pool.submit()`` 后发生。
+
+• 当你混合使用进程池和多线程的时候要特别小心。
+你应该在创建任何线程之前先创建并激活进程池（比如在程序启动的main线程中创建进程池）。

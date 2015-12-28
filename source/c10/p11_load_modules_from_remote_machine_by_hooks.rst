@@ -5,25 +5,20 @@
 ----------
 问题
 ----------
-You would like to customize Python’s import statement so that it can transparently load
-modules from a remote machine.
+你想自定义Python的import语句，使得它能从远程机器上面透明的加载模块。
 
 ----------
 解决方案
 ----------
-First, a serious disclaimer about security. The idea discussed in this recipe would be
-wholly bad without some kind of extra security and authentication layer. That said, the
-main goal is actually to take a deep dive into the inner workings of Python’s import
-statement. If you get this recipe to work and understand the inner workings, you’ll have
-a solid foundation of customizing import for almost any other purpose. With that out
-of the way, let’s carry on.
+首先要提出来的是安全问题。本届讨论的思想如果没有一些额外的安全和认知机制的话会很糟糕。
+也就是说，我们的主要目的是深入分析Python的import语句机制。
+如果你理解了本节内部原理，你就能够为其他任何目的而自定义import。
+有了这些，让我们继续向前走。
 
+本节核心是设计导入语句的扩展功能。有很多种方法可以做这个，
+不过为了演示的方便，我们开始先构造下面这个Python代码结构：
 
-At the core of this recipe is a desire to extend the functionality of the import statement.
-There are several approaches for doing this, but for the purposes of illustration, start by
-making the following directory of Python code:
-
-.. code-block:: python
+::
 
     testcode/
         spam.py
@@ -32,8 +27,8 @@ making the following directory of Python code:
             __init__.py
             blah.py
 
-The content of these files doesn’t matter, but put a few simple statements and functions
-in each file so you can test them and see output when they’re imported. For example:
+这些文件的内容并不重要，不过我们在每个文件中放入了少量的简单语句和函数，
+这样你可以测试它们并查看当它们被导入时的输出。例如：
 
 .. code-block:: python
 
@@ -58,11 +53,10 @@ in each file so you can test them and see output when they’re imported. For ex
     # grok/blah.py
     print("I'm grok.blah")
 
-The goal here is to allow remote access to these files as modules. Perhaps the easiest way
-to do this is to publish them on a web server. Simply go to the testcode directory and
-run Python like this:
+这里的目的是允许这些文件作为模块被远程访问。
+也许最简单的方式就是将它们发布到一个web服务器上面。在testcode目录中像下面这样运行Python：
 
-.. code-block:: python
+::
 
     bash % cd testcode
     bash % python3 -m http.server 15000
@@ -70,6 +64,7 @@ run Python like this:
 
 Leave that server running and start up a separate Python interpreter. Make sure you can
 access the remote files using urllib. For example:
+
 
 .. code-block:: python
 

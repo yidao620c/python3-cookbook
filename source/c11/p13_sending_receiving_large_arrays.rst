@@ -79,10 +79,6 @@
 不过，这样最终会创建数据的一个复制。
 就算你只是零碎的做这些，你的代码最终还是会有大量的小型复制操作。
 
-This recipe gets around this by playing a sneaky trick with memoryviews. Essentially, a
-memoryview is an overlay of an existing array. Not only that, memoryviews can be cast
-to different types to allow interpretation of the data in a different manner. This is the
-purpose of the following statement:
 本节通过使用内存视图展示了一些魔法操作。
 本质上，一个内存视图就是一个已存在数组的覆盖层。不仅仅是那样，
 内存视图还能以不同的方式转换成不同类型来表现数据。

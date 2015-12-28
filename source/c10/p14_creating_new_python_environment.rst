@@ -79,7 +79,7 @@ By default, virtual environments are completely clean and contain no third-party
 If you would like to include already installed packages as part of a virtual environment,
 create the environment using the --system-site-packages option. For example:
 
-.. code-block:: python'
+.. code-block:: python
 
     bash % pyvenv --system-site-packages Spam
     bash %

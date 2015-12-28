@@ -8,8 +8,6 @@
 你想以数据管道(类似Unix管道)的方式迭代处理数据。
 比如，你有个大量的数据需要处理，但是不能将它们一次性放入内存中。
 
-|
-
 ----------
 解决方案
 ----------
@@ -112,8 +110,6 @@
     bytecolumn = (line.rsplit(None,1)[1] for line in pylines)
     bytes = (int(x) for x in bytecolumn if x != '-')
     print('Total', sum(bytes))
-
-|
 
 ----------
 讨论

@@ -8,8 +8,6 @@
 You want to patch or apply decorators to functions in an existing module. However, you
 only want to do it if the module actually gets imported and used elsewhere.
 
-|
-
 ----------
 解决方案
 ----------
@@ -97,8 +95,6 @@ such as shown here:
     def add_logging(mod):
         mod.cos = logged(mod.cos)
         mod.sin = logged(mod.sin)
-
-|
 
 ----------
 讨论

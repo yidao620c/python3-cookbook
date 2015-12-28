@@ -7,8 +7,6 @@
 ----------
 You’ve written a useful library, and you want to be able to give it away to others.
 
-|
-
 ----------
 解决方案
 ----------
@@ -71,8 +69,6 @@ typing a command such as this:
 This will create a file such as projectname-1.0.zip or projectname-1.0.tar.gz, depending
 on the platform. If it all works, this file is suitable for giving to others or uploading to
 the `Python Package Index <http://pypi.python.org/>`_.
-
-|
 
 ----------
 讨论

@@ -7,8 +7,6 @@
 ----------
 你在一个 ``except`` 块中捕获了一个异常，现在想重新抛出它。
 
-|
-
 ----------
 解决方案
 ----------
@@ -31,8 +29,6 @@
       File "<stdin>", line 3, in example
     ValueError: invalid literal for int() with base 10: 'N/A'
     >>>
-
-|
 
 ----------
 讨论

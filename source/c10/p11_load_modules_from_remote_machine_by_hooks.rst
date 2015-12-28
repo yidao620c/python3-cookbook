@@ -8,8 +8,6 @@
 You would like to customize Python’s import statement so that it can transparently load
 modules from a remote machine.
 
-|
-
 ----------
 解决方案
 ----------
@@ -473,8 +471,6 @@ module. For instance:
         else:
             return fib(n-1) + fib(n-2)
     >>>
-
-|
 
 ----------
 讨论

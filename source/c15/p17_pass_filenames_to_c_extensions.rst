@@ -7,8 +7,6 @@
 ----------
 你需要向C库函数传递文件名，但是需要确保文件名根据系统期望的文件名编码方式编码过。
 
-|
-
 ----------
 解决方案
 ----------
@@ -57,8 +55,6 @@
     int   filename_len;   /* Already set */
 
     PyObject *obj = PyUnicode_DecodeFSDefaultAndSize(filename, filename_len);
-
-|
 
 ----------
 讨论

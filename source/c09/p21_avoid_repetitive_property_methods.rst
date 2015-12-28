@@ -69,8 +69,6 @@
             self.name = name
             self.age = age
 
-|
-
 ----------
 讨论
 ----------

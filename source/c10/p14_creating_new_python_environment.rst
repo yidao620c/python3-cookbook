@@ -9,8 +9,6 @@ You want to create a new Python environment in which you can install modules and
 packages. However, you want to do this without installing a new copy of Python or
 making changes that might affect the system Python installation.
 
-|
-
 ----------
 解决方案
 ----------
@@ -55,8 +53,6 @@ In the bin directory, you’ll find a Python interpreter that you can use. For e
 A key feature of this interpreter is that its site-packages directory has been set to the
 newly created environment. Should you decide to install third-party packages, they will
 be installed here, not in the normal system site-packages directory.
-
-|
 
 ----------
 讨论

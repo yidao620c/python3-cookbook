@@ -7,8 +7,6 @@
 ----------
 怎样在两个字典中寻寻找相同点(比如相同的键、相同的值等等)？
 
-|
-
 ----------
 解决方案
 ----------
@@ -48,8 +46,6 @@
     # Make a new dictionary with certain keys removed
     c = {key:a[key] for key in a.keys() - {'z', 'w'}}
     # c is {'x': 1, 'y': 2}
-
-|
 
 ----------
 讨论

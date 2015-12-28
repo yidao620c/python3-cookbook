@@ -7,8 +7,6 @@
 ----------
 你想构造一个字典，它是另外一个字典的子集。
 
-|
-
 ----------
 解决方案
 ----------
@@ -28,8 +26,6 @@
     # Make a dictionary of tech stocks
     tech_names = {'AAPL', 'IBM', 'HPQ', 'MSFT'}
     p2 = {key: value for key, value in prices.items() if key in tech_names}
-
-|
 
 ----------
 讨论

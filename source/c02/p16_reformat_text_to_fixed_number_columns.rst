@@ -7,8 +7,6 @@
 ----------
 你有一些长字符串，想以指定的列宽将它们重新格式化。
 
-|
-
 ----------
 解决方案
 ----------
@@ -48,8 +46,6 @@
         around the eyes, don't look around
         the eyes, look into my eyes, you're
         under.
-
-|
 
 ----------
 讨论

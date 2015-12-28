@@ -7,8 +7,6 @@
 ----------
 你想哟啊复制或移动文件和目录，但是又不想调用shell命令。
 
-|
-
 ----------
 解决方案
 ----------
@@ -60,8 +58,6 @@ Since ignoring filename patterns is common, a utility function ignore_patterns()
 already been provided to do it. For example:
 
 shutil.copytree(src, dst, ignore=shutil.ignore_patterns('*~','*.pyc'))
-
-|
 
 ----------
 讨论

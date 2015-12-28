@@ -7,8 +7,6 @@
 ----------
 你需要创建或解压常见格式的归档文件（比如.tar, .tgz或.zip）
 
-|
-
 ----------
 解决方案
 ----------
@@ -33,8 +31,6 @@
     [('bztar', "bzip2'ed tar-file"), ('gztar', "gzip'ed tar-file"),
      ('tar', 'uncompressed tar file'), ('zip', 'ZIP file')]
     >>>
-
-|
 
 ----------
 讨论

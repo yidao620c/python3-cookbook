@@ -62,8 +62,6 @@
     AttributeError: can't set attribute
     >>>
 
-|
-
 ----------
 讨论
 ----------

@@ -8,8 +8,6 @@
 你想在一个消息传输层如 ``sockets`` 、``multiprocessing connections`` 或 ``ZeroMQ``
 的基础之上实现一个简单的远程过程调用（RPC）。
 
-|
-
 ----------
 解决方案
 ----------
@@ -114,8 +112,6 @@
 
 要注意的是很多消息层（比如 ``multiprocessing`` ）已经使用pickle序列化了数据。
 如果是这样的话，对 ``pickle.dumps()`` 和 ``pickle.loads()`` 的调用要去掉。
-
-|
 
 ----------
 讨论

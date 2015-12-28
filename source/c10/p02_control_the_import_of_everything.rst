@@ -8,8 +8,6 @@
 当使用'from module import *' 语句时，希望对从模块或包导出的符号进行精确控制。
 
 
-|
-
 ----------
 解决方案
 ----------
@@ -29,8 +27,6 @@
     blah = 42
     # Only export 'spam' and 'grok'
     __all__ = ['spam', 'grok']
-
-|
 
 ----------
 讨论

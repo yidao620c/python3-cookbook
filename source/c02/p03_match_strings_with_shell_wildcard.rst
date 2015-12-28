@@ -7,8 +7,6 @@
 ----------
 你想使用 **Unix Shell** 中常用的通配符(比如 ``*.py`` , ``Dat[0-9]*.csv`` 等)去匹配文本字符串
 
-|
-
 ----------
 解决方案
 ----------
@@ -71,8 +69,6 @@
     >>> [addr for addr in addresses if fnmatchcase(addr, '54[0-9][0-9] *CLARK*')]
     ['5412 N CLARK ST']
     >>>
-
-|
 
 ----------
 讨论

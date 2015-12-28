@@ -7,8 +7,6 @@
 ----------
 你想将你的代码组织成由很多分层模块构成的包。
 
-|
-
 ----------
 解决方案
 ----------
@@ -36,8 +34,6 @@
     import graphics.primitive.line
     from graphics.primitive import line
     import graphics.formats.jpg as jpg
-
-|
 
 ----------
 讨论

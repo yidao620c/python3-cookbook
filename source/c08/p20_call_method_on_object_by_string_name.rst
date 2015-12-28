@@ -7,8 +7,6 @@
 ----------
 你有一个字符串形式的方法名称，想通过它调用某个对象的对应方法。
 
-|
-
 ----------
 解决方案
 ----------
@@ -55,8 +53,6 @@
     ]
     # Sort by distance from origin (0, 0)
     points.sort(key=operator.methodcaller('distance', 0, 0))
-
-|
 
 ----------
 讨论

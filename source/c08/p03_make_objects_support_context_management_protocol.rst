@@ -7,8 +7,6 @@
 ----------
 你想让你的对象支持上下文管理协议(with语句)。
 
-|
-
 ----------
 解决方案
 ----------
@@ -53,8 +51,6 @@
         s.send(b'\r\n')
         resp = b''.join(iter(partial(s.recv, 8192), b''))
         # conn.__exit__() executes: connection closed
-
-|
 
 ----------
 讨论

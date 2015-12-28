@@ -9,8 +9,6 @@ You want to install a third-party package, but you don’t have permission to in
 into the system Python. Alternatively, perhaps you just want to install a package
 for your own use, not all users on the system.
 
-|
-
 ----------
 解决方案
 ----------
@@ -32,8 +30,6 @@ The user site-packages directory normally appears before the system site-package
 on sys.path. Thus, packages you install using this technique take priority over
 the packages already installed on the system (although this is not always the case depending
 on the behavior of third-party package managers, such as distribute or pip).
-
-|
 
 ----------
 讨论

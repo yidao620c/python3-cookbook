@@ -7,8 +7,6 @@
 ----------
 怎样找出一个序列中出现次数最多的元素呢？
 
-|
-
 ----------
 解决方案
 ----------
@@ -31,8 +29,6 @@
     top_three = word_counts.most_common(3)
     print(top_three)
     # Outputs [('eyes', 8), ('the', 5), ('look', 4)]
-
-|
 
 ----------
 讨论

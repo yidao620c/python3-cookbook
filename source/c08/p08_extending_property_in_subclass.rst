@@ -7,8 +7,6 @@
 ----------
 在子类中，你想要扩展定义在父类中的property的功能。
 
-|
-
 ----------
 解决方案
 ----------
@@ -95,8 +93,6 @@
         def name(self, value):
             print('Setting name to', value)
             super(SubPerson, SubPerson).name.__set__(self, value)
-
-|
 
 ----------
 讨论

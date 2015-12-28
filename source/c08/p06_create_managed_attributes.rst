@@ -7,8 +7,6 @@
 ----------
 你想给某个实例attribute增加除访问与修改之外的其他处理逻辑，比如类型检查或合法性验证。
 
-|
-
 ----------
 解决方案
 ----------
@@ -95,8 +93,6 @@ property的一个关键特征是它看上去跟普通的attribute没什么两样
 
         # Make a property from existing get/set methods
         name = property(get_first_name, set_first_name, del_first_name)
-
-|
 
 ----------
 讨论

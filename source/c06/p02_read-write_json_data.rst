@@ -7,8 +7,6 @@
 ----------
 你想读写JSON(JavaScript Object Notation)编码格式的数据。
 
-|
-
 ----------
 解决方案
 ----------
@@ -46,8 +44,6 @@
     # Reading data back
     with open('data.json', 'r') as f:
         data = json.load(f)
-
-|
 
 ----------
 讨论

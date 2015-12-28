@@ -7,8 +7,6 @@
 ----------
 你希望自己的程序能生成警告信息（比如废弃特性或使用问题）。
 
-|
-
 ----------
 解决方案
 ----------
@@ -47,8 +45,6 @@ SyntaxWarning, RuntimeWarning, ResourceWarning, 或 FutureWarning.
         warnings.warn('logfile argument is deprecated', DeprecationWarning)
     DeprecationWarning: logfile argument is deprecated
     bash %
-
-|
 
 ----------
 讨论

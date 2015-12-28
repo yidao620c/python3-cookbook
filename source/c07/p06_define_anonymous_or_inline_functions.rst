@@ -8,8 +8,6 @@
 你想为 ``sort()`` 操作创建一个很短的回调函数，但又不想用 ``def`` 去写一个单行函数，
 而是希望通过某个快捷方式以内联方式来创建这个函数。
 
-|
-
 ----------
 解决方案
 ----------
@@ -43,8 +41,6 @@ lambda表达式典型的使用场景是排序或数据reduce等：
     >>> sorted(names, key=lambda name: name.split()[-1].lower())
     ['Ned Batchelder', 'David Beazley', 'Raymond Hettinger', 'Brian Jones']
     >>>
-
-|
 
 ----------
 讨论

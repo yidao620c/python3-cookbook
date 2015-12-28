@@ -7,8 +7,6 @@
 ----------
 你希望在脚本和程序中将诊断信息写入日志文件。
 
-|
-
 ----------
 解决方案
 ----------
@@ -115,8 +113,6 @@ the basicConfig() call. For example:
     format=%(levelname)s:%(name)s:%(message)s
 
 如果你想修改配置，可以直接编辑文件logconfig.ini即可。
-
-|
 
 ----------
 讨论

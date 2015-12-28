@@ -8,8 +8,6 @@
 你的程序中有个方法会输出到标准输出中（sys.stdout）。也就是说它会将文本打印到屏幕上面。
 你想写个测试来证明它，给定一个输入，相应的输出能正常显示出来。
 
-|
-
 ----------
 解决方案
 ----------
@@ -49,8 +47,6 @@
             with patch('sys.stdout', new=StringIO()) as fake_out:
                 mymodule.urlprint(protocol, host, domain)
                 self.assertEqual(fake_out.getvalue(), expected_url)
-
-|
 
 ----------
 讨论

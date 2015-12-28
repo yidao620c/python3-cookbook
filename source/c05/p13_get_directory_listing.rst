@@ -7,8 +7,6 @@
 ----------
 你想获取文件系统中某个目录下的所有文件列表。
 
-|
-
 ----------
 解决方案
 ----------
@@ -51,8 +49,6 @@
     from fnmatch import fnmatch
     pyfiles = [name for name in os.listdir('somedir')
                 if fnmatch(name, '*.py')]
-
-|
 
 ----------
 讨论

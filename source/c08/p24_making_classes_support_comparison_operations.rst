@@ -7,8 +7,6 @@
 ----------
 你想让某个类的实例支持标准的比较运算(比如>=,!=,<=,<等)，但是又不想去实现那一大丢的特殊方法。
 
-|
-
 ----------
 解决方案
 ----------
@@ -84,8 +82,6 @@ Python类对每个比较操作都需要实现一个特殊方法来支持。
     print('Is h2 greater than or equal to h1?', h2 >= h1) # Prints False
     print('Which one is biggest?', max(houses)) # Prints 'h3: 1101-square-foot Split'
     print('Which is smallest?', min(houses)) # Prints 'h2: 846-square-foot Ranch'
-
-|
 
 ----------
 讨论

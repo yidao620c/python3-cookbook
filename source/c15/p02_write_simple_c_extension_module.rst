@@ -7,8 +7,6 @@
 ----------
 你想不依靠其他工具，直接使用Python的扩展API来编写一些简单的C扩展模块。
 
-|
-
 ----------
 解决方案
 ----------
@@ -153,8 +151,6 @@
 Python的二进制分发通常使用了Microsoft  Visual Studio来构建。
 为了让这些扩展能正常工作，你需要使用同样或兼容的工具来编译它。
 参考相应的 `Python文档 <https://docs.python.org/3/extending/windows.html>`_
-
-|
 
 ----------
 讨论

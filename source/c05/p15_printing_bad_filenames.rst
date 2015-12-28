@@ -8,8 +8,6 @@
 你的程序获取了一个目录中的文件名列表，但是当它试着去打印文件名的时候程序崩溃，
 出现了 ``UnicodeEncodeError`` 异常和一条奇怪的消息—— ``surrogates not allowed`` 。
 
-|
-
 ----------
 解决方案
 ----------
@@ -24,8 +22,6 @@
         print(filename)
     except UnicodeEncodeError:
         print(bad_filename(filename))
-
-|
 
 ----------
 讨论

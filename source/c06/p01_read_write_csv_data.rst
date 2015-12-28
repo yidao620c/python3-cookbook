@@ -7,8 +7,6 @@
 ----------
 你想读写一个CSV格式的文件。
 
-|
-
 ----------
 解决方案
 ----------
@@ -102,8 +100,6 @@
         f_csv = csv.DictWriter(f, headers)
         f_csv.writeheader()
         f_csv.writerows(rows)
-
-|
 
 ----------
 讨论

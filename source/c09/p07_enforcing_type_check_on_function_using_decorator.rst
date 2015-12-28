@@ -7,8 +7,6 @@
 ----------
 作为某种编程规约，你想在对函数参数进行强制类型检查。
 
-|
-
 ----------
 解决方案
 ----------
@@ -80,8 +78,6 @@
     File "contract.py", line 33, in wrapper
     TypeError: Argument z must be <class 'int'>
     >>>
-
-|
 
 ----------
 讨论

@@ -1,5 +1,5 @@
 ================================
-10.11 通过导入钩子远程加载模块
+10.11 通过钩子远程加载模块
 ================================
 
 ----------
@@ -62,9 +62,8 @@
     bash % python3 -m http.server 15000
     Serving HTTP on 0.0.0.0 port 15000 ...
 
-Leave that server running and start up a separate Python interpreter. Make sure you can
-access the remote files using urllib. For example:
-
+服务器运行起来后再启动一个单独的Python解释器。
+确保你可以使用 ``urllib`` 访问到远程文件。例如：
 
 .. code-block:: python
 
@@ -82,13 +81,11 @@ access the remote files using urllib. For example:
             return fib(n-1) + fib(n-2)
     >>>
 
-Loading source code from this server is going to form the basis for the remainder of
-this recipe. Specifically, instead of manually grabbing a file of source code using urlop
-en(), the import statement will be customized to do it transparently behind the scenes.
+从这个服务器加载源代码是接下来本节的基础。
+为了替代手动的通过 ``urlopen()`` 来收集源文件，
+我们通过自定义import语句来在后台自动帮我们做到。
 
-
-The first approach to loading a remote module is to create an explicit loading function
-for doing it. For example:
+加载远程模块的第一种方法是创建一个显示的加载函数来完成它。例如：
 
 .. code-block:: python
 
@@ -106,9 +103,8 @@ for doing it. For example:
         exec(code, mod.__dict__)
         return mod
 
-This function merely downloads the source code, compiles it into a code object using
-compile(), and executes it in the dictionary of a newly created module object. Here’s
-how you would use the function:
+这个函数会下载源代码，并使用 ``compile()`` 将其编译到一个代码对象中，
+然后在一个新创建的模块对象的字典中来执行它。下面是使用这个函数的方式：
 
 .. code-block:: python
 
@@ -126,12 +122,10 @@ how you would use the function:
     <module 'http://localhost:15000/spam.py' from 'http://localhost:15000/spam.py'>
     >>>
 
-As you can see, it “works” for simple modules. However, it’s not plugged into the usual
-import statement, and extending the code to support more advanced constructs, such
-as packages, would require additional work.
+正如你所见，对于简单的模块这个是行得通的。
+不过它并没有嵌入到通常的import语句中，如果要支持更高级的结构比如包就需要更多的工作了。
 
-A much slicker approach is to create a custom importer. The first way to do this is to
-create what’s known as a meta path importer. Here is an example:
+一个更酷的做法是创建一个自定义导入器。第一种方法是创建一个元路径导入器。如下：
 
 .. code-block:: python
 
@@ -292,7 +286,7 @@ create what’s known as a meta path importer. Here is an example:
             sys.meta_path.remove(finder)
             log.debug('%r removed from sys.meta_path', finder)
 
-Here is an interactive session showing how to use the preceding code:
+下面是一个交互会话，演示了如何使用前面的代码：
 
 .. code-block:: python
 
@@ -315,25 +309,21 @@ Here is an interactive session showing how to use the preceding code:
     'http://localhost:15000/grok/blah.py'
     >>>
 
-This particular solution involves installing an instance of a special finder object UrlMe
-taFinder as the last entry in sys.meta_path. Whenever modules are imported, the
-finders in sys.meta_path are consulted in order to locate the module. In this example,
-the UrlMetaFinder instance becomes a finder of last resort that’s triggered when a
-module can’t be found in any of the normal locations.
+这个特殊的方案会安装一个特别的查找器 ``UrlMetaFinder`` 实例，
+作为 ``sys.meta_path`` 中最后的实体。
+当模块被导入时，会依据 ``sys.meta_path`` 中的查找器定位模块。
+在这个例子中，``UrlMetaFinder`` 实例是最后一个查找器方案，
+当模块在任何一个普通地方都找不到的时候就触发它。
 
+作为常见的实现方案，``UrlMetaFinder`` 类包装在一个用户指定的URL上。
+在内部，查找器通过抓取指定URL的内容构建合法的链接集合。
+导入的时候，模块名会跟已有的链接作对比。如果找到了一个匹配的，
+一个单独的 ``UrlModuleLoader`` 类被用来从远程机器上加载源代码并创建最终的模块对象。
+这里缓存链接的一个原因是避免不必要的HTTP请求重复导入。
 
-As for the general implementation approach, the UrlMetaFinder class wraps around a
-user-specified URL. Internally, the finder builds sets of valid links by scraping them
-from the given URL. When imports are made, the module name is compared against
-this set of known links. If a match can be found, a separate UrlModuleLoader class is
-used to load source code from the remote machine and create the resulting module
-object. One reason for caching the links is to avoid unnecessary HTTP requests on
-repeated imports.
-
-
-The second approach to customizing import is to write a hook that plugs directly into
-the sys.path variable, recognizing certain directory naming patterns. Add the following
-class and support functions to urlimport.py:
+自定义导入的第二种方法是编写一个钩子直接嵌入到 ``sys.path`` 变量中去，
+识别某些目录命名模式。
+在 ``urlimport.py`` 中添加如下的类和支持函数：
 
 .. code-block:: python
 
@@ -406,7 +396,7 @@ class and support functions to urlimport.py:
         sys.path_importer_cache.clear()
         log.debug('Removing handle_url')
 
-To use this path-based finder, you simply add URLs to sys.path. For example:
+要使用这个路径查找器，你只需要在 ``sys.path`` 中加入URL链接。例如：
 
 .. code-block:: python
 
@@ -438,14 +428,11 @@ To use this path-based finder, you simply add URLs to sys.path. For example:
     'http://localhost:15000/grok/blah.py'
     >>>
 
-The key to this last example is the handle_url() function, which is added to the
-sys.path_hooks variable. When the entries on sys.path are being processed, the functions
-in sys.path_hooks are invoked. If any of those functions return a finder object,
-that finder is used to try to load modules for that entry on sys.path.
+关键点就是 ``handle_url()`` 函数，它被添加到了 ``sys.path_hooks`` 变量中。
+当 ``sys.path`` 的实体被处理时，会调用 ``sys.path_hooks`` 中的函数。
+如果任何一个函数返回了一个查找器对象，那么这个对象就被用来为 ``sys.path`` 实体加载模块。
 
-
-It should be noted that the remotely imported modules work exactly like any other
-module. For instance:
+远程模块加载跟其他的加载使用方法几乎是一样的。例如：
 
 .. code-block:: python
 
@@ -470,18 +457,14 @@ module. For instance:
 ----------
 讨论
 ----------
-Before discussing this recipe in further detail, it should be emphasized that Python’s
-module, package, and import mechanism is one of the most complicated parts of the
-entire language—often poorly understood by even the most seasoned Python programmers
-unless they’ve devoted effort to peeling back the covers. There are several
-critical documents that are worth reading, including the documentation for the
+在详细讨论之前，有点要强调的是，Python的模块、包和导入机制是整个语言中最复杂的部分，
+即使经验丰富的Python程序员也很少能精通它们。
+我在这里推荐一些值的去读的文档和书籍，包括
 `importlib module <https://docs.python.org/3/library/importlib.html>`_
-and `PEP 302 <http://www.python.org/dev/peps/pep-0302>`_.
-That documentation won’t be repeated here, but some
-essential highlights will be discussed.
+和 `PEP 302 <http://www.python.org/dev/peps/pep-0302>`_.
+文档内容在这里不会被重复提到，不过我在这里会讨论一些最重要的部分。
 
-First, if you want to create a new module object, you use the imp.new_module() function.
-For example:
+首先，如果你想创建一个新的模块对象，使用 ``imp.new_module()`` 函数：
 
 .. code-block:: python
 
@@ -493,14 +476,11 @@ For example:
     'spam'
     >>>
 
-Module objects usually have a few expected attributes, including __file__ (the name
-of the file that the module was loaded from) and __package__ (the name of the enclosing
-package, if any).
+模块对象通常有一些期望属性，包括 ``__file__`` （运行模块加载语句的文件名）
+和 ``__package__`` (包名)。
 
-
-Second, modules are cached by the interpreter. The module cache can be found in the
-dictionary sys.modules. Because of this caching, it’s common to combine caching and
-module creation together into a single step. For example:
+其次，模块会被解释器缓存起来。模块缓存可以在字典 ``sys.modules`` 中被找到。
+因为有了这个缓存机制，通常可以将缓存和模块的创建通过一个步骤完成：
 
 .. code-block:: python
 
@@ -511,8 +491,7 @@ module creation together into a single step. For example:
     <module 'spam'>
     >>>
 
-The main reason for doing this is that if a module with the given name already exists,
-you’ll get the already created module instead. For example:
+如果给定模块已经存在那么就会直接获得已经被创建过的模块，例如：
 
 .. code-block:: python
 
@@ -526,20 +505,14 @@ you’ll get the already created module instead. For example:
     -0.4161468365471424
     >>>
 
-Since creating modules is easy, it is straightforward to write simple functions, such as
-the load_module() function in the first part of this recipe. A downside of this approach
-is that it is actually rather tricky to handle more complicated cases, such as package
-imports. In order to handle a package, you would have to reimplement much of the
-underlying logic that’s already part of the normal import statement (e.g., checking for
-directories, looking for __init__.py files, executing those files, setting up paths, etc.).
-This complexity is one of the reasons why it’s often better to extend the import statement
-directly rather than defining a custom function.
+由于创建模块很简单，很容易编写简单函数比如第一部分的 ``load_module()`` 函数。
+这个方案的一个缺点是很难处理复杂情况比如包的导入。
+为了处理一个包，你要重新实现普通import语句的底层逻辑（比如检查目录，查找__init__.py文件，
+执行那些文件，设置路径等）。这个复杂性就是为什么最好直接扩展import语句而不是自定义函数的一个原因。
 
-
-Extending the import statement is straightforward, but involves a number of moving
-parts. At the highest level, import operations are processed by a list of “meta-path”
-finders that you can find in the list sys.meta_path. If you output its value, you’ll see
-the following:
+扩展import语句很简单，但是会有很多移动操作。
+最高层上，导入操作被一个位于sys.meta_path列表中的“元路径”查找器处理。
+如果你输出它的值，会看到下面这样：
 
 .. code-block:: python
 
@@ -550,10 +523,9 @@ the following:
     <class '_frozen_importlib.PathFinder'>]
     >>>
 
-When executing a statement such as import fib, the interpreter walks through the
-finder objects on sys.meta_path and invokes their find_module() method in order to
-locate an appropriate module loader. It helps to see this by experimentation, so define
-the following class and try the following:
+当执行一个语句比如 ``import fib`` 时，解释器会遍历sys.mata_path中的查找器对象，
+调用它们的 ``find_module()`` 方法定位正确的模块加载器。
+可以通过实验来看看：
 
 .. code-block:: python
 
@@ -577,11 +549,11 @@ the following class and try the following:
     Looking for token None
     >>>
 
-Notice how the find_module() method is being triggered on every import. The role of
-the path argument in this method is to handle packages. When packages are imported,
-it is a list of the directories that are found in the package’s __path__ attribute. These are
-the paths that need to be checked to find package subcomponents. For example, notice
-the path setting for xml.etree and xml.etree.ElementTree:
+注意看 ``find_module()`` 方法是怎样在每一个导入就被触发的。
+这个方法中的path参数的作用是处理包。
+多个包被导入，就是一个可在包的 ``__path__`` 属性中找到的路径列表。
+要找到包的子组件就要检查这些路径。
+比如注意对于 ``xml.etree`` 和 ``xml.etree.ElementTree`` 的路径配置：
 
 .. code-block:: python
 
@@ -599,8 +571,7 @@ the path setting for xml.etree and xml.etree.ElementTree:
     Looking for ElementC14N None
     >>>
 
-The placement of the finder on sys.meta_path is critical. Remove it from the front of
-the list to the end of the list and try more imports:
+在 ``sys.meta_path`` 上查找器的位置很重要，将它从队头移到队尾，然后再试试导入看：
 
 .. code-block:: python
 
@@ -609,9 +580,8 @@ the list to the end of the list and try more imports:
     >>> import urllib.request
     >>> import datetime
 
-Now you don’t see any output because the imports are being handled by other entries
-in sys.meta_path. In this case, you would only see it trigger when nonexistent modules
-are imported:
+现在你看不到任何输出了，因为导入被sys.meta_path中的其他实体处理。
+这时候，你只有在导入不存在模块的时候才能看到它被触发：
 
 .. code-block:: python
 
@@ -627,23 +597,19 @@ are imported:
     ImportError: No module named 'xml.superfast'
     >>>
 
-The fact that you can install a finder to catch unknown modules is the key to the
-UrlMetaFinder class in this recipe. An instance of UrlMetaFinder is added to the end
-of sys.meta_path, where it serves as a kind of importer of last resort. If the requested
-module name can’t be located by any of the other import mechanisms, it gets handled
-by this finder. Some care needs to be taken when handling packages. Specifically, the
-value presented in the path argument needs to be checked to see if it starts with the URL
-registered in the finder. If not, the submodule must belong to some other finder and
-should be ignored.
+你之前安装过一个捕获未知模块的查找器，这个是 ``UrlMetaFinder`` 类的关键。
+一个 ``UrlMetaFinder`` 实例被添加到 ``sys.meta_path`` 的末尾，作为最后一个查找器方案。
+如果被请求的模块名不能定位，就会被这个查找器处理掉。
+处理包的时候需要注意，在path参数中指定的值需要被检查，看它是否以查找器中注册的URL开头。
+如果不是，该子模块必须归属于其他查找器并被忽略掉。
 
+对于包的其他处理可在 ``UrlPackageLoader`` 类中被找到。
+这个类不会导入包名，而是去加载对应的 ``__init__.py`` 文件。
+它也会设置模块的 ``__path__`` 属性，这一步很重要，
+因为在加载包的子模块时这个值会被传给后面的 ``find_module()`` 调用。
+基于路径的导入钩子是这些思想的一个扩展，但是采用了另外的方法。
+我们都知道，``sys.path`` 是一个Python查找模块的目录列表，例如：
 
-Additional handling of packages is found in the UrlPackageLoader class. This class,
-rather than importing the package name, tries to load the underlying __init__.py file.
-It also sets the module __path__ attribute. This last part is critical, as the value set will
-be passed to subsequent find_module() calls when loading package submodules.
-The path-based import hook is an extension of these ideas, but based on a somewhat
-different mechanism. As you know, sys.path is a list of directories where Python looks
-for modules. For example:
 
 .. code-block:: python
 
@@ -658,8 +624,8 @@ for modules. For example:
     '/usr/local/lib/...3.3/site-packages']
     >>>
 
-Each entry in sys.path is additionally attached to a finder object. You can view these
-finders by looking at sys.path_importer_cache:
+在 ``sys.path`` 中的每一个实体都会被额外的绑定到一个查找器对象上。
+你可以通过查看 ``sys.path_importer_cache`` 去看下这些查找器：
 
 .. code-block:: python
 
@@ -675,15 +641,13 @@ finders by looking at sys.path_importer_cache:
     '/usr/local/lib/python33.zip': None}
     >>>
 
-sys.path_importer_cache tends to be much larger than sys.path because it records
-finders for all known directories where code is being loaded. This includes subdirectories
-of packages which usually aren’t included on sys.path.
+``sys.path_importer_cache`` 比 ``sys.path`` 会更大点，
+因为它会为所有被加载代码的目录记录它们的查找器。
+这包括包的子目录，这些通常在 ``sys.path`` 中是不存在的。
 
-
-To execute import fib, the directories on sys.path are checked in order. For each
-directory, the name fib is presented to the associated finder found in sys.path_im
-porter_cache. This is also something that you can investigate by making your own
-finder and putting an entry in the cache. Try this experiment:
+要执行 ``import fib`` ，会顺序检查 ``sys.path`` 中的目录。
+对于每个目录，名称“fib”会被传给相应的 ``sys.path_importer_cache`` 中的查找器。
+这个可以让你创建自己的查找器并在缓存中放入一个实体。试试这个：
 
 .. code-block:: python
 
@@ -706,15 +670,12 @@ finder and putting an entry in the cache. Try this experiment:
     Looking for token
     >>>
 
-Here, you’ve installed a new cache entry for the name debug and installed the name
-debug as the first entry on sys.path. On all subsequent imports, you see your finder
-being triggered. However, since it returns (None, []), processing simply continues to the
-next entry.
+在这里，你可以为名字“debug”创建一个新的缓存实体并将它设置成 ``sys.path`` 上的第一个。
+在所有接下来的导入中，你会看到你的查找器被触发了。
+不过，由于它返回 (None, [])，那么处理进程会继续处理下一个实体。
 
-
-The population of sys.path_importer_cache is controlled by a list of functions stored
-in sys.path_hooks. Try this experiment, which clears the cache and adds a new path
-checking function to sys.path_hooks:
+``sys.path_importer_cache`` 的使用被一个存储在 ``sys.path_hooks`` 中的函数列表控制。
+试试下面的例子，它会清除缓存并给 ``sys.path_hooks`` 添加一个新的路径检查函数
 
 .. code-block:: python
 
@@ -739,13 +700,11 @@ checking function to sys.path_hooks:
     ImportError: No module named 'fib'
     >>>
 
-As you can see, the check_path() function is being invoked for every entry on
-sys.path. However, since an ImportError exception is raised, nothing else happens
-(checking just moves to the next function on sys.path_hooks).
+正如你所见，``check_path()`` 函数被每个 ``sys.path`` 中的实体调用。
+不顾，由于抛出了 ``ImportError`` 异常，
+啥都不会发生了（仅仅将检查转移到sys.path_hooks的下一个函数）。
 
-
-Using this knowledge of how sys.path is processed, you can install a custom path
-checking function that looks for filename patterns, such as URLs. For instance:
+知道了怎样sys.path是怎样被处理的，你就能构建一个自定义路径检查函数来查找文件名，不然URL。例如：
 
 .. code-block:: python
 
@@ -768,40 +727,29 @@ checking function that looks for filename patterns, such as URLs. For instance:
     <__main__.Finder object at 0x10064c850>
     >>>
 
-This is the key mechanism at work in the last part of this recipe. Essentially, a custom
-path checking function has been installed that looks for URLs in sys.path. When they
-are encountered, a new UrlPathFinder instance is created and installed into
-sys.path_importer_cache. From that point forward, all import statements that pass
-through that part of sys.path will try to use your custom finder.
+这就是本节最后部分的关键点。事实上，一个用来在sys.path中查找URL的自定义路径检查函数已经构建完毕。
+当它们被碰到的时候，一个新的 ``UrlPathFinder`` 实例被创建并被放入 ``sys.path_importer_cache``.
+之后，所有需要检查 ``sys.path`` 的导入语句都会使用你的自定义查找器。
 
+基于路径导入的包处理稍微有点复杂，并且跟 ``find_loader()`` 方法返回值有关。
+对于简单模块，``find_loader()`` 返回一个元组(loader, None)，
+其中的loader是一个用于导入模块的加载器实例。
 
-Package handling with a path-based importer is somewhat tricky, and relates to the
-return value of the find_loader() method. For simple modules, find_loader() returns
-a tuple (loader, None) where loader is an instance of a loader that will import
-the module.
+对于一个普通的包，``find_loader()`` 返回一个元组(loader, path)，
+其中的loader是一个用于导入包（并执行__init__.py）的加载器实例，
+path是一个会初始化包的 ``__path__`` 属性的目录列表。
+例如，如果基础URL是 http://localhost:15000 并且一个用户执行 ``import grok`` ,
+那么 ``find_loader()`` 返回的path就会是 [ 'http://localhost:15000/grok' ]
 
+``find_loader()`` 还要能处理一个命名空间包。
+一个命名空间包中有一个合法的包目录名，但是不存在__init__.py文件。
+这样的话，``find_loader()`` 必须返回一个元组(None, path)，
+path是一个目录列表，由它来构建包的定义有__init__.py文件的__path__属性。
+对于这种情况，导入机制会继续前行去检查sys.path中的目录。
+如果找到了命名空间包，所有的结果路径被加到一起来构建最终的命名空间包。
+关于命名空间包的更多信息请参考10.5小节。
 
-For a normal package, find_loader() returns a tuple (loader, path) where loader
-is the loader instance that will import the package (and execute __init__.py) and path
-is a list of the directories that will make up the initial setting of the package’s __path__
-attribute. For example, if the base URL was http://localhost:15000 and a user executed
-import grok, the path returned by find_loader() would be [ 'http://local
-host:15000/grok' ].
-
-
-The find_loader() must additionally account for the possibility of a namespace package.
-A namespace package is a package where a valid package directory name exists,
-but no __init__.py file can be found. For this case, find_loader() must return a tuple
-(None, path) where path is a list of directories that would have made up the package’s
-__path__ attribute had it defined an __init__.py file. For this case, the import mechanism
-moves on to check further directories on sys.path. If more namespace packages
-are found, all of the resulting paths are joined together to make a final namespace package.
-See Recipe 10.5 for more information on namespace packages.
-
-
-There is a recursive element to package handling that is not immediately obvious in the
-solution, but also at work. All packages contain an internal path setting, which can be
-found in __path__ attribute. For example:
+所有的包都包含了一个内部路径设置，可以在__path__属性中看到，例如：
 
 .. code-block:: python
 
@@ -812,23 +760,18 @@ found in __path__ attribute. For example:
     ['/usr/local/lib/python3.3/xml/etree']
     >>>
 
-As mentioned, the setting of __path__ is controlled by the return value of the find_load
-er() method. However, the subsequent processing of __path__ is also handled by the
-functions in sys.path_hooks. Thus, when package subcomponents are loaded, the entries
-in __path__ are checked by the handle_url() function. This causes new instances
-of UrlPathFinder to be created and added to sys.path_importer_cache.
+之前提到，__path__的设置是通过 ``find_loader()`` 方法返回值控制的。
+不过，__path__接下来也被sys.path_hooks中的函数处理。
+因此，但包的子组件被加载后，位于__path__中的实体会被 ``handle_url()`` 函数检查。
+这会导致新的 ``UrlPathFinder`` 实例被创建并且被加入到 ``sys.path_importer_cache`` 中。
 
-
-One remaining tricky part of the implementation concerns the behavior of the han
-dle_url() function and its interaction with the _get_links() function used internally.
-If your implementation of a finder involves the use of other modules (e.g., urllib.re
-quest), there is a possibility that those modules will attempt to make further imports
-in the middle of the finder’s operation. This can actually cause handle_url() and other
-parts of the finder to get executed in a kind of recursive loop. To account for this possibility,
-the implementation maintains a cache of created finders (one per URL). This
-avoids the problem of creating duplicate finders. In addition, the following fragment of
-code ensures that the finder doesn’t respond to any import requests while it’s in the
-processs of getting the initial set of links:
+还有个难点就是 ``handle_url()`` 函数以及它跟内部使用的 ``_get_links()`` 函数之间的交互。
+如果你的查找器实现需要使用到其他模块（比如urllib.request），
+有可能这些模块会在查找器操作期间进行更多的导入。
+它可以导致 ``handle_url()`` 和其他查找器部分陷入一种递归循环状态。
+为了解释这种可能性，实现中有一个被创建的查找器缓存（每一个URL一个）。
+它可以避免创建重复查找器的问题。
+另外，下面的代码片段可以确保查找器不会在初始化链接集合的时候响应任何导入请求：
 
 .. code-block:: python
 
@@ -837,32 +780,18 @@ processs of getting the initial set of links:
         self._links = [] # See discussion
         self._links = _get_links(self._baseurl)
 
-You may not need this checking in other implementations, but for this example involving
-URLs, it was required.
+最后，查找器的 ``invalidate_caches()`` 方法是一个工具方法，用来清理内部缓存。
+这个方法再用户调用 ``importlib.invalidate_caches()`` 的时候被触发。
+如果你想让URL导入者重新读取链接列表的话可以使用它。
 
+对比下两种方案（修改sys.meta_path或使用一个路径钩子）。
+使用sys.meta_path的导入者可以按照自己的需要自由处理模块。
+例如，它们可以从数据库中导入或以不同于一般模块/包处理方式导入。
+这种自由同样意味着导入者需要自己进行内部的一些管理。
+另外，基于路径的钩子只是适用于对sys.path的处理。
+通过这种扩展加载的模块跟普通方式加载的特性是一样的。
 
-Finally, the invalidate_caches() method of both finders is a utility method that is
-supposed to clear internal caches should the source code change. This method is triggered
-when a user invokes importlib.invalidate_caches(). You might use it if you
-want the URL importers to reread the list of links, possibly for the purpose of being able
-to access newly added files.
-
-
-In comparing the two approaches (modifying sys.meta_path or using a path hook), it
-helps to take a high-level view. Importers installed using sys.meta_path are free to
-handle modules in any manner that they wish. For instance, they could load modules
-out of a database or import them in a manner that is radically different than normal
-module/package handling. This freedom also means that such importers need to do
-more bookkeeping and internal management. This explains, for instance, why the implementation
-of UrlMetaFinder needs to do its own caching of links, loaders, and other
-details. On the other hand, path-based hooks are more narrowly tied to the processing
-of sys.path. Because of the connection to sys.path, modules loaded with such extensions
-will tend to have the same features as normal modules and packages that programmers
-are used to.
-
-Assuming that your head hasn’t completely exploded at this point, a key to understanding
-and experimenting with this recipe may be the added logging calls. You can enable
-logging and try experiments such as this:
+如果到现在为止你还是不是很明白，那么可以通过增加一些日志打印来测试下本节。像下面这样：
 
 .. code-block:: python
 
@@ -889,6 +818,6 @@ logging and try experiments such as this:
     I'm fib
     >>>
 
-Last, but not least, spending some time sleeping with
-`PEP 302 <http://www.python.org/dev/peps/pep-0302>`_ and the documentation
-for importlib under your pillow may be advisable.
+最后，建议你花点时间看看 `PEP 302 <http://www.python.org/dev/peps/pep-0302>`_
+以及importlib的文档。
+

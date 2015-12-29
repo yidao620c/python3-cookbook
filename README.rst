@@ -60,6 +60,7 @@
 ++++++++++++++++
 1. Tony Yang (liuliu036@gmail.com)
 2. Yu Longjun (https://github.com/yulongjun)
+3. LxMit (https://github.com/LxMit)
 
 -----------------------------------------------------
 

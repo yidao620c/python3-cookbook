@@ -5,24 +5,21 @@
 ----------
 问题
 ----------
-You want to create a new Python environment in which you can install modules and
-packages. However, you want to do this without installing a new copy of Python or
-making changes that might affect the system Python installation.
+你想创建一个新的Python环境，用来安装模块和包。
+不过，你不想安装一个新的Python克隆，也不想对系统Python环境产生影响。
 
 ----------
 解决方案
 ----------
-You can make a new “virtual” environment using the pyvenv command. This command
-is installed in the same directory as the Python interpreter or possibly in the Scripts
-directory on Windows. Here is an example:
+你可以使用 ``pyvenv`` 命令创建一个新的“虚拟”环境。
+这个命令被安装在Python解释器同一目录，或Windows上面的Scripts目录中。下面是一个例子：
 
 .. code-block:: python
 
     bash % pyvenv Spam
     bash %
 
-The name supplied to pyvenv is the name of a directory that will be created. Upon
-creation, the Spam directory will look something like this:
+传给 ``pyvenv`` 命令的名字是将要被创建的目录名。当被创建后，Span目录像下面这样：
 
 .. code-block:: python
 
@@ -31,7 +28,7 @@ creation, the Spam directory will look something like this:
     bin include lib pyvenv.cfg
     bash %
 
-In the bin directory, you’ll find a Python interpreter that you can use. For example:
+在bin目录中，你会找到一个可以使用的Python解释器：
 
 .. code-block:: python
 
@@ -50,41 +47,32 @@ In the bin directory, you’ll find a Python interpreter that you can use. For e
     '/Users/beazley/Spam/lib/python3.3/site-packages']
     >>>
 
-A key feature of this interpreter is that its site-packages directory has been set to the
-newly created environment. Should you decide to install third-party packages, they will
-be installed here, not in the normal system site-packages directory.
+这个解释器的特点就是他的site-packages目录被设置为新创建的环境。
+如果你要安装第三方包，它们会被安装在那里，而不是通常系统的site-packages目录。
 
 ----------
 讨论
 ----------
-The creation of a virtual environment mostly pertains to the installation and management
-of third-party packages. As you can see in the example, the sys.path variable
-contains directories from the normal system Python, but the site-packages directory has
-been relocated to a new directory.
+创建虚拟环境通常是为了安装和管理第三方包。
+正如你在例子中看到的那样，``sys.path`` 变量包含来自于系统Python的目录，
+而 site-packages目录已经被重定位到一个新的目录。
 
+有了一个新的虚拟环境，下一步就是安装一个包管理器，比如distribute或pip。
+但安装这样的工具和包的时候，你需要确保你使用的是虚拟环境的解释器。
+它会将包安装到新创建的site-packages目录中去。
 
-With a new virtual environment, the next step is often to install a package manager,
-such as distribute or pip. When installing such tools and subsequent packages, you
-just need to make sure you use the interpreter that’s part of the virtual environment.
-This should install the packages into the newly created site-packages directory.
+尽管一个虚拟环境看上去是Python安装的一个复制，
+不过它实际上只包含了少量几个文件和一些符号链接。
+素有标准库函文件和可执行解释器都来自原来的Python安装。
+因此，创建这样的环境是很容易的，并且几乎不会消耗机器资源。
 
-
-Although a virtual environment might look like a copy of the Python installation, it
-really only consists of a few files and symbolic links. All of the standard library files and
-interpreter executables come from the original Python installation. Thus, creating such
-environments is easy, and takes almost no machine resources.
-
-
-By default, virtual environments are completely clean and contain no third-party addons.
-If you would like to include already installed packages as part of a virtual environment,
-create the environment using the --system-site-packages option. For example:
+默认情况下，虚拟环境是空的，不包含任何额外的第三方库。如果你想将一个已经安装的包作为虚拟环境的一部分，
+可以使用“--system-site-packages”选项来创建虚拟环境，例如：
 
 .. code-block:: python
 
     bash % pyvenv --system-site-packages Spam
     bash %
 
-More information about pyvenv and virtual environments can be found in
+跟多关于 ``pyvenv`` 和虚拟环境的信息可以参考
 `PEP 405 <https://www.python.org/dev/peps/pep-0405/>`_.
-
-

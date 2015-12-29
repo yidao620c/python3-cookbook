@@ -2,7 +2,13 @@
 《Python Cookbook》 3rd Edition 翻译 
 =========================================================
 
-在线预览地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
+-------------------------------------------------------------
+
+《Python Cookbook》3rd 中文版1.0.0正式发布啦 ^_^！ ——2015/12/19
+
+* 在线预览地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
+
+* PDF下载地址： http://pan.baidu.com/s/1bok0W6j
 
 --------------------------------------------------------------
 
@@ -32,7 +38,7 @@
 ++++++++++++++++
 项目说明
 ++++++++++++++++
-1. 原版PDF下载地址： http://pan.baidu.com/s/1dDhByJv
+1. 英文原版PDF下载地址： http://pan.baidu.com/s/1dDhByJv
 #. 所有文档均使用reStructuredText编辑，参考 reStructuredText_
 #. 当前文档生成托管在 readthedocs_ 上
 #. 生成的文档预览地址： python3-cookbook_

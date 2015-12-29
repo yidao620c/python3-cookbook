@@ -5,14 +5,13 @@
 ----------
 问题
 ----------
-You’ve written a useful library, and you want to be able to give it away to others.
+你已经编写了一个有用的库，想将它分享给其他人。
 
 ----------
 解决方案
 ----------
-If you’re going to start giving code away, the first thing to do is to give it a unique name
-and clean up its directory structure. For example, a typical library package might look
-something like this:
+如果你想分发你的代码，第一件事就是给它一个唯一的名字，并且清理它的目录结构。
+例如，一个典型的函数库包会类似下面这样：
 
 .. code-block:: python
 
@@ -32,8 +31,7 @@ something like this:
             helloworld.py
             ...
 
-To make the package something that you can distribute, first write a setup.py file that
-looks like this:
+要让你的包可以发布出去，首先你要编写一个 ``setup.py`` ，类似下面这样：
 
 .. code-block:: python
 
@@ -48,8 +46,7 @@ looks like this:
         packages=['projectname', 'projectname.utils'],
     )
 
-Next, make a file MANIFEST.in that lists various nonsource files that you want to include
-in your package:
+下一步，就是创建一个 ``MANIFEST.in`` 文件，列出所有在你的包中需要包含进来的非源码文件：
 
 .. code-block:: python
 
@@ -58,40 +55,32 @@ in your package:
     recursive-include examples *
     recursive-include Doc *
 
-Make sure the setup.py and MANIFEST.in files appear in the top-level directory of your
-package. Once you have done this, you should be able to make a source distribution by
-typing a command such as this:
+确保 ``setup.py`` 和 ``MANIFEST.in`` 文件放在你的包的最顶级目录中。
+一旦你已经做了这些，你就可以像下面这样执行命令来创建一个源码分发包了：
 
 .. code-block:: python
 
     % bash python3 setup.py sdist
 
-This will create a file such as projectname-1.0.zip or projectname-1.0.tar.gz, depending
-on the platform. If it all works, this file is suitable for giving to others or uploading to
-the `Python Package Index <http://pypi.python.org/>`_.
+它会创建一个文件比如"projectname-1.0.zip" 或 “projectname-1.0.tar.gz”,
+具体依赖于你的系统平台。如果一切正常，
+这个文件就可以发送给别人使用或者上传至 `Python Package Index <http://pypi.python.org/>`_.
 
 ----------
 讨论
 ----------
-For pure Python code, writing a plain setup.py file is usually straightforward. One potential
-gotcha is that you have to manually list every subdirectory that makes up the
-packages source code. A common mistake is to only list the top-level directory of a
-package and to forget to include package subcomponents. This is why the specification
-for packages in setup.py includes the list packages=['projectname', 'project
-name.utils'].
+对于纯Python代码，编写一个普通的 ``setup.py`` 文件通常很简单。
+一个可能的问题是你必须手动列出所有构成包源码的子目录。
+一个常见错误就是仅仅只列出一个包的最顶级目录，忘记了包含包的子组件。
+这也是为什么在 ``setup.py`` 中对于包的说明包含了列表
+``packages=['projectname', 'projectname.utils']``
 
+大部分Python程序员都知道，有很多第三方包管理器供选择，包括setuptools、distribute等等。
+有些是为了替代标准库中的distutils。注意如果你依赖这些包，
+用户可能不能安装你的软件，除非他们已经事先安装过所需要的包管理器。
+正因如此，你更应该时刻记住越简单越好的道理。
+最好让你的代码使用标准的Python 3安装。
+如果其他包也需要的话，可以通过一个可选项来支持。
 
-As most Python programmers know, there are many third-party packaging options,
-including setuptools, distribute, and so forth. Some of these are replacements for the
-distutils library found in the standard library. Be aware that if you rely on these
-packages, users may not be able to install your software unless they also install the
-required package manager first. Because of this, you can almost never go wrong by
-keeping things as simple as possible. At a bare minimum, make sure your code can be
-installed using a standard Python 3 installation. Additional features can be supported
-as an option if additional packages are available.
-
-
-Packaging and distribution of code involving C extensions can get considerably more
-complicated. Chapter 15 on C extensions has a few details on this. In particular, see
-Recipe 15.2.
-
+对于涉及到C扩展的代码打包与分发就更复杂点了。
+第15章对关于C扩展的这方面知识有一些详细讲解，特别是在15.2小节中。

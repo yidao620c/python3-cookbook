@@ -5,19 +5,16 @@
 ----------
 问题
 ----------
-You want to patch or apply decorators to functions in an existing module. However, you
-only want to do it if the module actually gets imported and used elsewhere.
+你想给某个已存在模块中的函数添加装饰器。
+不过，前提是这个模块已经被导入并且被使用过。
 
 ----------
 解决方案
 ----------
-The essential problem here is that you would like to carry out actions in response to a
-module being loaded. Perhaps you want to trigger some kind of callback function that
-would notify you when a module was loaded.
+这里问题的本质就是你想在模块被加载时执行某个动作。
+可能是你想在一个模块被加载时触发某个回调函数来通知你。
 
-
-This problem can be solved using the same import hook machinery discussed in
-Recipe 10.11. Here is a possible solution:
+这个问题可以使用10.11小节中同样的导入钩子机制来实现。下面是一个可能的方案：
 
 .. code-block:: python
 
@@ -61,7 +58,7 @@ Recipe 10.11. Here is a possible solution:
 
     sys.meta_path.insert(0, PostImportFinder())
 
-To use this code, you use the when_imported() decorator. For example:
+这样，你就可以使用 ``when_imported()`` 装饰器了，例如：
 
 .. code-block:: python
 
@@ -75,8 +72,7 @@ To use this code, you use the when_imported() decorator. For example:
     Threads? Are you crazy?
     >>>
 
-As a more practical example, maybe you want to apply decorators to existing definitions,
-such as shown here:
+作为一个更实际的例子，你可能想在已存在的定义上面添加装饰器，如下所示：
 
 .. code-block:: python
 
@@ -99,53 +95,30 @@ such as shown here:
 ----------
 讨论
 ----------
-This recipe relies on the import hooks that were discussed in Recipe 10.11, with a slight
-twist.
+本节技术依赖于10.11小节中讲述过的导入钩子，并稍作修改。
+
+``@when_imported`` 装饰器的作用是注册在导入时被激活的处理器函数。
+该装饰器检查sys.modules来查看模块是否真的已经被加载了。
+如果是的话，该处理器被立即调用。不然，处理器被添加到 ``_post_import_hooks`` 字典中的一个列表中去。
+``_post_import_hooks`` 的作用就是收集所有的为每个模块注册的处理器对象。
+一个模块可以注册多个处理器。
+
+要让模块导入后触发添加的动作，``PostImportFinder`` 类被设置为sys.meta_path第一个元素。
+它会捕获所有模块导入操作。
+
+本节中的 ``PostImportFinder`` 的作用并不是加载模块，而是自带导入完成后触发相应的动作。
+实际的导入被委派给位于sys.meta_path中的其他查找器。
+``PostImportLoader`` 类中的 ``imp.import_module()`` 函数被递归的调用。
+为了避免陷入无线循环，``PostImportFinder`` 保持了一个所有被加载过的模块集合。
+如果一个模块名存在就会直接被忽略掉。
+
+当一个模块被 ``imp.import_module()`` 加载后，
+所有在_post_import_hooks被注册的处理器被调用，使用新加载模块作为一个参数。
+
+有一点需要注意的是本机不适用于那些通过 ``imp.reload()`` 被显式加载的模块。
+也就是说，如果你加载一个之前已被加载过的模块，那么导入处理器将不会再被触发。
+另外，要是你从sys.modules中删除模块然后再重新导入，处理器又会再一次触发。
+
+更多关于导入后钩子信息请参考 `PEP 369 <https://www.python.org/dev/peps/pep-0369>`_.
 
 
-First, the role of the @when_imported decorator is to register handler functions that get
-triggered on import. The decorator checks sys.modules to see if a module was already
-loaded. If so, the handler is invoked immediately. Otherwise, the handler is added to a
-list in the _post_import_hooks dictionary. The purpose of _post_import_hooks is
-simply to collect all handler objects that have been registered for each module. In principle,
-more than one handler could be registered for a given module.
-
-
-To trigger the pending actions in _post_import_hooks after module import, the Post
-ImportFinder class is installed as the first item in sys.meta_path. If you recall from
-Recipe 10.11, sys.meta_path contains a list of finder objects that are consulted in order
-to locate modules. By installing PostImportFinder as the first item, it captures all module
-imports.
-
-
-In this recipe, however, the role of PostImportFinder is not to load modules, but to
-trigger actions upon the completion of an import. To do this, the actual import is delegated
-to the other finders on sys.meta_path. Rather than trying to do this directly, the
-function imp.import_module() is called recursively in the PostImportLoader class. To
-avoid getting stuck in an infinite loop, PostImportFinder keeps a set of all the modules
-that are currently in the process of being loaded. If a module name is part of this set, it
-is simply ignored by PostImportFinder. This is what causes the import request to pass
-to the other finders on sys.meta_path.
-
-After a module has been loaded with imp.import_module(), all handlers currently registered
-in _post_import_hooks are called with the newly loaded module as an argument.
-
-
-From this point forward, the handlers are free to do what they want with the module.
-A major feature of the approach shown in this recipe is that the patching of a module
-occurs in a seamless fashion, regardless of where or how a module of interest is actually
-loaded. You simply write a handler function that’s decorated with @when_imported()
-and it all just magically works from that point forward.
-
-
-One caution about this recipe is that it does not work for modules that have been explicitly
-reloaded using imp.reload(). That is, if you reload a previously loaded module,
-the post import handler function doesn’t get triggered again (all the more reason to not
-use reload() in production code). On the other hand, if you delete the module from
-sys.modules and redo the import, you’ll see the handler trigger again.
-
-
-More information about post-import hooks can be found in PEP 369 . As of this writing,
-the PEP has been withdrawn by the author due to it being out of date with the current
-implementation of the importlib module. However, it is easy enough to implement
-your own solution using this recipe.

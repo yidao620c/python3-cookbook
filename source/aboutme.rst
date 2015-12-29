@@ -10,13 +10,6 @@
 * GitHub：  https://github.com/yidao620c
 
 
-::
-
-    ---
-    Neng Xiong
-    WHU, Mathematical and Statistical Institute
-    Mobile (0086)18520022428
-
 |
 
 *项目主页*

@@ -78,7 +78,7 @@ https://github.com/yidao620c/python3-cookbook
 你都可以随时拿过去在你的源码和文档中使用。你不需要向我们申请许可，
 除非你抄袭的太过分了。比如说复制几个代码片段去完成一个程序是不需要许可的，
 贩卖或者分发实例代码的光盘也不需要许可，引用本书和实例代码去网上回答一个问题也不需要许可。
-但是，合并大量的代码带你的正式产品或文档中去必须得到我们的许可。
+但是，合并大量的代码到你的正式产品或文档中去必须得到我们的许可。
 
 我们不会要求你添加代码的出处，包括标题，作者，出版社，ISBN。
 比如：Python Cookbook, 3rd edition, by David Beazley and Brian K. Jones (O’Reilly).
@@ -114,7 +114,7 @@ Copyright 2013 David Beazley and Brian Jones, 978-1-449-34037-7.
 ----------------------------------
 感谢
 ----------------------------------
-我们由衷的感谢本书的技术审核者Jake Vanderplas, Robert Kern 和 Andrea Crotti的非常有有用的评论和建议，
+我们由衷的感谢本书的技术审核者Jake Vanderplas, Robert Kern 和 Andrea Crotti的非常有用的评论和建议，
 还有Python社区的帮助和鼓励。我们还想感谢上一个版本的编辑Jake Vanderplas, Robert Kern,and Andrea Crotti。
 尽管这个版本是最新的，但是前一个版本已经提供了一个感兴趣主题和解决方案的框架。
 最后，最最重要的就是，我们要感谢所有预览版本的读者，他们的评论和改进意见对本书很有帮助。

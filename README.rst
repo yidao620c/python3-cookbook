@@ -4,11 +4,13 @@
 
 -------------------------------------------------------------
 
-《Python Cookbook》3rd 中文版1.0.0正式发布啦 ^_^！ ——2015/12/19
+《Python Cookbook》3rd 中文版1.0.0正式发布啦 ^_^！ ——2015/12/29
 
 * 在线预览地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
 
-* PDF下载地址： http://pan.baidu.com/s/1bok0W6j
+* 中文简体版PDF下载地址： http://pan.baidu.com/s/1bok0W6j
+
+* 中文繁体版PDF下载地址： http://pan.baidu.com/s/1eRjFDaM
 
 --------------------------------------------------------------
 

@@ -216,7 +216,7 @@
 
     value = yield node.left
 
-它会将 ``node.left`` 返回给 ``visti()`` 方法，然后 ``visti()`` 方法调用那个节点相应的 ``vist_Name()`` 方法。
+它会将 ``node.left`` 返回给 ``visit()`` 方法，然后 ``visit()`` 方法调用那个节点相应的 ``visit_Name()`` 方法。
 yield暂时将程序控制器让出给调用者，当执行完后，结果会赋值给value，
 
 看完这一小节，你也许想去寻找其它没有yield语句的方案。但是这么做没有必要，你必须处理很多棘手的问题。

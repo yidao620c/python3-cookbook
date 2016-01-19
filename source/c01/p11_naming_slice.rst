@@ -52,16 +52,16 @@
     >>> items
     [0, 1, 4, 5, 6]
 
-如果你有一个切片对象s，你可以分别调用它的 ``s.start`` , ``s.stop`` , ``s.step`` 属性来获取更多的信息。比如：
+如果你有一个切片对象a，你可以分别调用它的 ``a.start`` , ``a.stop`` , ``a.step`` 属性来获取更多的信息。比如：
 
 .. code-block:: python
 
-    >>> s = slice(5, 50, 2)
-    >>> s.start
+    >>> a = slice(5, 50, 2)
+    >>> a.start
     5
-    >>> s.stop
+    >>> a.stop
     50
-    >>> s.step
+    >>> a.step
     2
     >>>
 

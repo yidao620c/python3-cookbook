@@ -36,5 +36,39 @@ def for_demo():
     print("ddd", "dafdf", "ccc")
 
 
+def odd():
+    print('step 1')
+    yield 1
+    print('step 2')
+    yield(3)
+    print('step 3')
+    yield(5)
+
+
+def triangles():
+    """杨辉三角"""
+    num, lstpre = 1, [1]
+    yield lstpre
+    while True:
+        num += 1
+        lst = [1] + [lstpre[i] + lstpre[i + 1] for i in range(0, num - 2)] + [1]
+        yield lst
+        lstpre = lst
+
+
+def normalize(name):
+    return "".join([s.upper() if i == 0 else s.lower() for i,s in enumerate(name)])
+
+
+def word_to_name(lst):
+    return list(map(normalize, lst))
+
+from enum import Enum
+
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+
 if __name__ == '__main__':
-    print(fibonacci.__doc__)
+    # print(word_to_name(['abc', 'aERTadd', 'EEEEFFF']))
+    for name, member in Month.__members__.items():
+        print(name, '=>', member, ',', member.value)

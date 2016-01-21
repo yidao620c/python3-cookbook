@@ -11,9 +11,5 @@ Copyright
 | Copyright © 2013 David Beazley and Brian Jones. All rights reserved.
 
 |
-|
 
-更多发布信息请参考 http://oreilly.com/catalog/errata.csp?isbn=9781449340377
-
-|
-|
+| 更多发布信息请参考 http://oreilly.com/catalog/errata.csp?isbn=9781449340377

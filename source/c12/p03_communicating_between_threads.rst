@@ -15,6 +15,7 @@
 例如：
 
 .. code-block:: python
+
    from queue import Queue
    from threading import Thread
 
@@ -103,7 +104,7 @@
 使用队列来进行线程间通信是一个单向、不确定的过程。通常情况下，你没有办法知道接收数据的线程是什么时候接收到的数据并开始工作的。不过队列对象提供一些基本完成的特性，比如下边这个例子中的 ``task_done()`` 和 ``join()`` ：
 
 .. code-block:: python
-   
+
    from queue import Queue
    from threading import Thread
 
@@ -138,7 +139,7 @@
 如果一个线程需要在一个“消费者”线程处理完特定的数据项时立即得到通知，你可以把要发送的数据和一个 ``Event`` 放到一起使用，这样“生产者”就可以通过这个Event对象来监测处理的过程了。示例如下：
 
 .. code-block:: python
-   
+
    from queue import Queue
    from threading import Thread, Event
 
@@ -171,7 +172,7 @@
 使用线程队列有一个要注意的问题是，向队列中添加数据项时并不会复制此数据项，线程间通信实际上是在线程间传递对象引用。如果你担心对象的共享状态，那你最好只传递不可修改的数据结构（如：整型、字符串或者元组）或者一个对象的深拷贝。例如：
 
 .. code-block:: python
-   
+
    from queue import Queue
    from threading import Thread
    import copy
@@ -216,7 +217,7 @@
 这些操作都可以用来避免当执行某些特定队列操作时发生无限阻塞的情况，比如，一个非阻塞的 ``put()`` 方法和一个固定大小的队列一起使用，这样当队列已满时就可以执行不同的代码。比如输出一条日志信息并丢弃。
 
 .. code-block:: python
-   
+
    def producer(q):
        ...
        try:
@@ -227,7 +228,7 @@
 如果你试图让消费者线程在执行像 ``q.get()`` 这样的操作时，超时自动终止以便检查终止标志，你应该使用 ``q.get()`` 的可选参数 ``timeout`` ，如下：
 
 .. code-block:: python
-   
+
    _running = True
 
    def consumer(q):

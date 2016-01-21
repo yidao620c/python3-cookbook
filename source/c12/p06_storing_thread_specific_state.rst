@@ -46,7 +46,7 @@
 其他方法操作被存储为 ``self.local.sock`` 的套接字对象。
 有了这些就可以在多线程中安全的使用 ``LazyConnection`` 实例了。例如：
 
-::
+.. code-block:: python
 
     from functools import partial
     def test(conn):

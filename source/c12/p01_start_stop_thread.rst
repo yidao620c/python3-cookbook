@@ -31,7 +31,7 @@
 当你创建好一个线程对象后，该对象并不会立即执行，除非你调用它的 ``start()`` 方法（当你调用 ``start()`` 方法时，它会调用你传递进来的函数，并把你传递进来的参数传递给该函数）。Python中的线程会在一个单独的系统级线程中执行（比如说一个 POSIX 线程或者一个 Windows 线程），这些线程将由操作系统来全权管理。线程一旦启动，将独立执行直到目标函数返回。你可以查询一个线程对象的状态，看它是否还在执行：
 
 .. code-block:: python
-   
+
    if t.is_alive():
        print('Still running')
    else:
@@ -47,7 +47,7 @@ Python解释器在所有线程都终止后才继续执行代码剩余的部分�
 例如：
 
 .. code-block:: python
-   
+
    t = Thread(target=countdown, args=(10,), daemon=True)
    t.start()
 
@@ -79,7 +79,7 @@ Python解释器在所有线程都终止后才继续执行代码剩余的部分�
 例子如下：
 
 .. code-block:: python
-   
+
    class IOTask:
        def terminate(self):
            self._running = False
@@ -106,7 +106,7 @@ Python解释器在所有线程都终止后才继续执行代码剩余的部分�
 有时你会看到下边这种通过继承 ``Thread`` 类来实现的线程：
 
 .. code-block:: python
-   
+
    from threading import Thread
 
    class CountdownThread(Thread):
@@ -126,7 +126,7 @@ Python解释器在所有线程都终止后才继续执行代码剩余的部分�
 尽管这样也可以工作，但这使得你的代码依赖于 ``threading`` 库，所以你的这些代码只能在线程上下文中使用。上文所写的那些代码、函数都是与 ``threading`` 库无关的，这样就使得这些代码可以被用在其他的上下文中，可能与线程有关，也可能与线程无关。比如，你可以通过 ``multiprocessing`` 模块在一个单独的进程中执行你的代码：
 
 .. code-block:: python
-   
+
    import multiprocessing
    c = CountdownTask(5)
    p = multiprocessing.Process(target=c.run)

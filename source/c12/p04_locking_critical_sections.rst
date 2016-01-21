@@ -48,7 +48,7 @@
 在一些“老的” Python 代码中，显式获取和释放锁是很常见的。下边是一个上一个例子的变种：
 
 .. code-block:: python
-   
+
    import threading
 
    class SharedCounter:

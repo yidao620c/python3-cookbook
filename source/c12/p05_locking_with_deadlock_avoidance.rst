@@ -16,6 +16,7 @@
 是非常容易实现的，示例如下：
 
 .. code-block:: python
+
    import threading
    from contextlib import contextmanager
 
@@ -50,6 +51,7 @@
 示例如下：
 
 .. code-block:: python
+
    import threading
    x_lock = threading.Lock()
    y_lock = threading.Lock()
@@ -78,6 +80,7 @@
 假设你的代码是这样写的：
 
 .. code-block:: python
+
    import threading
    x_lock = threading.Lock()
    y_lock = threading.Lock()
@@ -106,6 +109,7 @@
 如果你运行这个版本的代码，必定会有一个线程发生崩溃，异常信息可能像这样：
 
 .. code-block:: python
+
    Exception in thread Thread-1:
    Traceback (most recent call last):
      File "/usr/local/lib/python3.3/threading.py", line 639, in _bootstrap_inner
@@ -145,6 +149,7 @@
 下面是一个简单的使用死锁避免机制解决“哲学家就餐问题”的实现：
 
 .. code-block:: python
+
    import threading
 
    # The philosopher thread

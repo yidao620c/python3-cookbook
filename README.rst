@@ -4,9 +4,9 @@
 
 -------------------------------------------------------------
 
-《Python Cookbook》3rd 中文版1.0.0正式发布啦 ^_^！ ——2015/12/29
+《Python Cookbook》3rd 中文版1.0.2正式发布啦 ^_^！ ——2016/01/29
 
-* 在线预览地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
+* 在线阅读地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
 
 * 中文简体版PDF下载地址： http://pan.baidu.com/s/1jGMF1Sq
 
@@ -117,3 +117,4 @@ See the License for the specific language governing permissions and limitations 
 .. _sphinx-rtd-theme: https://github.com/snide/sphinx_rtd_theme
 .. _reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _python3-cookbook: http://python3-cookbook.readthedocs.org/zh_CN/latest/
+

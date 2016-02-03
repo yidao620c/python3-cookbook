@@ -8,9 +8,9 @@
 
 * 在线阅读地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
 
-* 中文简体版PDF下载地址： http://pan.baidu.com/s/1jGMF1Sq
+* 中文简体版PDF下载地址： http://pan.baidu.com/s/1eRe3Yee
 
-* 中文繁体版PDF下载地址： http://pan.baidu.com/s/1eRnmdoQ
+* 中文繁体版PDF下载地址： http://pan.baidu.com/s/1nurMT0t
 
 -------------------------------------------------------------
 

@@ -127,8 +127,8 @@
 
 .. code-block:: python
 
-    PRINT = r'(P<PRINT>print)'
-    NAME = r'(P<NAME>[a-zA-Z_][a-zA-Z_0-9]*)'
+    PRINT = r'(?P<PRINT>print)'
+    NAME = r'(?P<NAME>[a-zA-Z_][a-zA-Z_0-9]*)'
 
     master_pat = re.compile('|'.join([PRINT, NAME]))
 

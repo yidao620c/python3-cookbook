@@ -19,11 +19,11 @@ http://pyvideo.org
    
 http://code.activestate.com/recipes/langs/python
    
-长期以来，ActiveState的Python版块已经成为一个找到数以千计的针对特定编程问题的解决方案。到写作此书位置，已经包含了大约300个特定于Python3的秘籍。你回发现，其中多数的秘籍要么对本书覆盖的话题进行了扩展，要么专精于具体的任务。所以说，它是一个好伴侣。
+长期以来，ActiveState的Python版块已经成为一个找到数以千计的针对特定编程问题的解决方案。到写作此书位置，已经包含了大约300个特定于Python3的秘籍。你会发现，其中多数的秘籍要么对本书覆盖的话题进行了扩展，要么专精于具体的任务。所以说，它是一个好伴侣。
    
 http://stackoverflow.com/questions/tagged/python
    
-Stack Overflow 木器啊有超过175，000个问题呗标记为Python相关（而其中大约5000个问题是针对Python 3的）。尽管问题和回答的质量不同，但是任仍然能发现很多好优秀的素材。
+Stack Overflow 木器啊有超过175,000个问题被标记为Python相关（而其中大约5000个问题是针对Python 3的）。尽管问题和回答的质量不同，但是仍然能发现很多好优秀的素材。
 
 -------------------
 Python学习书籍

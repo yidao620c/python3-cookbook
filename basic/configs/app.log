@@ -1,5 +1,0 @@
-127.0.0.1 - frank [10/Oct/2000:12:55:36 -0700] "GET /apache_pa.gif HTTP/1.0" 200 2222 "http://www.winhong.com/" "MOzilla/4.08 [en](Win98; I ;Nav)"
-127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 3333 "http://www.winhong.com/" "MOzilla/4.08 [en](Win98; I ;Nav)"
-127.0.0.1 - frank [10/Oct/2000:14:55:36 -0700] "GET /apache_pc.gif HTTP/1.0" 200 4444 "http://www.winhong.com/" "MOzilla/4.08 [en](Win98; I ;Nav)"
-127.0.0.1 - Jim [10/Oct/2000:14:33:36 -0700] "GET /apache_pc.gif HTTP/1.0" 200 4444 "http://www.winhong.com/" "MOzilla/4.08 [en](Win98; I ;Nav)"
-127.0.0.1 - Tom [10/Oct/2000:18:33:36 -0700] "GET /apache_pc.gif HTTP/1.0" 203 6789 "http://www.winhong.com/" "MOzilla/4.08 [en](Win98; I ;Nav)"

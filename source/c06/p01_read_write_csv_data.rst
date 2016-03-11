@@ -137,8 +137,7 @@
 
 .. code-block::
 
-    Street Address,Num-Premises,Latitude,Longitude
-    5412 N CLARK,10,41.980262,-87.668452
+    Street Address,Num-Premises,Latitude,Longitude 5412 N CLARK,10,41.980262,-87.668452
 
 这样最终会导致在创建一个命名元组时产生一个 ``ValueError`` 异常而失败。
 为了解决这问题，你可能不得不先去修正列标题。

@@ -47,7 +47,7 @@
     'UPPER SNAKE, lower snake, Mixed Snake'
     >>>
 
-译者注： ``matchcase('snake')`` 返回了一个回调函数(参数必须是 ``match`` 对象)，前面一节一节提到过，
+译者注： ``matchcase('snake')`` 返回了一个回调函数(参数必须是 ``match`` 对象)，前面一节提到过，
 ``sub()`` 函数除了接受替换字符串外，还能接受一个回调函数。
 
 ----------

@@ -114,15 +114,18 @@
     content_type = resp.headers['content-type']
     content_length = resp.headers['content-length']
 
-    Here is a requests example that executes a login into the Python Package index using
-    basic authentication:
+下面是一个利用requests通过基本认证登录Pypi的例子：
+
+.. code-block:: python
+
     import requests
 
     resp = requests.get('http://pypi.python.org/pypi?:action=login',
                         auth=('user','password'))
 
-    Here is an example of using requests to pass HTTP cookies from one request to the
-    next:
+下面是一个利用requests将HTTP cookies从一个请求传递到另一个的例子：
+
+.. code-block:: python
 
     import requests
 
@@ -133,7 +136,9 @@
     # Second requests with cookies received on first requests
     resp2 = requests.get(url, cookies=resp1.cookies)
 
-    Last, but not least, here is an example of using requests to upload content:
+最后但并非最不重要的一个例子是用requests上传内容：
+
+.. code-block:: python
 
     import requests
     url = 'http://httpbin.org/post'

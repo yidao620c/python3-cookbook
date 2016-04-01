@@ -135,7 +135,7 @@
 如果你正在读取CSV数据并将它们转换为命名元组，需要注意对列名进行合法性认证。
 例如，一个CSV格式文件有一个包含非法标识符的列头行，类似下面这样：
 
-.. code-block::
+.. code-block:: text
 
     Street Address,Num-Premises,Latitude,Longitude 5412 N CLARK,10,41.980262,-87.668452
 

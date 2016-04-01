@@ -12,7 +12,7 @@
 ----------
 考虑下面这个使用了命名空间的文档：
 
-.. code-block::
+.. code-block:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
     <top>

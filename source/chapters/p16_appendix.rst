@@ -23,7 +23,7 @@ http://code.activestate.com/recipes/langs/python
    
 http://stackoverflow.com/questions/tagged/python
    
-Stack Overflow 木器啊有超过175,000个问题被标记为Python相关（而其中大约5000个问题是针对Python 3的）。尽管问题和回答的质量不同，但是仍然能发现很多好优秀的素材。
+Stack Overflow 目前有超过175,000个问题被标记为Python相关（而其中大约5000个问题是针对Python 3的）。尽管问题和回答的质量不同，但是仍然能发现很多好优秀的素材。
 
 -------------------
 Python学习书籍

@@ -55,13 +55,13 @@
     >>> print(a / b)
     0.7647058823529411764705882353
     >>> with localcontext() as ctx:
-    ... ctx.prec = 3
-    ... print(a / b)
+    ...     ctx.prec = 3
+    ...     print(a / b)
     ...
     0.765
     >>> with localcontext() as ctx:
-    ... ctx.prec = 50
-    ... print(a / b)
+    ...     ctx.prec = 50
+    ...     print(a / b)
     ...
     0.76470588235294117647058823529411764705882352941176
     >>>

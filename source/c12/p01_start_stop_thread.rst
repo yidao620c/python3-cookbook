@@ -69,11 +69,11 @@ Python解释器直到所有线程都终止前仍保持运行。对于需要长�
                n -= 1
                time.sleep(5)
 
-       c = CountdownTask()
-       t = Thread(target=c.run, args=(10,))
-       t.start()
-       c.terminate() # Signal termination
-       t.join()      # Wait for actual termination (if needed)
+   c = CountdownTask()
+   t = Thread(target=c.run, args=(10,))
+   t.start()
+   c.terminate() # Signal termination
+   t.join()      # Wait for actual termination (if needed)
 
 如果线程执行一些像I/O这样的阻塞操作，那么通过轮询来终止线程将使得线程之间的协调变得非常棘手。比如，如果一个线程一直阻塞在一个I/O操作上，它就永远无法返回，也就无法检查自己是否已经被结束了。要正确处理这些问题，你需要利用超时循环来小心操作线程。
 例子如下：

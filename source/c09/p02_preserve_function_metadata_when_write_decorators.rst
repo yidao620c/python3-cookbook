@@ -34,7 +34,7 @@
 .. code-block:: python
 
     >>> @timethis
-    ... def countdown(n:int):
+    ... def countdown(n):
     ...     '''
     ...     Counts down
     ...     '''

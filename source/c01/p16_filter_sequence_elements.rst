@@ -113,7 +113,7 @@
     >>> list(compress(addresses, more5))
     ['5800 E 58TH', '4801 N BROADWAY', '1039 W GRANVILLE']
     >>>
-这里的关键点在于先创建一个 ``Boolean`` 序列，指示哪些元素复合条件。
+这里的关键点在于先创建一个 ``Boolean`` 序列，指示哪些元素符合条件。
 然后 ``compress()`` 函数根据这个序列去选择输出对应位置为 ``True`` 的元素。
 
 和 ``filter()`` 函数类似， ``compress()`` 也是返回的一个迭代器。因此，如果你需要得到一个列表，

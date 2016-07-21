@@ -58,7 +58,7 @@
     'python is awesome\n'
     >>>
 
-上面例子中，通过使用 ``dict.fromkeys()`` 方法构造一个字典，每个Unicode和音符作为键，对于的值全部为 ``None`` 。
+上面例子中，通过使用 ``dict.fromkeys()`` 方法构造一个字典，每个Unicode和音符作为键，对应的值全部为 ``None`` 。
 
 然后使用 ``unicodedata.normalize()`` 将原始输入标准化为分解形式字符。
 然后再调用 ``translate`` 函数删除所有重音符。

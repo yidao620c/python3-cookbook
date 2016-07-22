@@ -90,7 +90,7 @@
     AttributeError: can't set attribute
     >>>
 
-如果你真的需要改变然后的属性，那么可以使用命名元组实例的 ``_replace()`` 方法，
+如果你真的需要改变属性的值，那么可以使用命名元组实例的 ``_replace()`` 方法，
 它会创建一个全新的命名元组并将对应的字段用新的值取代。比如：
 
 .. code-block:: python

@@ -52,10 +52,10 @@
 .. code-block:: python
 
     def compute_cost(records):
-    total = 0.0
-    for rec in records:
-        total += rec[1] * rec[2]
-    return total
+        total = 0.0
+        for rec in records:
+            total += rec[1] * rec[2]
+        return total
 
 下标操作通常会让代码表意不清晰，并且非常依赖记录的结构。
 下面是使用命名元组的版本：

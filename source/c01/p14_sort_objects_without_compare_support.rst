@@ -55,8 +55,8 @@
 
 .. code-block:: python
 
-    >>> min(users, key=attrgetter('user_id')
+    >>> min(users, key=attrgetter('user_id'))
     User(3)
-    >>> max(users, key=attrgetter('user_id')
+    >>> max(users, key=attrgetter('user_id'))
     User(99)
     >>>

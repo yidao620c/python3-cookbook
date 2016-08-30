@@ -94,7 +94,7 @@
         '5412 N CLARK',
         '5148 N CLARK',
         '5800 E 58TH',
-        '2122 N CLARK'
+        '2122 N CLARK',
         '5645 N RAVENSWOOD',
         '1060 W ADDISON',
         '4801 N BROADWAY',
@@ -111,7 +111,7 @@
     >>> more5
     [False, False, True, False, False, True, True, False]
     >>> list(compress(addresses, more5))
-    ['5800 E 58TH', '4801 N BROADWAY', '1039 W GRANVILLE']
+    ['5800 E 58TH', '1060 W ADDISON', '4801 N BROADWAY']
     >>>
 这里的关键点在于先创建一个 ``Boolean`` 序列，指示哪些元素符合条件。
 然后 ``compress()`` 函数根据这个序列去选择输出对应位置为 ``True`` 的元素。

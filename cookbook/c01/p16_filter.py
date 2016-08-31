@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """
 Topic: 序列元素过滤
-Desc : 
+Desc :
 """
 from itertools import compress
 
@@ -37,7 +37,7 @@ def cb_filter():
         '5412 N CLARK',
         '5148 N CLARK',
         '5800 E 58TH',
-        '2122 N CLARK'
+        '2122 N CLARK',
         '5645 N RAVENSWOOD',
         '1060 W ADDISON',
         '4801 N BROADWAY',

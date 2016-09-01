@@ -16,15 +16,15 @@
 .. code-block:: python
 
     from collections import OrderedDict
-    def ordered_dict():
-        d = OrderedDict()
-        d['foo'] = 1
-        d['bar'] = 2
-        d['spam'] = 3
-        d['grok'] = 4
-        # Outputs "foo 1", "bar 2", "spam 3", "grok 4"
-        for key in d:
-            print(key, d[key])
+
+    d = OrderedDict()
+    d['foo'] = 1
+    d['bar'] = 2
+    d['spam'] = 3
+    d['grok'] = 4
+    # Outputs "foo 1", "bar 2", "spam 3", "grok 4"
+    for key in d:
+        print(key, d[key])
 
 当你想要构建一个将来需要序列化或编码成其他格式的映射的时候， ``OrderedDict`` 是非常有用的。
 比如，你想精确控制以JSON编码后字段的顺序，你可以先使用 ``OrderedDict`` 来构建这样的数据：

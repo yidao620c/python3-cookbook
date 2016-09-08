@@ -12,7 +12,7 @@
 
 这里是我们将在大部分秘籍中工作的代码：
 
-::
+.. code-block:: c
 
     /* sample.c */_method
     #include <math.h>

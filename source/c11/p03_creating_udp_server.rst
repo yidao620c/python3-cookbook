@@ -73,7 +73,7 @@ UDP通常被用在那些对于可靠传输要求不是很高的场合。例如�
         serv = ThreadingUDPServer(('',20000), TimeHandler)
         serv.serve_forever()
 
-直接使用 ``socket`` 来是想一个UDP服务器也不难，下面是一个例子：
+直接使用 ``socket`` 来实现一个UDP服务器也不难，下面是一个例子：
 
 .. code-block:: python
 

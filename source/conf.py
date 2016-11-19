@@ -90,7 +90,7 @@ latex_elements={# The paper size ('letterpaper' or 'a4paper').
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'python3-cookbook.tex', u'《Python Cookbook》第三版',
-   u'熊能', 'manual'),
+   u'熊能', 'howto'),
 ]
 
 # -- Options for manual page output ---------------------------------------

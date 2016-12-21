@@ -16,9 +16,8 @@ def reader(s, size):
 
 
 def reader2(s, size):
-    for chunk in iter(lambda: s.recv(size), b''):
-        pass
-        # process_data(data)
+    for data in iter(lambda: s.recv(size), b''):
+        process_data(data)
 
 
 def iterate_while():

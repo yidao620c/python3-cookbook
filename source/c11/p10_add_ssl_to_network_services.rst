@@ -87,7 +87,7 @@
         '''
         def __init__(self, *args,
                      keyfile=None, certfile=None, ca_certs=None,
-                     cert_reqs=ssl.NONE,
+                     cert_reqs=ssl.CERT_NONE,
                      **kwargs):
             self._keyfile = keyfile
             self._certfile = certfile
@@ -156,7 +156,7 @@
         CERTFILE='server_cert.pem'  # Server certificate
         kvserv = KeyValueServer(('', 15000),
                                 keyfile=KEYFILE,
-                                certfile=CERTFILE),
+                                certfile=CERTFILE)
         kvserv.serve_forever()
 
 使用这个服务器时，你可以使用普通的 ``xmlrpc.client`` 模块来连接它。
@@ -193,7 +193,7 @@
             SafeTransport.__init__(self)
             self._ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
             self._ssl_context.load_verify_locations(cafile)
-            if cert:
+            if certfile:
                 self._ssl_context.load_cert_chain(certfile, keyfile)
             self._ssl_context.verify_mode = ssl.CERT_REQUIRED
 

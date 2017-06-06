@@ -20,8 +20,8 @@
     ...             int('N/A')
     ...     except ValueError as e:
     ...             raise RuntimeError('A parsing error occurred') from e
-    >>>
-    example()
+    ...
+    >>> example()
     Traceback (most recent call last):
       File "<stdin>", line 3, in example
     ValueError: invalid literal for int() with base 10: 'N/A'
@@ -36,7 +36,7 @@
     RuntimeError: A parsing error occurred
     >>>
 
-在回溯中科院看到，两个异常都被捕获。
+在回溯中可以看到，两个异常都被捕获。
 要想捕获这样的异常，你可以使用一个简单的 ``except`` 语句。
 不过，你还可以通过查看异常对象的 ``__cause__`` 属性来跟踪异常链。例如：
 
@@ -87,7 +87,8 @@
     ...     try:
     ...             int('N/A')
     ...     except ValueError:
-    ...             raise RuntimeError('A parsing error occurred') from None...
+    ...             raise RuntimeError('A parsing error occurred') from None
+    ...
     >>>
     example3()
     Traceback (most recent call last):

@@ -54,7 +54,7 @@
 
     import sys
     from os.path import abspath, join, dirname
-    sys.path.insert(0, join(abspath(dirname('__file__')), 'src'))
+    sys.path.insert(0, join(abspath(dirname(__file__)), 'src'))
 
 这将src目录添加到path里，和执行插入步骤的代码在同一个目录里。
 

@@ -33,7 +33,7 @@
 ----------
 讨论
 ----------
-作为输入， ``Counter`` 对象可以接受任意的由可哈希(``hashable``)元素构成的序列对象。
+作为输入， ``Counter`` 对象可以接受任意的由可哈希（``hashable``）元素构成的序列对象。
 在底层实现上，一个 ``Counter`` 对象就是一个字典，将元素映射到它出现的次数上。比如：
 
 .. code-block:: python
@@ -50,7 +50,7 @@
 
     >>> morewords = ['why','are','you','not','looking','in','my','eyes']
     >>> for word in morewords:
-    ... word_counts[word] += 1
+    ...     word_counts[word] += 1
     ...
     >>> word_counts['eyes']
     9
@@ -90,4 +90,3 @@
 
 毫无疑问， ``Counter`` 对象在几乎所有需要制表或者计数数据的场合是非常有用的工具。
 在解决这类问题的时候你应该优先选择它，而不是手动的利用字典去实现。
-

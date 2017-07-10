@@ -30,7 +30,7 @@
         print(users)
         print(sorted(users, key=lambda u: u.user_id))
 
-另外一种方式是使用 ``operator.attrgetter()`` 来代替lambda函数：
+另外一种方式是使用 ``operator.attrgetter()`` 来代替 lambda 函数：
 
 .. code-block:: python
 
@@ -42,9 +42,9 @@
 ----------
 讨论
 ----------
-选择使用lambda函数或者是 ``attrgetter()`` 可能取决于个人喜好。
+选择使用 lambda 函数或者是 ``attrgetter()`` 可能取决于个人喜好。
 但是， ``attrgetter()`` 函数通常会运行的快点，并且还能同时允许多个字段进行比较。
-这个跟 ``operator.itemgetter()`` 函数作用于字典类型很类似(参考1.13小节)。
+这个跟 ``operator.itemgetter()`` 函数作用于字典类型很类似（参考1.13小节）。
 例如，如果 ``User`` 实例还有一个 ``first_name`` 和 ``last_name`` 属性，那么可以向下面这样排序：
 
 .. code-block:: python

@@ -5,7 +5,7 @@
 ----------------------------------
 项目主页
 ----------------------------------
-https://github.com/yidao620c/Python3-cookbook
+https://github.com/yidao620c/python3-cookbook
 
 ----------------------------------
 译者的话

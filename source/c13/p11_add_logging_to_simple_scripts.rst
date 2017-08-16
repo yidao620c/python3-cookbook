@@ -10,8 +10,6 @@
 ----------
 解决方案
 ----------
-The easiest way to add logging to simple programs is to use the logging module. For
-example:
 打印日志最简单方式是使用 ``logging`` 模块。例如：
 
 .. code-block:: python

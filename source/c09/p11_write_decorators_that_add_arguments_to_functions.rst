@@ -29,7 +29,7 @@
 
     >>> @optional_debug
     ... def spam(a,b,c):
-    ... print(a,b,c)
+    ...     print(a,b,c)
     ...
     >>> spam(1,2,3)
     1 2 3

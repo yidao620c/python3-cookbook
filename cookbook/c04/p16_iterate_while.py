@@ -7,6 +7,10 @@ Desc :
 import sys
 
 
+def process_data():
+    print(data)
+
+
 def reader(s, size):
     while True:
         data = s.recv(size)

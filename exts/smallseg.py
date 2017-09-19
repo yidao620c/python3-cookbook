@@ -86,7 +86,7 @@ class SEG(object):
                     elif mem2!=None:
                         delta = mem2[0]-i
                         if delta>=1:
-                            if (delta<5) and (re.search(ur"[\w\u2E80-\u9FFF]",t)!=None):
+                            if (delta<5) and (re.search(u"[\w\u2E80-\u9FFF]",t)!=None):
                                 pre = text[i-j]
                                 #print pre
                                 if not (pre in self.specialwords):

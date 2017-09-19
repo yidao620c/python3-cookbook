@@ -1,5 +1,6 @@
-
+import socket
 import time
+
 def countdown(n):
     while n > 0:
         print('T-minus', n)
@@ -12,10 +13,7 @@ t = Thread(target=countdown, args=(10,))
 t.start()
 
 
-if t.is_alive():
-    print('Still running')
-else:
-    print('Completed')
+print('Still running' if t.is_alive() else 'Completed')
 
 
 t.join()

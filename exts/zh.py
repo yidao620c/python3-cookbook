@@ -6,7 +6,7 @@ class SearchChinese(SearchLanguage):
     lang = 'zh'
 
     def init(self, options):
-        print "reading Chiniese dictionary"
+        print("reading Chiniese dictionary")
         self.seg = SEG() 
 
     def split(self, input):

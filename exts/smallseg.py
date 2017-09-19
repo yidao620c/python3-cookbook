@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import re
 import os
 import sys
+
+try:
+    xrange          # Python 2
+except NameError:
+    xrange = range  # Python 3
+
 class SEG(object):
     def __init__(self):
         _localDir=os.path.dirname(__file__)
         _curpath=os.path.normpath(os.path.join(os.getcwd(),_localDir))
         curpath=_curpath
         self.d = {}
-        print >> sys.stderr,"loading dict..."
+        print("loading dict...", file=sys.stderr)
         self.set([x.rstrip() for x in file(os.path.join(curpath,"main.dic")) ])
         self.specialwords= set([x.rstrip().decode('utf-8') for x in file(os.path.join(curpath,"suffix.dic"))])
-        print >> sys.stderr,'dict ok.'
+        print('dict ok.', file=sys.stderr)
     #set dictionary(a list)
     def set(self,keywords):
         p = self.d
@@ -33,8 +40,6 @@ class SEG(object):
                     q = p
                     k = char
                 p = p[char]
-        
-        pass
     
     def _binary_seg(self,s):
         ln = len(s)
@@ -47,7 +52,7 @@ class SEG(object):
         return R
     
     def _pro_unreg(self,piece):
-        #print piece
+        #print(piece)
         R = []
         tmp = re.sub(u"。|，|,|！|…|!|《|》|<|>|\"|'|:|：|？|\?|、|\||“|”|‘|’|；|—|（|）|·|\(|\)|　"," ",piece).split()
         ln1 = len(tmp)
@@ -77,7 +82,7 @@ class SEG(object):
         mem2 = None
         while i-j>0:
             t = text[i-j-1].lower()
-            #print i,j,t,mem
+            #print(i,j,t,mem)
             if not (t in p):
                 if (mem!=None) or (mem2!=None):
                     if mem!=None:
@@ -88,7 +93,7 @@ class SEG(object):
                         if delta>=1:
                             if (delta<5) and (re.search(u"[\w\u2E80-\u9FFF]",t)!=None):
                                 pre = text[i-j]
-                                #print pre
+                                #print(pre)
                                 if not (pre in self.specialwords):
                                     i,j,z,q = mem2
                                     del recognised[q:]
@@ -99,7 +104,7 @@ class SEG(object):
                         unreg_tmp = self._pro_unreg(text[i:z])
                         recognised.extend(unreg_tmp)
                     recognised.append(text[i-j:i])
-                    #print text[i-j:i],mem2
+                    #print(text[i-j:i],mem2)
                     i = i-j
                     z = i
                     j = 0
@@ -113,18 +118,18 @@ class SEG(object):
             if chr(11) in p:
                 if j<=2:
                     mem = i,j,z
-                    #print text[i-1]
+                    #print(text[i-1])
                     if (z-i<2) and (text[i-1] in self.specialwords) and ((mem2==None) or ((mem2!=None and mem2[0]-i>1))):
-                        #print text[i-1]
+                        #print(text[i-1])
                         mem = None
                         mem2 = i,j,z,len(recognised)
                         p = self.d
                         i -= 1
                         j = 0
                     continue
-                    #print mem
+                    #print(mem)
                 p = self.d
-                #print i,j,z,text[i:z]
+                #print(i,j,z,text[i:z])
                 if((i<ln) and (i<z)):
                     unreg_tmp = self._pro_unreg(text[i:z])
                     recognised.extend(unreg_tmp)
@@ -134,7 +139,7 @@ class SEG(object):
                 j = 0
                 mem = None
                 mem2 = None
-        #print mem
+        #print(mem)
         if mem!=None:
             i,j,z = mem
             recognised.extend(self._pro_unreg(text[i:z]))

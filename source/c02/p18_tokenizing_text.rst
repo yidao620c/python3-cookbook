@@ -22,7 +22,7 @@
 .. code-block:: python
 
     tokens = [('NAME', 'foo'), ('EQ','='), ('NUM', '23'), ('PLUS','+'),
-        ('NUM', '42'), ('TIMES', '*'), ('NUM', '10')]
+              ('NUM', '42'), ('TIMES', '*'), ('NUM', '10')]
 
 为了执行这样的切分，第一步就是像下面这样利用命名捕获组的正则表达式来定义所有可能的令牌，包括空格：
 
@@ -76,10 +76,10 @@
 .. code-block:: python
 
     def generate_tokens(pat, text):
-    Token = namedtuple('Token', ['type', 'value'])
-    scanner = pat.scanner(text)
-    for m in iter(scanner.match, None):
-        yield Token(m.lastgroup, m.group())
+        Token = namedtuple('Token', ['type', 'value'])
+        scanner = pat.scanner(text)
+        for m in iter(scanner.match, None):
+            yield Token(m.lastgroup, m.group())
 
     # Example use
     for tok in generate_tokens(master_pat, 'foo = 42'):
@@ -97,7 +97,7 @@
 .. code-block:: python
 
     tokens = (tok for tok in generate_tokens(master_pat, text)
-                if tok.type != 'WS')
+              if tok.type != 'WS')
     for tok in tokens:
         print(tok)
 

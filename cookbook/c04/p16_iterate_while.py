@@ -7,6 +7,10 @@ Desc :
 import sys
 
 
+def process_data():
+    print(data)
+
+
 def reader(s, size):
     while True:
         data = s.recv(size)
@@ -22,11 +26,10 @@ def reader2(s, size):
 
 def iterate_while():
     CHUNKSIZE = 8192
-    f = open('/etc/passwd')
-    for chunk in iter(lambda: f.read(10), ''):
-        n = sys.stdout.write(chunk)
+    with open('/etc/passwd') as f:
+        for chunk in iter(lambda: f.read(10), ''):
+            n = sys.stdout.write(chunk)
 
 
 if __name__ == '__main__':
     iterate_while()
-

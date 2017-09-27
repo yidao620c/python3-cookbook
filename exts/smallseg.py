@@ -16,8 +16,10 @@ class SEG(object):
         curpath=_curpath
         self.d = {}
         print("loading dict...", file=sys.stderr)
-        self.set([x.rstrip() for x in file(os.path.join(curpath,"main.dic")) ])
-        self.specialwords= set([x.rstrip().decode('utf-8') for x in file(os.path.join(curpath,"suffix.dic"))])
+        with open(os.path.join(curpath, "main.dic")) as in_file:
+            self.set([x.rstrip() for x in in_file])
+        with open(os.path.join(curpath,"suffix.dic")) as in_file:
+            self.specialwords= set([x.rstrip().decode('utf-8') for x in in_file])
         print('dict ok.', file=sys.stderr)
     #set dictionary(a list)
     def set(self,keywords):

@@ -48,7 +48,7 @@ heapq 模块有两个函数：``nlargest()`` 和 ``nsmallest()`` 可以完美解
     >>> import heapq
     >>> heap = list(nums)
     >>> heapq.heapify(heap)
-    >>> nums
+    >>> heap
     [-4, 2, 1, 23, 7, 2, 18, 23, 42, 37, 8]
     >>>
 

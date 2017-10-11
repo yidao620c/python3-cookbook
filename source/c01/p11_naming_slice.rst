@@ -75,7 +75,7 @@
     >>> a.indices(len(s))
     (5, 10, 2)
     >>> for i in range(*a.indices(len(s))):
-    ... print(s[i])
+    ...     print(s[i])
     ...
     W
     r

@@ -99,7 +99,7 @@
 ----------
 在子类中扩展一个property可能会引起很多不易察觉的问题，
 因为一个property其实是 ``getter``、``setter`` 和 ``deleter`` 方法的集合，而不是单个方法。
-因此，但你扩展一个property的时候，你需要先确定你是否要重新定义所有的方法还是说只修改其中某一个。
+因此，当你扩展一个property的时候，你需要先确定你是否要重新定义所有的方法还是说只修改其中某一个。
 
 在第一个例子中，所有的property方法都被重新定义。
 在每一个方法中，使用了 ``super()`` 来调用父类的实现。
@@ -135,7 +135,7 @@
 .. code-block:: python
 
     class SubPerson(Person):
-        @Person.getter
+        @Person.name.getter
         def name(self):
             print('Getting name')
             return super().name

@@ -154,7 +154,7 @@ Properties还是一种定义动态计算attribute的方法。
 
         @property
         def diameter(self):
-            return self.radius ** 2
+            return self.radius * 2
 
         @property
         def perimeter(self):

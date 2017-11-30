@@ -16,7 +16,7 @@ def combine(source, maxsize):
             yield ''.join(parts)
             parts = []
             size = 0
-        yield ' '.join(parts)
+    yield ''.join(parts)
 
 
 def sample():

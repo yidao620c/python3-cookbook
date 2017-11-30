@@ -40,7 +40,7 @@
 ----------
 定义模块的层次结构就像在文件系统上建立目录结构一样容易。
 文件__init__.py的目的是要包含不同运行级别的包的可选的初始化代码。
-举个例子，如果你执行了语句import graphics， 文件graphics/__init__.py将被导入,建立graphics命名空间的内容。像import graphics.format.jpg这样导入，文件graphics/__init__.py和文件graphics/graphics/formats/__init__.py将在文件graphics/formats/jpg.py导入之前导入。
+举个例子，如果你执行了语句import graphics， 文件graphics/__init__.py将被导入,建立graphics命名空间的内容。像import graphics.format.jpg这样导入，文件graphics/__init__.py和文件graphics/formats/__init__.py将在文件graphics/formats/jpg.py导入之前导入。
 
 
 绝大部分时候让__init__.py空着就好。但是有些情况下可能包含代码。

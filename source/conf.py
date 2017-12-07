@@ -44,16 +44,16 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'python3-cookbook'
-copyright = u'2015, 熊能'
+copyright = u'2017, 熊能'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '2.0'
+version = '3.0'
 # The full version, including alpha/beta/rc tags.
-release = '2.0.0'
+release = '3.0.0'
 
 exclude_patterns = []
 
@@ -67,11 +67,14 @@ htmlhelp_basename = 'python3-cookbook doc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
+# 注：在生成html的时候这句话要注释
+# latex_engine = 'xelatex'
+
 latex_elements={# The paper size ('letterpaper' or 'a4paper').
 'papersize':'a4paper',# The font size ('10pt', '11pt' or '12pt').
-'pointsize':'12pt','classoptions':',oneside','babel':'',#必須
-'inputenc':'',#必須
-'utf8extra':'',#必須
+'pointsize':'12pt','classoptions':',oneside','babel':'',#必须
+'inputenc':'',#必须
+'utf8extra':'',#必须
 # Additional stuff for the LaTeX preamble.
 'preamble': r"""
 \usepackage{xeCJK}

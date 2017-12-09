@@ -42,7 +42,7 @@
 
 目前已经正式完成了整本书的翻译工作，历时2年，不管怎样还是坚持下来了。现在共享给python社区。
 
-**捐助渠道已开通，如有意向请点击 `【微信二维码】 <https://github.com/yidao620c/python3-cookbook/blob/master/reward.jpg>`_ 捐赠。**
+**捐助渠道已开通，如有意向请点击 【微信二维码】_ 捐赠。**
 
 --------------------------------------------------------------
 
@@ -140,4 +140,5 @@ See the License for the specific language governing permissions and limitations 
 .. _sphinx-rtd-theme: https://github.com/snide/sphinx_rtd_theme
 .. _reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _python3-cookbook: http://python3-cookbook.readthedocs.org/zh_CN/latest/
+.. _【微信二维码】: https://github.com/yidao620c/python3-cookbook/blob/master/reward.jpg
 

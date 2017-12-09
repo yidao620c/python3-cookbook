@@ -8,14 +8,14 @@
 
 在线阅读地址： http://python3-cookbook.readthedocs.org/zh_CN/latest/
 
-* 中文简体版PDF下载地址： https://pan.baidu.com/s/1sl3av3f
-* 中文繁体版PDF下载地址： https://pan.baidu.com/s/1hsnJEpm
+* 中文简体版PDF下载地址： https://pan.baidu.com/s/1pL1cI9d
+* 中文繁体版PDF下载地址： https://pan.baidu.com/s/1qX97VJI
 
 -------------------------------------------------------------
 
 旧版本(2.0.0)下载
 
-《Python Cookbook》3rd 中文版2.0.0正式发布啦 ^_^！ ——2016/03/31
+《Python Cookbook》3rd 中文版2.0.0 ——2016/03/31
 
 * 中文简体版PDF下载地址： http://pan.baidu.com/s/1i4Jypff
 * 中文繁体版PDF下载地址： http://pan.baidu.com/s/1i5k2CjN
@@ -85,7 +85,8 @@
 
 https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html
 
-另外关于生成的PDF文件中会自动生成标题编号的问题，有热心网友也提出了解决方案，请参考issues108的解放方案：
+另外关于生成的PDF文件中会自动生成标题编号的问题，
+有热心网友 `CarlKing5019 <https://github.com/CarlKing5019>`_ 提出了解决方案，请参考issues108的解放方案：
 
 https://github.com/yidao620c/python3-cookbook/issues/108
 

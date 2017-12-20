@@ -49,7 +49,7 @@
 
 .. code-block:: python
 
-    d = {} # A regular dictionary
+    d = {} # 一个普通的字典
     d.setdefault('a', []).append(1)
     d.setdefault('a', []).append(2)
     d.setdefault('b', []).append(4)

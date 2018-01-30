@@ -30,9 +30,6 @@ Python学习书籍
 -------------------
 下面这些书籍提供了对Python编程的入门介绍，且重点放在了Python 3上。
 
-Beginning Python: From Novice to Professional, 2nd Edition, by Magnus Lie Het‐ land, Apress (2008).
-Programming in Python 3, 2nd Edition, by Mark Summerfield, Addison-Wesley (2010).
-
 * *Learning Python*，第四版 ，作者 Mark Lutz， O’Reilly & Associates 出版 (2009)。
 * *The Quick Python Book*，作者 Vernon Ceder， Manning 出版(2010)。
 * *Python Programming for the Absolute Beginner*，第三版，作者 Michael Dawson，Course Technology PTR 出版(2010).

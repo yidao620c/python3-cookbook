@@ -25,7 +25,7 @@
 
 .. code-block:: python
 
-    def mininum(*values, clip=None):
+    def minimum(*values, clip=None):
         m = min(values)
         if clip is not None:
             m = clip if clip > m else m

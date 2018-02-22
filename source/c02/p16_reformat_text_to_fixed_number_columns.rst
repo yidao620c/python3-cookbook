@@ -64,5 +64,5 @@
 参阅 `textwrap.TextWrapper文档`_ 获取更多内容。
 
 .. _textwrap.TextWrapper文档:
-    https://docs.python.org/3.3/library/textwrap.html#textwrap.TextWrapper
+    https://docs.python.org/3.6/library/textwrap.html#textwrap.TextWrapper
 

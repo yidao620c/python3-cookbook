@@ -16,7 +16,7 @@
 
 .. code-block:: python
 
-    >>> str_pat = re.compile(r'\"(.*)\"')
+    >>> str_pat = re.compile(r'"(.*)"')
     >>> text1 = 'Computer says "no."'
     >>> str_pat.findall(text1)
     ['no.']
@@ -33,7 +33,7 @@
 
 .. code-block:: python
 
-    >>> str_pat = re.compile(r'\"(.*?)\"')
+    >>> str_pat = re.compile(r'"(.*?)"')
     >>> str_pat.findall(text2)
     ['no.', 'yes.']
     >>>

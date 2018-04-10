@@ -34,9 +34,9 @@
     >>> buf = read_into_buffer('sample.bin')
     >>> buf
     bytearray(b'Hello World')
-    >>> buf[0:5] = b'Hallo'
+    >>> buf[0:5] = b'Hello'
     >>> buf
-    bytearray(b'Hallo World')
+    bytearray(b'Hello World')
     >>> with open('newsample.bin', 'wb') as f:
     ...     f.write(buf)
     ...

@@ -149,7 +149,7 @@
                 yield ''.join(parts)
                 parts = []
                 size = 0
-            yield ''.join(parts)
+        yield ''.join(parts)
 
     # 结合文件操作
     with open('filename', 'w') as f:

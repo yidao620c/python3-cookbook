@@ -26,7 +26,7 @@
 
     s = pickle.dumps(data)
 
-为了从字节流中恢复一个对象，使用 ``picle.load()`` 或 ``pickle.loads()`` 函数。比如：
+为了从字节流中恢复一个对象，使用 ``pickle.load()`` 或 ``pickle.loads()`` 函数。比如：
 
 .. code-block:: python
 

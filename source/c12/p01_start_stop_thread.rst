@@ -112,7 +112,7 @@ Python解释器直到所有线程都终止前仍保持运行。对于需要长�
    class CountdownThread(Thread):
        def __init__(self, n):
            super().__init__()
-           self.n = 0
+           self.n = n
        def run(self):
            while self.n > 0:
 

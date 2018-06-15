@@ -1,4 +1,10 @@
 
+[![GitHub issues](https://img.shields.io/github/issues/yidao620c/python3-cookbook.svg)](https://github.com/yidao620c/python3-cookbook/issues)
+[![License][licensesvg]][license]
+[![Github downloads](https://img.shields.io/github/downloads/yidao620c/python3-cookbook/total.svg)](https://github.com/yidao620c/python3-cookbook/releases/latest)
+[![GitHub release](https://img.shields.io/github/release/yidao620c/python3-cookbook.svg)](https://github.com/yidao620c/python3-cookbook/releases)
+
+
 # 《Python Cookbook》 3rd Edition 翻译 
 
 《Python Cookbook》3rd 中文版3.0.0正式发布啦 ^_^！ ——2017/12/07
@@ -74,10 +80,10 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 有网友提问怎样通过源码生成PDF文件，由于这个步骤介绍有点长，不适合放在README里面，
 我专门写了篇博客专门介绍怎样通过ReadtheDocs托管文档，怎样自己生成PDF文件，大家可以参考一下。
 
-https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html
+<https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>
 
-另外关于生成的PDF文件中会自动生成标题编号的问题，
-有热心网友 [CarlKing5019](https://github.com/CarlKing5019)提出了解决方案，请参考issues108的解放方案：
+另外关于生成的PDF文件中会自动生成标题编号的问题，有热心网友 [CarlKing5019](https://github.com/CarlKing5019)提出了解决方案，
+请参考issues108的解放方案：
 
 <https://github.com/yidao620c/python3-cookbook/issues/108>
 
@@ -102,12 +108,11 @@ Meanwhile you'd better follow the rules below
 * Follow common Python coding conventions
 * Add the following [license] in each source file
 
-
 ## License
 
 (The Apache License)
 
-Copyright (c) 2014-2015 [Xiong Neng](<https://www.xncoding.com/>) and other contributors
+Copyright (c) 2014-2018 [Xiong Neng](<https://www.xncoding.com/>) and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -118,3 +123,7 @@ Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 See the License for the specific language governing permissions and limitations under the License.
+
+
+[licensesvg]: https://img.shields.io/hexpm/l/plug.svg
+[license]: http://www.apache.org/licenses/LICENSE-2.0

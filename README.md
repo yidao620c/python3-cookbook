@@ -16,15 +16,6 @@
 * 中文简体版PDF下载地址：<https://pan.baidu.com/s/1pL1cI9d>
 * 中文繁体版PDF下载地址：<https://pan.baidu.com/s/1qX97VJI>
 
--------------------------------------------------------------
-
-旧版本(2.0.0)下载
-
-《Python Cookbook》3rd 中文版2.0.0 ——2016/03/31
-
-* 中文简体版PDF下载地址：<http://pan.baidu.com/s/1i4Jypff>
-* 中文繁体版PDF下载地址：<http://pan.baidu.com/s/1i5k2CjN>
-
 
 ## 译者的话
 
@@ -83,7 +74,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 <https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>
 
 另外关于生成的PDF文件中会自动生成标题编号的问题，有热心网友 [CarlKing5019](https://github.com/CarlKing5019)提出了解决方案，
-请参考issues108的解放方案：
+请参考issues108：
 
 <https://github.com/yidao620c/python3-cookbook/issues/108>
 

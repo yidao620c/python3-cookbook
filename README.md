@@ -60,9 +60,20 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 
 ## 其他贡献者
 
+排名不分先后：
+
+1. Yu Longjun (https://github.com/yulongjun)
+1. tylinux (https://github.com/tylinux)
+1. Kevin Guan (https://github.com/K-Guan)
+1. littlezz (https://github.com/littlezz)
+1. cclauss (https://github.com/cclauss)
+1. Yan Zhang (https://github.com/Eskibear)
+1. xiuyanduan (https://github.com/xiuyanduan)
+1. FPlust (https://github.com/fplust)
+1. lambdaplus (https://github.com/lambdaplus)
 1. Tony Yang (liuliu036@gmail.com)
-2. Yu Longjun (https://github.com/yulongjun)
-3. LxMit (https://github.com/LxMit)
+
+[更多贡献者](https://github.com/yidao620c/python3-cookbook/graphs/contributors)
 
 -----------------------------------------------------
 

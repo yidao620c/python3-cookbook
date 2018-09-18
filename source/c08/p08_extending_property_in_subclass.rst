@@ -164,7 +164,7 @@
 如果你不知道到底是哪个基类定义了property，
 那你只能通过重新定义所有property并使用 ``super()`` 来将控制权传递给前面的实现。
 
-值的注意的是上面演示的第一种技术还可以被用来扩展一个描述器(在8.9小节我们有专门的介绍)。比如：
+值得注意的是上面演示的第一种技术还可以被用来扩展一个描述器(在8.9小节我们有专门的介绍)。比如：
 
 .. code-block:: python
 
@@ -207,7 +207,7 @@
             print('Deleting name')
             super(SubPerson, SubPerson).name.__delete__(self)
 
-最后值的注意的是，读到这里时，你应该会发现子类化 ``setter`` 和 ``deleter`` 方法其实是很简单的。
+最后值得注意的是，读到这里时，你应该会发现子类化 ``setter`` 和 ``deleter`` 方法其实是很简单的。
 这里演示的解决方案同样适用，但是在 `Python的issue页面 <http://bugs.python.org/issue14965>`_
 报告的一个bug，或许会使得将来的Python版本中出现一个更加简洁的方法。
 

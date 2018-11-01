@@ -78,9 +78,9 @@
 
 .. code-block:: python
 
-        import ssl
+    import ssl
 
-        class SSLMixin:
+    class SSLMixin:
         '''
         Mixin class that adds support for SSL to existing servers based
         on the socketserver module.
@@ -253,7 +253,7 @@
 例如，web浏览器保存了主要的认证机构的证书，并使用它来为每一个HTTPS连接确认证书的合法性。
 对本小节示例而言，只是为了测试，我们可以创建自签名的证书，下面是主要步骤：
 
-
+::
     bash % openssl req -new -x509 -days 365 -nodes -out server_cert.pem \
                -keyout server_key.pem
     Generating a 1024 bit RSA private key
@@ -282,6 +282,7 @@
 在创建证书的时候，各个值的设定可以是任意的，但是”Common Name“的值通常要包含服务器的DNS主机名。
 如果你只是在本机测试，那么就使用”localhost“，否则使用服务器的域名。
 
+::
     -----BEGIN RSA PRIVATE KEY-----
     MIICXQIBAAKBgQCZrCNLoEyAKF+f9UNcFaz5Osa6jf7qkbUl8si5xQrY3ZYC7juu
     nL1dZLn/VbEFIITaUOgvBtPv1qUWTJGwga62VSG1oFE0ODIx3g2Nh4sRf+rySsx2
@@ -300,6 +301,7 @@
 
 服务器证书文件server_cert.pem内容类似下面这样：
 
+::
     -----BEGIN CERTIFICATE-----
     MIIC+DCCAmGgAwIBAgIJAPMd+vi45js3MA0GCSqGSIb3DQEBBQUAMFwxCzAJBgNV
     BAYTAlVTMREwDwYDVQQIEwhJbGxpbm9pczEQMA4GA1UEBxMHQ2hpY2FnbzEUMBIG

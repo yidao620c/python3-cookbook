@@ -81,10 +81,10 @@
     import ssl
 
     class SSLMixin:
-    '''
-    Mixin class that adds support for SSL to existing servers based
-    on the socketserver module.
-    '''
+        '''
+        Mixin class that adds support for SSL to existing servers based
+        on the socketserver module.
+        '''
         def __init__(self, *args,
                      keyfile=None, certfile=None, ca_certs=None,
                      cert_reqs=ssl.CERT_NONE,

@@ -50,7 +50,7 @@
 
 .. code-block:: python
 
-    s = sum((x * x for x in nums)) # 显示的传递一个生成器表达式对象
+    s = sum((x * x for x in nums)) # 显式的传递一个生成器表达式对象
     s = sum(x * x for x in nums) # 更加优雅的实现方式，省略了括号
 
 使用一个生成器表达式作为参数会比先创建一个临时列表更加高效和优雅。

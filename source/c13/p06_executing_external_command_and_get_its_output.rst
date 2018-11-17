@@ -62,7 +62,7 @@
     out_bytes = subprocess.check_output('grep python | wc > out', shell=True)
 
 需要注意的是在shell中执行命令会存在一定的安全风险，特别是当参数来自于用户输入时。
-这时候可以使用 ``shlex.quote()`` 函数来讲参数正确的用双引用引起来。
+这时候可以使用 ``shlex.quote()`` 函数来将参数正确的用双引用引起来。
 
 ----------
 讨论

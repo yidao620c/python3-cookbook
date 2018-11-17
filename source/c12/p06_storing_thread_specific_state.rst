@@ -42,7 +42,7 @@
             del self.local.sock
 
 代码中，自己观察对于 ``self.local`` 属性的使用。
-它被初始化尾一个 ``threading.local()`` 实例。
+它被初始化为一个 ``threading.local()`` 实例。
 其他方法操作被存储为 ``self.local.sock`` 的套接字对象。
 有了这些就可以在多线程中安全的使用 ``LazyConnection`` 实例了。例如：
 

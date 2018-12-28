@@ -153,6 +153,9 @@ actor模式的魅力就在于它的简单性。
     a.start()
     a.send(('A', 1))      # Invokes do_A(1)
     a.send(('B', 2, 3))   # Invokes do_B(2,3)
+    a.close()
+    a.join()
+
 
 作为另外一个例子，下面的actor允许在一个工作者中运行任意的函数，
 并且通过一个特殊的Result对象返回结果：

@@ -145,7 +145,7 @@
             except socket.timeout:
                 print('Timed out!')
 
-最后，还需要注意的是巨大部分Python的高层网络模块（比如HTTP、XML-RPC等）都是建立在 ``socketserver`` 功能之上。
+最后，还需要注意的是绝大部分Python的高层网络模块（比如HTTP、XML-RPC等）都是建立在 ``socketserver`` 功能之上。
 也就是说，直接使用 ``socket`` 库来实现服务器也并不是很难。
 下面是一个使用 ``socket`` 直接编程实现的一个服务器简单例子：
 

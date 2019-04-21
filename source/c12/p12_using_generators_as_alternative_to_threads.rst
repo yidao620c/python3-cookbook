@@ -45,7 +45,6 @@
         def new_task(self, task):
             '''
             Admit a newly started task to the scheduler
-
             '''
             self._task_queue.append(task)
 
@@ -89,7 +88,7 @@
     ...
 
 到此为止，我们实际上已经实现了一个“操作系统”的最小核心部分。
-生成器函数就是认为，而yield语句是任务挂起的信号。
+生成器函数就是任务，而yield语句是任务挂起的信号。
 调度器循环检查任务列表直到没有任务要执行为止。
 
 实际上，你可能想要使用生成器来实现简单的并发。
@@ -103,7 +102,7 @@
 
     class ActorScheduler:
         def __init__(self):
-            self._actors = { }          # Mapping of names to actors
+            self._actors = {}          # Mapping of names to actors
             self._msg_queue = deque()   # Message queue
 
         def new_actor(self, name, actor):
@@ -148,7 +147,6 @@
                 # Send to the printer task
                 sched.send('printer', n)
                 # Send the next count to the counter task (recursive)
-
                 sched.send('counter', n-1)
 
         sched = ActorScheduler()
@@ -175,6 +173,7 @@
     class YieldEvent:
         def handle_yield(self, sched, task):
             pass
+            
         def handle_resume(self, sched, task):
             pass
 
@@ -201,7 +200,6 @@
             '''
             Add a newly started task to the scheduler
             '''
-
             self._ready.append((task, None))
             self._numtasks += 1
 
@@ -253,9 +251,10 @@
         def __init__(self, sock, data):
             self.sock = sock
             self.data = data
+            
         def handle_yield(self, sched, task):
-
             sched._write_wait(self.sock.fileno(), self, task)
+            
         def handle_resume(self, sched, task):
             nsent = self.sock.send(self.data)
             sched.add_ready(task, nsent)
@@ -263,8 +262,10 @@
     class AcceptSocket(YieldEvent):
         def __init__(self, sock):
             self.sock = sock
+            
         def handle_yield(self, sched, task):
             sched._read_wait(self.sock.fileno(), self, task)
+            
         def handle_resume(self, sched, task):
             r = self.sock.accept()
             sched.add_ready(task, r)
@@ -273,12 +274,16 @@
     class Socket(object):
         def __init__(self, sock):
             self._sock = sock
+            
         def recv(self, maxbytes):
             return ReadSocket(self._sock, maxbytes)
+            
         def send(self, data):
             return WriteSocket(self._sock, data)
+            
         def accept(self):
             return AcceptSocket(self._sock)
+            
         def __getattr__(self, name):
             return getattr(self._sock, name)
 

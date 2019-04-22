@@ -192,6 +192,8 @@ actor模式的魅力就在于它的简单性。
     worker = Worker()
     worker.start()
     r = worker.submit(pow, 2, 3)
+    worker.close()
+    worker.join()
     print(r.result())
 
 最后，“发送”一个任务消息的概念可以被扩展到多进程甚至是大型分布式系统中去。

@@ -10,12 +10,12 @@ from itertools import islice
 
 def skip_iter():
     # with open('/etc/passwd') as f:
-    #     for line in dropwhile(lambda line: line.startswith('#'), f):
+    #     for line in dropwhile(lambda line: not line.startswith('#'), f):
     #         print(line, end='')
 
-    # 明确知道了要跳过的元素个数
+    # 明确知道了要跳过的元素序号
     items = ['a', 'b', 'c', 1, 4, 10, 15]
-    for x in islice(items, None, 3):
+    for x in islice(items, 3, None):
         print(x)
 
 if __name__ == '__main__':

@@ -184,7 +184,7 @@
             # Check if it's a package
             if basename in self._links[baseurl]:
                 log.debug('find_module: trying package %r', fullname)
-                fullurl = self._baseurl + '/' + basename
+                fullurl = self.base_url + '/' + basename
                 # Attempt to load the package (which accesses __init__.py)
                 loader = UrlPackageLoader(fullurl)
                 try:

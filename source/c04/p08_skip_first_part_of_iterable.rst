@@ -41,7 +41,7 @@
 
     >>> from itertools import dropwhile
     >>> with open('/etc/passwd') as f:
-    ...     for line in dropwhile(lambda line: line.startswith('#'), f):
+    ...     for line in dropwhile(lambda line: not line.startswith('#'), f):
     ...         print(line, end='')
     ...
     nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false
@@ -50,7 +50,7 @@
     >>>
 
 这个例子是基于根据某个测试函数跳过开始的元素。
-如果你已经明确知道了要跳过的元素的个数的话，那么可以使用 ``itertools.islice()`` 来代替。比如：
+如果你已经明确知道了要跳过的元素的序号的话，那么可以使用 ``itertools.islice()`` 来代替。比如：
 
 .. code-block:: python
 
@@ -59,13 +59,12 @@
     >>> for x in islice(items, 3, None):
     ...     print(x)
     ...
-    1
     4
     10
     15
     >>>
 
-在这个例子中， ``islice()`` 函数最后那个 ``None`` 参数指定了你要获取从第3个到最后的所有元素，
+在这个例子中， ``islice()`` 函数最后那个 ``None`` 参数指定了你要跳过前面3个元素，获取第4个到最后的所有元素，
 如果 ``None`` 和3的位置对调，意思就是仅仅获取前三个元素恰恰相反，
 (这个跟切片的相反操作 ``[3:]`` 和 ``[:3]`` 原理是一样的)。
 

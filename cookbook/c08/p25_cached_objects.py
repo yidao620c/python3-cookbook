@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 """
 Topic: 创建缓存实例
-Desc : 
+Desc :
 """
 
 import logging
@@ -78,8 +78,8 @@ class Spam2:
     def __init__(self, name):
         self.name = name
 
-    def get_spam(name):
-        return Spam2.manager.get_spam(name)
+def get_spam(name):
+    return Spam2.manager.get_spam(name)
 
 
 # ------------------------最后的修正方案------------------------

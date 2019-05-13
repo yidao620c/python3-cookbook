@@ -147,8 +147,8 @@
         def __init__(self, name):
             self.name = name
 
-        def get_spam(name):
-            return Spam.manager.get_spam(name)
+    def get_spam(name):
+        return Spam.manager.get_spam(name)
 
 这样的话代码更清晰，并且也更灵活，我们可以增加更多的缓存管理机制，只需要替代manager即可。
 

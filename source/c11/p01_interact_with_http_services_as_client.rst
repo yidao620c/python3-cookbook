@@ -194,7 +194,7 @@
     >>> import requests
     >>> r = requests.get('http://httpbin.org/get?name=Dave&n=37',
     ...     headers = { 'User-agent': 'goaway/1.0' })
-    >>> resp = r.json
+    >>> resp = r.json()
     >>> resp['headers']
     {'User-Agent': 'goaway/1.0', 'Content-Length': '', 'Content-Type': '',
     'Accept-Encoding': 'gzip, deflate, compress', 'Connection':

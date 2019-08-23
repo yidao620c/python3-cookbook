@@ -34,9 +34,7 @@
 
 目前已经正式完成了整本书的翻译工作，历时2年，不管怎样还是坚持下来了。现在共享给python社区。
 
-**捐助渠道已开通，如有意向请点击[【微信二维码】](qcode.jpg) 捐赠。**
-
-欢迎关注我的个人公众号“飞污熊”，我会定期分享一些自己的Python学习笔记和心得。
+**欢迎关注我的个人公众号“飞污熊”，我会定期分享一些自己的Python学习笔记和心得。**
 
 ![公众号](https://github.com/yidao620c/python3-cookbook/raw/master/exts/wuxiong.jpg)
 
@@ -60,7 +58,6 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
 ```
-
 
 ## 其他贡献者
 

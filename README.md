@@ -3,50 +3,48 @@
 [![License][licensesvg]][license]
 [![Github downloads](https://img.shields.io/github/downloads/yidao620c/python3-cookbook/total.svg)](https://github.com/yidao620c/python3-cookbook/releases/latest)
 [![GitHub release](https://img.shields.io/github/release/yidao620c/python3-cookbook.svg)](https://github.com/yidao620c/python3-cookbook/releases)
+# Translated By google translated in English
 
 
-# 《Python Cookbook》 3rd Edition 翻译 
+Online reading address: http://python3-cookbook.readthedocs.org/zh_CN/latest/
 
-《Python Cookbook》3rd 中文版3.0.0正式发布啦 ^_^！ ——2017/12/07
+The latest version (3.0.0) download
 
-在线阅读地址：<http://python3-cookbook.readthedocs.org/zh_CN/latest/>
+Chinese simplified version PDF download address: https://pan.baidu.com/s/1pL1cI9d
+Chinese Traditional Chinese PDF download address: https://pan.baidu.com/s/1qX97VJI
+Translator's words
+Life is short, I use Python!
 
-最新版(3.0.0)下载
+The translator has always insisted on using Python 3 because it represents the future of Python. Although backward compatibility is its flaw, this situation will change sooner or later, and the future of Python3 needs everyone's help and support. At present, the tutorial books on the market, most of the manuals on the Internet are basically 2.x series, and the books based on the 3.x series are less pitiful.
 
-* 中文简体版PDF下载地址：<https://pan.baidu.com/s/1pL1cI9d>
-* 中文繁体版PDF下载地址：<https://pan.baidu.com/s/1qX97VJI>
+Life is short, I use Python!
 
+The translator has always insisted on using Python 3 because it represents the future of Python. Although backward compatibility is its hard injury, this situation will change sooner or later,
+And the future of Python 3 needs everyone's help and support.
+At present, the tutorial books on the market, most of the manuals on the Internet are basically 2.x series, and the books based on the 3.x series are less pitiful.
 
-## 译者的话
+I recently saw a Python Cookbook 3rd Edition, based entirely on Python3, which is also very good.
+For the popularity of Python3, I am not self-sufficient and want to do something. Ever since, there is an impulse to translate this book!
+This is not an easy job, but it is a worthwhile job: it is not only convenient for others, but also an exercise and improvement for your ability to translate.
 
-人生苦短，我用Python！
+The translator will insist on being responsible for the translation of each sentence and strive for high quality. However, due to limited ability, it is inevitable that there will be omissions or improper expressions.
+If there is anything wrong with the translation, please forgive me and welcome everyone to correct me.
 
-译者一直坚持使用Python3，因为它代表了Python的未来。虽然向后兼容是它的硬伤，但是这个局面迟早会改变的，
-而且Python3的未来需要每个人的帮助和支持。
-目前市面上的教程书籍，网上的手册大部分基本都是2.x系列的，专门基于3.x系列的书籍少的可怜。
+At present, the translation of the entire book has been officially completed. It lasted for 2 years, and it persisted anyway. Now share it with the python community.
 
-最近看到一本《Python Cookbook》3rd Edition，完全基于Python3，写的也很不错。
-为了Python3的普及，我也不自量力，想做点什么事情。于是乎，就有了翻译这本书的冲动了！
-这不是一项轻松的工作，却是一件值得做的工作：不仅方便了别人，而且对自己翻译能力也是一种锻炼和提升。
-
-译者会坚持对自己每一句的翻译负责，力求高质量。但受能力限制，也难免有疏漏或者表意不当的地方。
-如果译文中有什么错漏的地方请大家见谅，也欢迎大家随时指正。
-
-目前已经正式完成了整本书的翻译工作，历时2年，不管怎样还是坚持下来了。现在共享给python社区。
-
-**欢迎关注我的个人公众号“飞污熊”，我会定期分享一些自己的Python学习笔记和心得。**
-
-![公众号](https://github.com/yidao620c/python3-cookbook/raw/master/exts/wuxiong.jpg)
+**Welcome to my personal public number "Flying Saffron Bear", I will share some of my own Python study notes and tips on a regular basis. **
 
 
-## 项目说明
+[[Public Number] (https://github.com/yidao620c/python3-cookbook/raw/master/exts/wuxiong.jpg)
 
-* 所有文档均使用reStructuredText编辑，参考 [reStructuredText](http://docutils.sourceforge.net/docs/user/rst/quickref.html)
-* 当前文档生成托管在 [readthedocs](https://readthedocs.org/) 上
-* 生成的文档预览地址： [python3-cookbook](http://python3-cookbook.readthedocs.org/zh_CN/latest/)
-* 使用了python官方文档主题 [sphinx-rtd-theme](https://github.com/snide/sphinx_rtd_theme) ，也是默认的主题default.
-* 书中所有代码均在python 3.6版本下面运行通过，所有源码放在cookbook包下面
 
+## project instruction
+
+* All documents are edited using reStructuredText, refer to [reStructuredText] (http://docutils.sourceforge.net/docs/user/rst/quickref.html)
+* Current document generation is hosted on [readthedocs] (https://readthedocs.org/)
+* Generated document preview address: [python3-cookbook](http://python3-cookbook.readthedocs.org/zh_CN/latest/)
+* Use the python official documentation theme [sphinx-rtd-theme] (https://github.com/snide/sphinx_rtd_theme), which is also the default theme default.
+* All code in the book runs under Python 3.6, all source code is placed under the cookbook package
 ```
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -59,9 +57,10 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
 ```
 
-## 其他贡献者
+##
+Other contributors
 
-排名不分先后：
+names not listed in order：
 
 1. Yu Longjun (https://github.com/yulongjun)
 1. tylinux (https://github.com/tylinux)
@@ -74,23 +73,24 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 1. lambdaplus (https://github.com/lambdaplus)
 1. Tony Yang (liuliu036@gmail.com)
 
-[更多贡献者](https://github.com/yidao620c/python3-cookbook/graphs/contributors)
 
------------------------------------------------------
+[More contributors] (https://github.com/yidao620c/python3-cookbook/graphs/contributors)
 
-## 关于源码生成PDF文件
+-------------------------------------------------- ---
 
-有网友提问怎样通过源码生成PDF文件，由于这个步骤介绍有点长，不适合放在README里面，
-我专门写了篇博客专门介绍怎样通过ReadtheDocs托管文档，怎样自己生成PDF文件，大家可以参考一下。
+## About source code generation PDF file
+
+Some netizens asked how to generate a PDF file from the source code. Since this step is a bit long, it is not suitable for being placed in the README.
+I wrote a blog dedicated to how to use the ReadtheDocs to host documents, how to generate PDF files yourself, you can refer to it.
 
 <https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>
 
-另外关于生成的PDF文件中会自动生成标题编号的问题，有热心网友 [CarlKing5019](https://github.com/CarlKing5019)提出了解决方案，
-请参考issues108：
+In addition, the issue of the title number is automatically generated in the generated PDF file, and the enthusiastic user [CarlKing5019] (https://github.com/CarlKing5019) proposes a solution.
+Please refer to issues108:
 
 <https://github.com/yidao620c/python3-cookbook/issues/108>
 
-再次感谢每一位贡献者。
+Thanks again to each contributor.
 
 -----------------------------------------------------
 

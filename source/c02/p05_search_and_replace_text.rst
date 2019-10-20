@@ -42,6 +42,16 @@
     'Today is 2012-11-27. PyCon starts 2013-3-13.'
     >>>
 
+如果你使用了命名分组，那么第二个参数请使用 ``\g<group_name>`` ,如下
+
+.. code-block:: python
+
+    >>> text = 'Today is 11/27/2012. PyCon starts 3/13/2013.'
+    >>> import re
+    >>> re.sub(r'(?P<month>\d+)/(?P<day>\d+)/(?P<year>\d+)', r'\g<year>-\g<month>-\g<day>', text)
+    'Today is 2012-11-27. PyCon starts 2013-3-13.'
+    >>>
+
 对于更加复杂的替换，可以传递一个替换回调函数来代替，比如：
 
 .. code-block:: python

@@ -20,6 +20,7 @@ def search_replace():
     # 复杂的模式，使用sub()
     text = 'Today is 11/27/2012. PyCon starts 3/13/2013.'
     print(re.sub(r'(\d+)/(\d+)/(\d+)', r'\3-\1-\2', text))
+    print(re.sub(r'(?P<month>\d+)/(?P<day>\d+)/(?P<year>\d+)', r'\g<year>-\g<month>-\g<day>', text))
 
     # 先编译
     datepat = re.compile(r'(\d+)/(\d+)/(\d+)')

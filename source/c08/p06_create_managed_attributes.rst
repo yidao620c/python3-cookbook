@@ -110,7 +110,7 @@ property的一个关键特征是它看上去跟普通的attribute没什么两样
     <function Person.first_name at 0x1006a62e0>
     >>>
 
-通常来讲，你不会直接取调用fget或者fset，它们会在访问property的时候自动被触发。
+通常来讲，你不会直接去调用fget或者fset，它们会在访问property的时候自动被触发。
 
 只有当你确实需要对attribute执行其他额外的操作的时候才应该使用到property。
 有时候一些从其他编程语言(比如Java)过来的程序员总认为所有访问都应该通过getter和setter，

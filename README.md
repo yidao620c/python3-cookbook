@@ -4,7 +4,6 @@
 [![Github downloads](https://img.shields.io/github/downloads/yidao620c/python3-cookbook/total.svg)](https://github.com/yidao620c/python3-cookbook/releases/latest)
 [![GitHub release](https://img.shields.io/github/release/yidao620c/python3-cookbook.svg)](https://github.com/yidao620c/python3-cookbook/releases)
 
-For those who don't understand this language try using the translator apps/websites.Here's a sample website.(https://language-translator-demo.ng.bluemix.net/)
 # 《Python Cookbook》 3rd Edition 翻译 
 
 《Python Cookbook》3rd 中文版3.0.0正式发布啦 ^_^！ ——2017/12/07

@@ -41,7 +41,7 @@
 
     >>> from itertools import dropwhile
     >>> with open('/etc/passwd') as f:
-    ...     for line in dropwhile(lambda line: not line.startswith('#'), f):
+    ...     for line in dropwhile(lambda line: line.startswith('#'), f):
     ...         print(line, end='')
     ...
     nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false

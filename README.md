@@ -15,6 +15,16 @@
 * 中文简体版PDF下载地址：<https://pan.baidu.com/s/1pL1cI9d>
 * 中文繁体版PDF下载地址：<https://pan.baidu.com/s/1qX97VJI>
 
+## 关于作者David Beazley
+
+本书作者是David Beazley大神，一位独立的计算机科学家、教育家，以及有着35年开发经验的软件开发者。
+他在Python社区一直都很活跃，编写了很多的[python包](http://www.dabeaz.com/software.html)，
+发表了很多的公开[演讲视频](http://www.dabeaz.com/talks.html) 以及 
+[编程教程](http://www.dabeaz.com/tutorials.html)。
+同时还是[Python Essential Reference](http://www.dabeaz.com/per.html) 以及 
+[ Python Cookbook (O'Reilly Media)](http://www.dabeaz.com/cookbook.html)的作者。
+
+David Beazley大神的博客地址：<http://www.dabeaz.com/>
 
 ## 译者的话
 

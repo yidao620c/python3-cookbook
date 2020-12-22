@@ -16,7 +16,7 @@ def inf_nan():
     print(a * 10 == a)
     print(10 / a)
 
-    # undifined
+    # undefined
     print(a / a)
     print(a + b)
 

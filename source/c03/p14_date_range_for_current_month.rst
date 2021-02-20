@@ -35,8 +35,8 @@
     >>> a_day = timedelta(days=1)
     >>> first_day, last_day = get_month_range()
     >>> while first_day < last_day:
-    ...     print(first_day)
-    ...     first_day += a_day
+    ...         print(first_day)
+    ...         first_day += a_day
     ...
     2012-08-01
     2012-08-02

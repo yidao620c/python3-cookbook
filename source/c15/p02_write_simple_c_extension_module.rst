@@ -34,7 +34,7 @@
 有了这些，下面我们演示下编写扩展函数的一个简单例子：
 
 ::
-
+    /* pysample.c */
     #include "Python.h"
     #include "sample.h"
 
@@ -103,20 +103,16 @@
     # setup.py
     from distutils.core import setup, Extension
 
-    setup(name='sample',
+    setup(name="sample", 
           ext_modules=[
-            Extension('sample',
-                      ['pysample.c'],
-                      include_dirs = ['/some/dir'],
-                      define_macros = [('FOO','1')],
-                      undef_macros = ['BAR'],
-                      library_dirs = ['/usr/local/lib'],
-                      libraries = ['sample']
+            Extension("sample",
+                      ["../sample.c", "pysample.c"],
+                      include_dirs = ['..'],
                       )
             ]
     )
 
-为了构建最终的函数库，只需简单的使用 ``python3 buildlib.py build_ext --inplace`` 命令即可：
+为了构建最终的函数库，只需简单的使用 ``python3 setup.py build_ext --inplace`` 命令即可：
 
 ::
 

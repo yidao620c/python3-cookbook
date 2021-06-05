@@ -106,7 +106,7 @@ Python并没有对在字符串中简单替换变量值提供直接的支持。
 
     >>> name = 'Guido'
     >>> n = 37
-    >>> '%(name) has %(n) messages.' % vars()
+    >>> '%{name} has %{n} messages.' % vars()
     'Guido has 37 messages.'
     >>>
 

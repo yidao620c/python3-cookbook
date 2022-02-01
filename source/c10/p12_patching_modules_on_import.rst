@@ -109,7 +109,7 @@
 本节中的 ``PostImportFinder`` 的作用并不是加载模块，而是自带导入完成后触发相应的动作。
 实际的导入被委派给位于sys.meta_path中的其他查找器。
 ``PostImportLoader`` 类中的 ``imp.import_module()`` 函数被递归的调用。
-为了避免陷入无线循环，``PostImportFinder`` 保持了一个所有被加载过的模块集合。
+为了避免陷入无限循环，``PostImportFinder`` 保持了一个所有被加载过的模块集合。
 如果一个模块名存在就会直接被忽略掉。
 
 当一个模块被 ``imp.import_module()`` 加载后，

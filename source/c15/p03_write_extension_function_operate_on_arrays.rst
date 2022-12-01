@@ -60,6 +60,7 @@
 ::
 
     >>> import array
+    >>> from sample import *
     >>> avg(array.array('d',[1,2,3]))
     2.0
     >>> import numpy
@@ -95,9 +96,9 @@
 通过编写能接受并操作数组的代码，你可以编写很好的兼容这些应用程序的自定义代码，
 而不是只能兼容你自己的代码。
 
-代码的关键点在于 ``PyBuffer_GetBuffer()`` 函数。
+代码的关键点在于 ``PyObject_GetBuffer()`` 函数。
 给定一个任意的Python对象，它会试着去获取底层内存信息，它简单的抛出一个异常并返回-1.
-传给 ``PyBuffer_GetBuffer()`` 的特殊标志给出了所需的内存缓冲类型。
+传给 ``PyObject_GetBuffer()`` 的特殊标志给出了所需的内存缓冲类型。
 例如，``PyBUF_ANY_CONTIGUOUS`` 表示是一个连续的内存区域。
 
 对于数组、字节字符串和其他类似对象而言，一个 ``Py_buffer`` 结构体包含了所有底层内存的信息。

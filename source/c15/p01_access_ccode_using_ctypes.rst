@@ -255,7 +255,7 @@
     >>> a = array.array('d',[1,2,3])
     >>> a
     array('d', [1.0, 2.0, 3.0])
-    >>> ptr_ = a.buffer_info()
+    >>> ptr, _ = a.buffer_info()
     >>> ptr
     4298687200
     >>> ctypes.cast(ptr, ctypes.POINTER(ctypes.c_double))

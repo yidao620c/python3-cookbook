@@ -8,7 +8,7 @@ psycopg2==2.5.4
 pycrypto==2.6.1
 pytz==2014.9
 tzlocal==1.1.2
-redis>=3.4
+redis>=4.4.0
 requests==2.4.3
 requests-oauthlib==0.4.2
 whitenoise==1.0.3

@@ -42,6 +42,7 @@
 .. code-block:: python
 
     from collections import namedtuple
+    import csv
     with open('stock.csv') as f:
         f_csv = csv.reader(f)
         headings = next(f_csv)

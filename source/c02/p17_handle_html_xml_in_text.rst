@@ -49,7 +49,7 @@
     >>> s = 'Spicy &quot;Jalape&#241;o&quot.'
     >>> from html.parser import HTMLParser
     >>> p = HTMLParser()
-    >>> p.unescape(s)
+    >>> p.unescape(s)  # Python3.5以后使用 html.unescape(s)
     'Spicy "Jalapeño".'
     >>>
     >>> t = 'The prompt is &gt;&gt;&gt;'

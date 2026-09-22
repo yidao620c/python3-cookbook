@@ -4,7 +4,9 @@
 [![GitHub release](https://img.shields.io/github/release/yidao620c/python3-cookbook.svg)](https://github.com/yidao620c/python3-cookbook/releases)
 
 <div align="center">
+
 **中文** | **[English](README_en.md)**
+
 </div>
 
 # Python Cookbook 3rd Edition 中文翻译 

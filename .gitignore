@@ -1,3 +1,10 @@
+.claude/
+.codex/
 build/
 .idea/
+target/
 *.pyc
+*.iml
+*.ipr
+*.iws
+*.log

@@ -40,7 +40,7 @@ At present, the translation of the entire book has been officially completed. It
 
 **Welcome to my personal public number "Flying Saffron Bear", I will share some of my own Python study notes and tips on a regular basis. **
 
-![Public Number] (https://github.com/yidao620c/python3-cookbook/raw/master/exts/wuxiong.jpg)
+![Public Number](https://github.com/yidao620c/python3-cookbook/raw/master/exts/wuxiong.jpg)
 
 ## project instruction
 

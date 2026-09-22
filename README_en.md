@@ -88,7 +88,7 @@ names not listed in order：
 Some netizens asked how to generate a PDF file from the source code. Since this step is a bit long, it is not suitable for being placed in the README.
 I wrote a blog dedicated to how to use the ReadtheDocs to host documents, how to generate PDF files yourself, you can refer to it.
 
-<https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>
+<https://www.xiongneng.me/posts/devops/readthedoc/>
 
 In addition, the issue of the title number is automatically generated in the generated PDF file, and the enthusiastic user [CarlKing5019] (https://github.com/CarlKing5019) proposes a solution.
 Please refer to issues108:
@@ -120,7 +120,7 @@ Meanwhile you'd better follow the rules below
 
 (The Apache License)
 
-Copyright (c) 2014-2018 [Xiong Neng](<https://www.xncoding.com/>) and other contributors
+Copyright (c) 2014-2018 [Xiong Neng](<https://www.xiongneng.me>) and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. You may obtain a copy of the License at

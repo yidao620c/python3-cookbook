@@ -96,7 +96,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 
 有网友提问怎样通过源码生成 PDF 文件，由于这个步骤介绍有点长，不适合放在 README 中，我专门写了篇博客专门介绍怎样通过 Read the Docs 托管文档，怎样自己生成 PDF 文件，大家可以参考一下。
 
-<https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>
+<https://www.xiongneng.me/posts/devops/readthedoc/>
 
 另外关于生成的 PDF 文件中会自动生成标题编号的问题，有热心网友 [CarlKing5019](https://github.com/CarlKing5019) 提出了解决方案，
 请参考 [issues#108](https://github.com/yidao620c/python3-cookbook/issues/108)。
@@ -126,7 +126,7 @@ Meanwhile you'd better follow the rules below
 
 (The Apache License)
 
-Copyright (c) 2014-2018 [Xiong Neng](<https://www.xncoding.com/>) and other contributors
+Copyright (c) 2014-2018 [Xiong Neng](<https://www.xiongneng.me>) and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. You may obtain a copy of the License at

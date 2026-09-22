@@ -4,7 +4,7 @@
 [![Github downloads](https://img.shields.io/github/downloads/yidao620c/python3-cookbook/total.svg)](https://github.com/yidao620c/python3-cookbook/releases/latest)
 [![GitHub release](https://img.shields.io/github/release/yidao620c/python3-cookbook.svg)](https://github.com/yidao620c/python3-cookbook/releases)
 
-<div align="center">**[中文](README.md)** | **English**</div>
+<div align="center"> **[中文](README.md)** | **English** </div>
 
 Online reading address: http://python3-cookbook.readthedocs.org/zh_CN/latest/
 
